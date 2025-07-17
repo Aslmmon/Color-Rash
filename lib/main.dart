@@ -10,15 +10,13 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Color Rush',
+      title: 'Color Rash',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.darkTheme, // <-- Use your custom theme here
       home: const GameScreen(), // <-- Updated this line
     );
   }
 }
-
