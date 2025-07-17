@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 
 import '../../domain/game_provider.dart';
 import '../../domain/game_state.dart';
+import '../theme/app_colors.dart';
 import 'components/falling_object.dart';
 
 class ColorRushGame extends FlameGame {
@@ -30,7 +31,7 @@ class ColorRushGame extends FlameGame {
       RectangleComponent(
         position: Vector2(0, catchZoneY),
         size: Vector2(screenWidth, 2.5), // A thin line 2 pixels high
-        paint: Paint()..color = Colors.red.withOpacity(0.5),
+        paint: Paint()..color = AppColors.catchZoneLineColor.withOpacity(0.5), // Use AppColors
       ),
     );
 

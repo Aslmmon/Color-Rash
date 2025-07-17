@@ -1,4 +1,5 @@
 import 'package:color_rash/presentation/game/game_screen.dart';
+import 'package:color_rash/presentation/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -15,7 +16,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Color Rush',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData.dark(), // Using a dark theme is good for games
+      theme: AppTheme.darkTheme, // <-- Use your custom theme here
       home: const GameScreen(), // <-- Updated this line
     );
   }
