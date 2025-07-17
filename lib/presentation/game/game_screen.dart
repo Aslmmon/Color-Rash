@@ -78,7 +78,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
 
           if (gameState.status != GameStatus.playing)
             Container(
-              color: Colors.black.withOpacity(0.5), // Dark overlay
+              color: Colors.black.withOpacity(0.5),
               child: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -91,8 +91,28 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                       ),
                     if (gameState.status == GameStatus.gameOver)
                       const SizedBox(height: 20),
+                    // Display Final Score and High Score on Game Over
+                    if (gameState.status == GameStatus.gameOver)
+                      Text(
+                        'Your Score: ${gameState.score}',
+                        style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold),
+                      ),
+                    if (gameState.status == GameStatus.gameOver)
+                      Text(
+                        'High Score: ${gameState.highScore}',
+                        style: const TextStyle(color: Colors.amber, fontSize: 24),
+                      ),
+                    if (gameState.status == GameStatus.gameOver)
+                      const SizedBox(height: 30), // Spacing before button
                     ElevatedButton(
-                      onPressed: gameNotifier.startGame,
+                      // *** MODIFIED: onPressed logic ***
+                      onPressed: () {
+                        if (gameState.status == GameStatus.gameOver) {
+                          gameNotifier.restartGame(); // Call restartGame when game is over
+                        } else {
+                          gameNotifier.startGame(); // Call startGame initially
+                        }
+                      },
                       child: Text(
                         gameState.status == GameStatus.initial
                             ? 'Start Game'
