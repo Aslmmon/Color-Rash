@@ -1,7 +1,9 @@
+import 'dart:io';
 import 'dart:ui';
 import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart'; // Still needed for `Color`
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import '../data/score_repository.dart';
 import 'game_state.dart';
 
@@ -18,11 +20,61 @@ class GameNotifier extends Notifier<GameState> {
   static const double _minSpawnInterval =
       0.5; // Minimum possible spawn interval to prevent it from becoming too fast
 
+  InterstitialAd? _interstitialAd;
+  int _gameOverCount = 0; // <--- NEW: Track game overs since last ad
+  static const int _adShowFrequency = 3; // Show ad every 3 game overs
+
   @override
   GameState build() {
     _scoreRepository = ref.read(scoreRepositoryProvider);
     _loadHighScore();
+    _loadInterstitialAd(); // <--- NEW: Load first ad when notifier builds
+
+
+    ref.onDispose(() {
+      _interstitialAd?.dispose();
+      print('GameNotifier disposed, interstitial ad also disposed.');
+    });
+
+
     return GameState();
+  }
+
+  void _loadInterstitialAd() {
+    InterstitialAd.load(
+      adUnitId:
+          Platform.isAndroid
+              ? 'ca-app-pub-3940256099942544/1033173712' // Android test ID
+              : 'ca-app-pub-3940256099942544/4411468910', // iOS test ID
+      request: const AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (ad) {
+          _interstitialAd = ad;
+          print('Interstitial ad loaded.');
+        },
+        onAdFailedToLoad: (error) {
+          _interstitialAd = null;
+          print('Interstitial ad failed to load: $error');
+        },
+      ),
+    );
+  }
+
+  void _showInterstitialAd() {
+    if (_interstitialAd != null) {
+      _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
+        onAdDismissedFullScreenContent: (ad) {
+          ad.dispose(); // Dispose the ad after it's dismissed
+          _loadInterstitialAd(); // Load a new one for next time
+        },
+        onAdFailedToShowFullScreenContent: (ad, error) {
+          ad.dispose();
+          _loadInterstitialAd();
+          print('Interstitial ad failed to show: $error');
+        },
+      );
+      _interstitialAd!.show();
+    }
   }
 
   Future<void> _loadHighScore() async {
@@ -86,8 +138,16 @@ class GameNotifier extends Notifier<GameState> {
     } else {
       state = state.copyWith(status: GameStatus.gameOver);
     }
+
+    _gameOverCount++;
+    if (_gameOverCount >= _adShowFrequency) {
+      _showInterstitialAd();
+      _gameOverCount = 0; // Reset counter
+    }
     FlameAudio.play('game_over.mp3'); // Play game over sound
   }
+
+
 
   void restartGame() {
     // Good: Resets to initial state and reloads high score.

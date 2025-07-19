@@ -1,6 +1,7 @@
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import '../../domain/game_provider.dart';
 import '../../domain/game_state.dart';
@@ -17,6 +18,8 @@ class GameScreen extends ConsumerStatefulWidget {
 
 class _GameScreenState extends ConsumerState<GameScreen> {
   late final ColorRushGame _game;
+  BannerAd? _bannerAd; // <--- NEW
+  bool _isBannerAdLoaded = false; // <--- NEW
 
   @override
   void initState() {
@@ -32,6 +35,38 @@ class _GameScreenState extends ConsumerState<GameScreen> {
       gameColors: colors,
       notifier: gameNotifier,
     );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadBannerAd();
+    });
+  }
+
+  void _loadBannerAd() {
+    _bannerAd = BannerAd(
+      adUnitId:
+          (Theme.of(context).platform == TargetPlatform.android)
+              ? 'ca-app-pub-3940256099942544/6300978111' // Android test ID
+              : 'ca-app-pub-3940256099942544/2934735716', // iOS test ID
+      request: const AdRequest(),
+      size: AdSize.banner, // Standard banner size
+      listener: BannerAdListener(
+        onAdLoaded: (ad) {
+          setState(() {
+            _isBannerAdLoaded = true;
+          });
+        },
+        onAdFailedToLoad: (ad, err) {
+          _isBannerAdLoaded = false;
+          ad.dispose(); // Dispose the ad if it fails to load
+          print('Error loading banner ad: $err');
+        },
+      ),
+    )..load(); // Don't forget to call load()
+  }
+
+  @override
+  void dispose() {
+    _bannerAd?.dispose(); // <--- NEW: Dispose banner ad when screen is disposed
+    super.dispose();
   }
 
   @override
@@ -47,16 +82,28 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     _game.status = gameState.status;
 
     return Scaffold(
-      body: Stack(
+      body: Column(
         children: [
-          GameWidget(game: _game), // Flame game rendered here
-          // Top UI: Score and High Score Display
-          _buildScoreDisplay(context, gameState),
-          // Bottom UI: Color Buttons
-          _buildColorButtons(colors, _game),
-          // Game Over / Start Overlay (conditionally rendered)
-          if (gameState.status != GameStatus.playing)
-            _buildGameOverlay(context, gameState, gameNotifier),
+          Expanded(
+            child: Stack(
+              children: [
+                GameWidget(game: _game), // Flame game rendered here
+                // Top UI: Score and High Score Display
+                _buildScoreDisplay(context, gameState),
+                // Bottom UI: Color Buttons
+                _buildColorButtons(colors, _game),
+                // Game Over / Start Overlay (conditionally rendered)
+                if (gameState.status != GameStatus.playing)
+                  _buildGameOverlay(context, gameState, gameNotifier),
+              ],
+            ),
+          ),
+          if (_isBannerAdLoaded && _bannerAd != null)
+            SizedBox(
+              width: _bannerAd?.size.width.toDouble(),
+              height: _bannerAd?.size.height.toDouble(),
+              child: AdWidget(ad: _bannerAd!),
+            ),
         ],
       ),
     );
