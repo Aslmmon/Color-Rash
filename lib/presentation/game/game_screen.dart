@@ -1,3 +1,4 @@
+import 'package:color_rash/core/ad_service.dart';
 import 'package:color_rash/core/audio_player.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +8,7 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import '../../domain/game_provider.dart';
 import '../../domain/game_state.dart';
 import '../../services/flame_audio_player.dart';
+import '../../services/google_ad_service.dart';
 import '../theme/app_colors.dart';
 import '../widgets/color_button.dart';
 import 'color_rush_game.dart';
@@ -22,7 +24,6 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   late final ColorRushGame _game;
   BannerAd? _bannerAd; // <--- NEW
   bool _isBannerAdLoaded = false; // <--- NEW
-  late final IAudioPlayer _audioPlayer;
 
   @override
   void initState() {
@@ -32,13 +33,13 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     // The game instance itself is initialized once.
     final colors = ref.read(colorProvider);
     final gameNotifier = ref.read(gameProvider.notifier);
-    _audioPlayer = FlameAudioPlayer();
+    final IAudioPlayer audioPlayer = ref.read(audioPlayerProvider);
 
     _game = ColorRushGame(
       status: gameNotifier.state.status, // Initial status
       gameColors: colors,
       notifier: gameNotifier,
-      audioPlayer: _audioPlayer,
+      audioPlayer: audioPlayer,
     );
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadBannerAd();
@@ -46,13 +47,13 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   }
 
   void _loadBannerAd() {
+    final IAdService adService = ref.read(
+      adServiceProvider,
+    ); // <--- NEW: Get Ad Service
     _bannerAd = BannerAd(
-      adUnitId:
-          (Theme.of(context).platform == TargetPlatform.android)
-              ? 'ca-app-pub-3940256099942544/6300978111' // Android test ID
-              : 'ca-app-pub-3940256099942544/2934735716', // iOS test ID
+      adUnitId: adService.getBannerAdUnitId(),
       request: const AdRequest(),
-      size: AdSize.banner, // Standard banner size
+      size: AdSize.banner,
       listener: BannerAdListener(
         onAdLoaded: (ad) {
           setState(() {
@@ -61,11 +62,11 @@ class _GameScreenState extends ConsumerState<GameScreen> {
         },
         onAdFailedToLoad: (ad, err) {
           _isBannerAdLoaded = false;
-          ad.dispose(); // Dispose the ad if it fails to load
+          ad.dispose();
           print('Error loading banner ad: $err');
         },
       ),
-    )..load(); // Don't forget to call load()
+    )..load();
   }
 
   @override

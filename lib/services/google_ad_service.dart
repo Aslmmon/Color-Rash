@@ -49,6 +49,13 @@ class GoogleAdService implements IAdService {
   void dispose() {
     _interstitialAd?.dispose();
   }
+
+  @override
+  String getBannerAdUnitId() {
+    return Platform.isAndroid
+        ? 'ca-app-pub-3940256099942544/6300978111' // Android test ID
+        : 'ca-app-pub-3940256099942544/2934735716';
+  }
 }
 
 // Riverpod provider for the GoogleAdService

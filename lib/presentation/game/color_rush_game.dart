@@ -3,9 +3,7 @@ import 'dart:ui'; // Not strictly needed unless you're doing custom drawing with
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flame/particles.dart';
-import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart'; // Needed for Color, even in Flame components
-
 import '../../core/audio_player.dart';
 import '../../domain/game_constants.dart';
 import '../../domain/game_provider.dart';

@@ -14,13 +14,15 @@ const double kObjectBaseSpeed = 150; // Pixels per second for falling objects
 const double kObjectRadius = 30.0; // Radius of falling circles
 const double kCatchZoneHeight = 200; // Height of the catch zone from the bottom
 const double kCatchZoneLineWidth = 2.5; // Thickness of the catch zone line
-const double kReceiverHeight = 100.0; // Height of the receiver buttons at the bottom
+const double kReceiverHeight =
+    100.0; // Height of the receiver buttons at the bottom
 
 // Particle Effect Constants (from ColorRushGame)
 const int kParticleCount = 35;
 const double kParticleLifespan = 0.5;
 const double kParticleSpeed = 100; // Base speed for random particle velocity
-const double kParticleAccelerationY = 200; // Gravity-like acceleration for particles
+const double kParticleAccelerationY =
+    200; // Gravity-like acceleration for particles
 const double kParticleRadius = 3;
 
 // --- Ad Integration Constants ---
