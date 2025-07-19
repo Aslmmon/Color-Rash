@@ -6,19 +6,32 @@ class GameState {
   final int score;
   final int highScore;
   final GameStatus status;
+  final double currentSpeed;
+  final double currentSpawnInterval; // <--- NEW PROPERTY
 
   GameState({
     this.score = 0,
     this.highScore = 0,
     this.status = GameStatus.initial,
+    this.currentSpeed = 1.0,
+    this.currentSpawnInterval = 2.0, // <--- NEW: Default spawn interval (2 seconds)
+
   });
 
   // A convenience method to create a copy of the state with new values.
-  GameState copyWith({int? score, int? highScore, GameStatus? status}) {
+  GameState copyWith({
+    int? score,
+    int? highScore,
+    GameStatus? status,
+    double? currentSpeed,
+    double? currentSpawnInterval, // <--- NEW
+  }) {
     return GameState(
       score: score ?? this.score,
       highScore: highScore ?? this.highScore,
       status: status ?? this.status,
+      currentSpeed: currentSpeed ?? this.currentSpeed,
+      currentSpawnInterval: currentSpawnInterval ?? this.currentSpawnInterval, // <--- NEW
     );
   }
 }

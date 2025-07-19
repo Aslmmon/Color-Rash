@@ -31,6 +31,7 @@ class ColorRushGame extends FlameGame {
   static const double _catchZoneLineWidth = 2.5;
   static const double _objectSpawnPeriod =
       2.0; // The 2.0 period for TimerComponent
+  double _spawnTimer = 0.0; // Timer to track when to spawn next object
 
   @override
   Future<void> onLoad() async {
@@ -47,25 +48,46 @@ class ColorRushGame extends FlameGame {
     );
 
     _drawReceivers();
-    add(
-      TimerComponent(
-        period: _objectSpawnPeriod, // Use constant
-        repeat: true,
-        onTick: () {
-          if (status != GameStatus.playing) {
-            // A more efficient way to remove all children of a specific type
-            // without creating a new list. `removeWhere` is generally preferred
-            // for collections if you're modifying them during iteration.
-            children.whereType<FallingObject>().forEach(
-              (obj) => obj.removeFromParent(),
-            );
-            return;
-          }
-          spawnObject();
-        },
-      ),
-    );
+    // add(
+    //   TimerComponent(
+    //     period: _objectSpawnPeriod, // Use constant
+    //     repeat: true,
+    //     onTick: () {
+    //       if (status != GameStatus.playing) {
+    //         // A more efficient way to remove all children of a specific type
+    //         // without creating a new list. `removeWhere` is generally preferred
+    //         // for collections if you're modifying them during iteration.
+    //         children.whereType<FallingObject>().forEach(
+    //           (obj) => obj.removeFromParent(),
+    //         );
+    //         return;
+    //       }
+    //       spawnObject();
+    //     },
+    //   ),
+    // );
     return super.onLoad();
+  }
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+
+    if (status != GameStatus.playing) {
+      // Clear objects when not playing
+      children.whereType<FallingObject>().forEach(
+        (obj) => obj.removeFromParent(),
+      );
+      _spawnTimer = 0.0; // Reset timer when game is not playing
+      return;
+    }
+
+    _spawnTimer += dt;
+    // Check if enough time has passed based on the current spawn interval from GameNotifier
+    if (_spawnTimer >= notifier.state.currentSpawnInterval) {
+      spawnObject();
+      _spawnTimer = 0.0; // Reset timer for the next spawn
+    }
   }
 
   void attemptCatch(Color tappedColor) {
@@ -141,7 +163,13 @@ class ColorRushGame extends FlameGame {
   void spawnObject() {
     final randomX = _random.nextDouble() * size.x;
     final randomColor = gameColors[_random.nextInt(gameColors.length)];
-    add(FallingObject(position: Vector2(randomX, 0), color: randomColor));
+    add(
+      FallingObject(
+        position: Vector2(randomX, 0),
+        color: randomColor,
+        speedMultiplier: notifier.state.currentSpeed,
+      ),
+    );
   }
 
   void _drawReceivers() {
@@ -161,12 +189,4 @@ class ColorRushGame extends FlameGame {
       add(receiver);
     }
   }
-
-  // Consider overriding `update` method if you need per-frame game logic
-  // that's not tied to specific components or timers.
-  // @override
-  // void update(double dt) {
-  //   super.update(dt);
-  //   // Any continuous game logic here
-  // }
 }

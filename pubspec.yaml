@@ -39,6 +39,7 @@ dependencies:
   google_fonts: ^6.2.1
   shared_preferences: ^2.5.3
   flame_audio: ^2.5.0
+  google_mobile_ads: ^6.0.0
 
 dev_dependencies:
   flutter_test:

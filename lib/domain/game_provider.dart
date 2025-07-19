@@ -9,6 +9,15 @@ class GameNotifier extends Notifier<GameState> {
   // Good: _scoreRepository is declared as late final and initialized in build.
   late final ScoreRepository _scoreRepository;
 
+  static const int _scoreThresholdForSpeedIncrease = 5;
+  static const double _speedIncrementFactor = 0.1;
+  static const int _scoreThresholdForIntervalDecrease =
+      10; // New threshold for interval decrease
+  static const double _intervalDecrementAmount =
+      0.1; // Decrease interval by 0.1 seconds
+  static const double _minSpawnInterval =
+      0.5; // Minimum possible spawn interval to prevent it from becoming too fast
+
   @override
   GameState build() {
     _scoreRepository = ref.read(scoreRepositoryProvider);
@@ -18,40 +27,66 @@ class GameNotifier extends Notifier<GameState> {
 
   Future<void> _loadHighScore() async {
     final loadedHighScore = await _scoreRepository.getHighScore();
-    // Good: Only update if the high score has actually changed.
     if (loadedHighScore != state.highScore) {
       state = state.copyWith(highScore: loadedHighScore);
     }
   }
 
   void startGame() {
-    // Good: Resets score and loads latest high score when starting.
-    state = state.copyWith(status: GameStatus.playing, score: 0);
+    state = state.copyWith(
+      status: GameStatus.playing,
+      score: 0,
+      currentSpeed: 1.0,
+    ); // <--- MODIFIED
     _loadHighScore();
   }
 
   void onColorTapped(Color color) {
-    // Good: Defensive check for game status.
-    // The print statement is for debugging and can be removed in a final version.
     if (state.status != GameStatus.playing) return;
-    print('Tapped color: $color (handled by game logic)');
   }
 
   void incrementScore() {
-    state = state.copyWith(score: state.score + 1);
+    final newScore = state.score + 1;
+    double newSpeed = state.currentSpeed;
+    double newInterval = state.currentSpawnInterval; // Get current interval
+
+    if (newScore > 0 && newScore % _scoreThresholdForSpeedIncrease == 0) {
+      newSpeed += _speedIncrementFactor; // Increase the speed multiplier
+      print(
+        'Speed increased to: $newSpeed at score $newScore',
+      ); // For debugging
+    }
+
+    // Check if it's time to decrease spawn interval
+    if (newScore > 0 && newScore % _scoreThresholdForIntervalDecrease == 0) {
+      newInterval = (newInterval - _intervalDecrementAmount).clamp(
+        _minSpawnInterval,
+        double.infinity,
+      ); // Decrease and clamp
+      print(
+        'Spawn interval decreased to: $newInterval at score $newScore',
+      ); // For debugging
+    }
+
+    state = state.copyWith(
+      score: newScore,
+      currentSpeed: newSpeed,
+      currentSpawnInterval: newInterval,
+    );
   }
 
   void endGame() {
-    // Good: Correctly checks and saves new high score.
     if (state.score > state.highScore) {
       final newHighScore = state.score;
-      state = state.copyWith(highScore: newHighScore, status: GameStatus.gameOver);
+      state = state.copyWith(
+        highScore: newHighScore,
+        status: GameStatus.gameOver,
+      );
       _scoreRepository.saveHighScore(newHighScore);
     } else {
       state = state.copyWith(status: GameStatus.gameOver);
     }
     FlameAudio.play('game_over.mp3'); // Play game over sound
-
   }
 
   void restartGame() {
