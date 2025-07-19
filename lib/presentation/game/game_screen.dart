@@ -1,6 +1,7 @@
 import 'package:color_rash/core/ad_service.dart';
 import 'package:color_rash/core/audio_player.dart';
 import 'package:flame/game.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -42,7 +43,12 @@ class _GameScreenState extends ConsumerState<GameScreen> {
       audioPlayer: audioPlayer,
     );
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _loadBannerAd();
+      if (!kIsWeb) {
+        // <--- NEW: Conditional call
+        _loadBannerAd();
+      } else {
+        print('Banner ads not supported on web platform.');
+      }
     });
   }
 
@@ -104,7 +110,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
               ],
             ),
           ),
-          if (_isBannerAdLoaded && _bannerAd != null)
+          if (!kIsWeb && _isBannerAdLoaded && _bannerAd != null)
             SizedBox(
               width: _bannerAd?.size.width.toDouble(),
               height: _bannerAd?.size.height.toDouble(),

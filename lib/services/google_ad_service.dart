@@ -1,18 +1,36 @@
 // lib/services/google_ad_service.dart
-import 'dart:io' show Platform;
-import 'package:flutter_riverpod/flutter_riverpod.dart'; // Used for `Provider`
+import 'dart:io' show Platform; // Still needed for native platform checks
+import 'package:flutter/foundation.dart' show kIsWeb; // <--- NEW: Import kIsWeb
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:color_rash/core/ad_service.dart'; // Import the interface
+import 'package:color_rash/core/ad_service.dart';
 
 class GoogleAdService implements IAdService {
   InterstitialAd? _interstitialAd;
 
+  // Helper method to get the correct interstitial ad unit ID based on platform
+  String _getInterstitialAdUnitId() {
+    if (kIsWeb) {
+      return ''; // Return empty string for web, as ads won't load
+    } else if (Platform.isAndroid) {
+      return 'ca-app-pub-3940256099942544/1033173712'; // Android test ID
+    } else if (Platform.isIOS) {
+      return 'ca-app-pub-3940256099942544/4411468910'; // iOS test ID
+    }
+    // Fallback for other unsupported native platforms (e.g., desktop)
+    return '';
+  }
+
   @override
   void loadInterstitialAd() {
+    // Only attempt to load ads on non-web platforms
+    if (kIsWeb) {
+      print('Interstitial ads not supported on web platform.');
+      return;
+    }
+
     InterstitialAd.load(
-      adUnitId: Platform.isAndroid
-          ? 'ca-app-pub-3940256099942544/1033173712' // Android test ID
-          : 'ca-app-pub-3940256099942544/4411468910', // iOS test ID
+      adUnitId: _getInterstitialAdUnitId(), // Use the helper method
       request: const AdRequest(),
       adLoadCallback: InterstitialAdLoadCallback(
         onAdLoaded: (ad) {
@@ -29,6 +47,11 @@ class GoogleAdService implements IAdService {
 
   @override
   void showInterstitialAd() {
+    // Only show ad if not on web
+    if (kIsWeb) {
+      print('Interstitial ads not supported on web platform.');
+      return;
+    }
     if (_interstitialAd != null) {
       _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
         onAdDismissedFullScreenContent: (ad) {
@@ -45,18 +68,28 @@ class GoogleAdService implements IAdService {
     }
   }
 
-  // Don't forget to dispose of the ad when this service is no longer needed
-  void dispose() {
-    _interstitialAd?.dispose();
+  // Helper method to get the correct banner ad unit ID based on platform
+  String _getBannerAdUnitId() {
+    if (kIsWeb) {
+      return ''; // Return empty string for web
+    } else if (Platform.isAndroid) {
+      return 'ca-app-pub-3940256099942544/6300978111'; // Android test ID
+    } else if (Platform.isIOS) {
+      return 'ca-app-pub-3940256099942544/2934735716'; // iOS test ID
+    }
+    return '';
   }
 
   @override
   String getBannerAdUnitId() {
-    return Platform.isAndroid
-        ? 'ca-app-pub-3940256099942544/6300978111' // Android test ID
-        : 'ca-app-pub-3940256099942544/2934735716';
+    return _getBannerAdUnitId(); // Use the helper method
+  }
+
+  void dispose() {
+    _interstitialAd?.dispose();
   }
 }
+
 
 // Riverpod provider for the GoogleAdService
 final adServiceProvider = Provider<IAdService>((ref) {
