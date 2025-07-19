@@ -1,3 +1,4 @@
+import 'package:color_rash/core/audio_player.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -5,6 +6,7 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import '../../domain/game_provider.dart';
 import '../../domain/game_state.dart';
+import '../../services/flame_audio_player.dart';
 import '../theme/app_colors.dart';
 import '../widgets/color_button.dart';
 import 'color_rush_game.dart';
@@ -20,6 +22,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   late final ColorRushGame _game;
   BannerAd? _bannerAd; // <--- NEW
   bool _isBannerAdLoaded = false; // <--- NEW
+  late final IAudioPlayer _audioPlayer;
 
   @override
   void initState() {
@@ -29,11 +32,13 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     // The game instance itself is initialized once.
     final colors = ref.read(colorProvider);
     final gameNotifier = ref.read(gameProvider.notifier);
+    _audioPlayer = FlameAudioPlayer();
 
     _game = ColorRushGame(
       status: gameNotifier.state.status, // Initial status
       gameColors: colors,
       notifier: gameNotifier,
+      audioPlayer: _audioPlayer,
     );
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadBannerAd();
@@ -138,10 +143,14 @@ class _GameScreenState extends ConsumerState<GameScreen> {
 
   // Extracted method for Color Buttons
   Widget _buildColorButtons(List<Color> colors, ColorRushGame game) {
+    final double bannerAdHeight =
+        _isBannerAdLoaded ? AdSize.banner.height.toDouble() : 0.0;
+    final double bottomPadding = 64.0 + bannerAdHeight;
+
     return Align(
       alignment: Alignment.bottomCenter,
       child: Padding(
-        padding: const EdgeInsets.only(bottom: 64.0),
+        padding: EdgeInsets.only(bottom: bottomPadding),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children:

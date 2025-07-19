@@ -1,14 +1,12 @@
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 
+import '../../../domain/game_constants.dart';
 import '../color_rush_game.dart';
 
 class FallingObject extends CircleComponent
     with HasGameReference<ColorRushGame> {
   // Define constant for speed
-  // This makes the speed easily adjustable and discoverable.
-  static const double _baseSpeed = 150; // Pixels per second
-  static const double _objectRadius = 30.0; // The radius of the circle
   final double speedMultiplier; // <--- NEW PROPERTY
 
   final Color color;
@@ -18,13 +16,13 @@ class FallingObject extends CircleComponent
     required this.color,
     this.speedMultiplier = 1.0, // <--- NEW: Default to 1.0 if not provided
   })
-    : super(radius: _objectRadius, paint: Paint()..color = color);
+    : super(radius: kObjectRadius, paint: Paint()..color = color);
 
   @override
   void update(double dt) {
     super.update(dt);
     // Calculate effective speed
-    final double effectiveSpeed = _baseSpeed * speedMultiplier; // <--- MODIFIED
+    final double effectiveSpeed = kObjectBaseSpeed * speedMultiplier; // <--- MODIFIED
 
     // Move the circle downwards using the constant speed
     position.y += effectiveSpeed * dt;

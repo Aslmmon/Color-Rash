@@ -6,6 +6,8 @@ import 'package:flame/particles.dart';
 import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart'; // Needed for Color, even in Flame components
 
+import '../../core/audio_player.dart';
+import '../../domain/game_constants.dart';
 import '../../domain/game_provider.dart';
 import '../../domain/game_state.dart';
 import '../theme/app_colors.dart';
@@ -15,57 +17,33 @@ class ColorRushGame extends FlameGame {
   GameStatus status;
   final List<Color> gameColors;
   final GameNotifier notifier; // Reference to our brain
+  final IAudioPlayer audioPlayer; // <--- NEW: Accept the audio player interface
 
   ColorRushGame({
     required this.status,
     required this.gameColors,
     required this.notifier,
+    required this.audioPlayer, // <--- NEW: Require audioPlayer
   });
 
   final Random _random = Random();
 
-  // Define constants for game parameters to make them easily adjustable and readable.
-  static const double _catchZoneHeight =
-      200; // This was hardcoded in multiple places
-  static const double _receiverHeight = 100.0;
-  static const double _catchZoneLineWidth = 2.5;
-  static const double _objectSpawnPeriod =
-      2.0; // The 2.0 period for TimerComponent
   double _spawnTimer = 0.0; // Timer to track when to spawn next object
 
   @override
   Future<void> onLoad() async {
     final screenWidth = size.x;
-    // Use the defined constant
-    final catchZoneY = size.y - _catchZoneHeight;
-
+    final catchZoneY = size.y - kCatchZoneHeight;
     add(
       RectangleComponent(
         position: Vector2(0, catchZoneY),
-        size: Vector2(screenWidth, _catchZoneLineWidth), // Use constant
+        size: Vector2(screenWidth, kCatchZoneLineWidth), // Use constant
         paint: Paint()..color = AppColors.catchZoneLineColor.withOpacity(0.5),
       ),
     );
 
     _drawReceivers();
-    // add(
-    //   TimerComponent(
-    //     period: _objectSpawnPeriod, // Use constant
-    //     repeat: true,
-    //     onTick: () {
-    //       if (status != GameStatus.playing) {
-    //         // A more efficient way to remove all children of a specific type
-    //         // without creating a new list. `removeWhere` is generally preferred
-    //         // for collections if you're modifying them during iteration.
-    //         children.whereType<FallingObject>().forEach(
-    //           (obj) => obj.removeFromParent(),
-    //         );
-    //         return;
-    //       }
-    //       spawnObject();
-    //     },
-    //   ),
-    // );
+
     return super.onLoad();
   }
 
@@ -119,7 +97,7 @@ class ColorRushGame extends FlameGame {
       return; // Should not happen if fallingObjects is not empty
 
     // Use the defined constant
-    final catchZone = size.y - _catchZoneHeight;
+    final catchZone = size.y - kCatchZoneHeight;
 
     // Check if the object is in the zone
     if (lowestObject.position.y > catchZone) {
@@ -151,10 +129,14 @@ class ColorRushGame extends FlameGame {
         // --- End particle effect ---
         lowestObject.removeFromParent();
         notifier.incrementScore();
-        FlameAudio.play('correct_tap.mp3'); // Play correct sound
+        audioPlayer.playSfx(
+          'correct_tap.mp3',
+        ); // <--- MODIFIED: Use the interface
       } else {
         // Play correct sound
-        FlameAudio.play('error_Tap.mp3');
+        audioPlayer.playSfx(
+          'error_Tap.mp3',
+        ); // <--- MODIFIED: Use the interface
         notifier.endGame();
       }
     }
@@ -179,7 +161,7 @@ class ColorRushGame extends FlameGame {
         screenWidth /
         gameColors.length; // More dynamic, based on gameColors length
     // Use the defined constant
-    final receiverHeight = _receiverHeight;
+    final receiverHeight = kReceiverHeight;
 
     for (var i = 0; i < gameColors.length; i++) {
       final receiver = RectangleComponent(

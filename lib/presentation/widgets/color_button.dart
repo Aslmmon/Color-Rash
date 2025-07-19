@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../domain/game_constants.dart';
+
 class ColorButton extends StatelessWidget {
   final Color color;
   final VoidCallback onTap;
@@ -15,8 +17,8 @@ class ColorButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 64,
-        height: 64,
+        width: kObjectRadius * 2, // <--- MODIFIED: Use constant for size based on object radius
+        height: kObjectRadius * 2,
         decoration: BoxDecoration(
           color: color,
           shape: BoxShape.circle,

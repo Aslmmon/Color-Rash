@@ -1,4 +1,6 @@
 // Defines the possible states of our game.
+import 'package:color_rash/domain/game_constants.dart'; // <--- NEW
+
 enum GameStatus { initial, playing, gameOver }
 
 // A class to hold all our game's state data in one place.
@@ -14,7 +16,7 @@ class GameState {
     this.highScore = 0,
     this.status = GameStatus.initial,
     this.currentSpeed = 1.0,
-    this.currentSpawnInterval = 2.0, // <--- NEW: Default spawn interval (2 seconds)
+    this.currentSpawnInterval = kObjectSpawnPeriodInitial, // <--- NEW: Default spawn interval (2 seconds)
 
   });
 
