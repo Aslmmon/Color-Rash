@@ -2,6 +2,8 @@ import 'dart:math';
 import 'dart:ui'; // Not strictly needed unless you're doing custom drawing with dart:ui. Keep for now if Flutter/Flame implicitly uses it.
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
+import 'package:flame/particles.dart';
+import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart'; // Needed for Color, even in Flame components
 
 import '../../domain/game_provider.dart';
@@ -100,9 +102,37 @@ class ColorRushGame extends FlameGame {
     // Check if the object is in the zone
     if (lowestObject.position.y > catchZone) {
       if (lowestObject.color == tappedColor) {
+        // Correct tap!
+        // --- Add particle effect here ---
+        add(
+          ParticleSystemComponent(
+            position: lowestObject.position, // Position at the tapped object
+            particle: Particle.generate(
+              count: 35, // Number of particles
+              lifespan: 0.5, // How long each particle lives
+              generator:
+                  (i) => AcceleratedParticle(
+                    speed: Vector2.random() * 100 - Vector2.all(50),
+                    // Random direction and speed
+                    acceleration: Vector2(0, 200),
+                    // Gravity-like fall
+                    child: CircleParticle(
+                      radius: 3,
+                      paint:
+                          Paint()
+                            ..color = lowestObject.color, // Color of the object
+                    ),
+                  ),
+            ),
+          ),
+        );
+        // --- End particle effect ---
         lowestObject.removeFromParent();
         notifier.incrementScore();
+        FlameAudio.play('correct_tap.mp3'); // Play correct sound
       } else {
+        // Play correct sound
+        FlameAudio.play('error_Tap.mp3');
         notifier.endGame();
       }
     }

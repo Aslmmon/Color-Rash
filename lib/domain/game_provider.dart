@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart'; // Still needed for `Color`
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/score_repository.dart';
@@ -49,6 +50,8 @@ class GameNotifier extends Notifier<GameState> {
     } else {
       state = state.copyWith(status: GameStatus.gameOver);
     }
+    FlameAudio.play('game_over.mp3'); // Play game over sound
+
   }
 
   void restartGame() {
