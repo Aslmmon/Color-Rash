@@ -133,7 +133,7 @@ class ColorRushGame extends FlameGame {
       } else {
         // Play correct sound
         audioPlayer.playSfx(
-          'error_Tap.mp3',
+          'error_tap.mp3',
         ); // <--- MODIFIED: Use the interface
         notifier.endGame();
       }
