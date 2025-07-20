@@ -1,7 +1,9 @@
+// lib/domain/game_notifier.dart
 import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart'; // Still needed for `Color`
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../core/ad_service.dart';
 import '../core/audio_player.dart';
 import '../data/score_repository.dart';
@@ -10,40 +12,33 @@ import '../services/flame_audio_player.dart';
 import '../services/google_ad_service.dart';
 import 'game_constants.dart';
 import 'game_state.dart';
+import 'game_provider.dart'; // Make sure this is imported if providers are external
 
 class GameNotifier extends Notifier<GameState> {
-  // Good: _scoreRepository is declared as late final and initialized in build.
   late final ScoreRepository _scoreRepository;
+  late final IAdService _adService;
+  late final IAudioPlayer _audioPlayer;
 
-  int _gameOverCount = 0; // <--- NEW: Track game overs since last ad
-  late final IAdService _adService; // <--- NEW: Ad service interface
-  late final IAudioPlayer
-  _audioPlayer; // <--- NEW: Declare the audio player interface
-  final Random _random =
-      Random(); // <--- NEW: Random instance for gradient selection
-  int _lastGradientIndex =
-      0; // <--- NEW: To ensure next random gradient is different
+  final Random _random = Random();
+  int _lastGradientIndex = 0;
+  int _gameOverCount = 0;
 
   @override
   GameState build() {
-    _scoreRepository = ref.read(scoreRepositoryProvider);
-    _adService = ref.read(
-      adServiceProvider,
-    ); // <--- NEW: Read the ad service provider
-    _audioPlayer = ref.read(
-      audioPlayerProvider,
-    ); // Assuming you'll add audioPlayerProvider
+    _initializeDependencies(); // <--- NEW: Extracted method
     _loadHighScore();
-
-    _adService.loadInterstitialAd(); // <--- MODIFIED: Use ad service to load
-    ref.onDispose(() {
-      // No need to dispose interstitialAd here, adService will handle it
-      print('GameNotifier disposed.');
-    });
-
+    _adService.loadInterstitialAd();
     return GameState();
   }
 
+  /// Initializes the necessary service dependencies from Riverpod.
+  void _initializeDependencies() {
+    _scoreRepository = ref.read(scoreRepositoryProvider);
+    _adService = ref.read(adServiceProvider);
+    _audioPlayer = ref.read(audioPlayerProvider);
+  }
+
+  /// Loads the high score from the repository and updates the game state.
   Future<void> _loadHighScore() async {
     final loadedHighScore = await _scoreRepository.getHighScore();
     if (loadedHighScore != state.highScore) {
@@ -51,6 +46,7 @@ class GameNotifier extends Notifier<GameState> {
     }
   }
 
+  /// Starts a new game session, resetting scores and game state.
   void startGame() {
     state = state.copyWith(
       status: GameStatus.playing,
@@ -59,58 +55,39 @@ class GameNotifier extends Notifier<GameState> {
       currentSpawnInterval: kObjectSpawnPeriodInitial,
       currentGradientIndex: 0,
       currentLevel: 1,
-      showLevelUpOverlay: false, // Ensure hidden on start
+      showLevelUpOverlay: false,
     );
     _loadHighScore();
   }
 
+  /// Handles the player tapping a color.
   void onColorTapped(Color color) {
     if (state.status != GameStatus.playing) return;
   }
 
+  /// Increments the player's score and updates difficulty/level.
   void incrementScore() {
     final newScore = state.score + 1;
     double newSpeed = state.currentSpeed;
-    double newInterval = state.currentSpawnInterval; // Get current interval
-    int newGradientIndex = state.currentGradientIndex; // Get current index
+    double newInterval = state.currentSpawnInterval;
+    int newGradientIndex = state.currentGradientIndex;
     int newLevel = state.currentLevel;
-    bool showLevelUp = false; // Assume false by default
+    bool showLevelUp = false;
 
-    if (newScore > 0 && newScore % kScoreThresholdForSpeedIncrease == 0) {
-      newSpeed += kSpeedIncrementFactor; // Increase the speed multiplier
-      print(
-        'Speed increased to: $newSpeed at score $newScore',
-      ); // For debugging
-    }
+    // Determine new difficulty parameters and if a level up occurs
+    final difficultyUpdateResult = _determineDifficultyUpdate(
+      newScore,
+      newSpeed,
+      newInterval,
+      newGradientIndex,
+      newLevel,
+    );
 
-    // Check if it's time to decrease spawn interval
-    if (newScore > 0 && newScore % kScoreThresholdForIntervalDecrease == 0) {
-      newInterval = (newInterval - kIntervalDecrementAmount).clamp(
-        kMinSpawnInterval,
-        double.infinity,
-      ); // Decrease and clamp
-      newLevel++; // Increment level
-      showLevelUp = true; // Trigger level up overlay
-      int newRandomIndex = _random.nextInt(
-        AppColors.backgroundGradients.length,
-      );
-      while (newRandomIndex == _lastGradientIndex &&
-          AppColors.backgroundGradients.length > 1) {
-        newRandomIndex = _random.nextInt(AppColors.backgroundGradients.length);
-      }
-      newGradientIndex = newRandomIndex;
-      _lastGradientIndex = newGradientIndex; // Update last picked index
-      print(
-        'Level Up! To Level: $newLevel. Gradient changed to index: $newGradientIndex at score $newScore',
-      ); // For debugging
-      _audioPlayer.playSfx(
-        'celebrate.wav',
-      ); // Assuming you have this sound for Day 4
-
-      print(
-        'Spawn interval decreased to: $newInterval at score $newScore',
-      ); // For debugging
-    }
+    newSpeed = difficultyUpdateResult['speed'] as double;
+    newInterval = difficultyUpdateResult['interval'] as double;
+    newGradientIndex = difficultyUpdateResult['gradientIndex'] as int;
+    newLevel = difficultyUpdateResult['level'] as int;
+    showLevelUp = difficultyUpdateResult['showLevelUpOverlay'] as bool;
 
     state = state.copyWith(
       score: newScore,
@@ -122,57 +99,114 @@ class GameNotifier extends Notifier<GameState> {
     );
 
     if (showLevelUp) {
-      Future.delayed(const Duration(milliseconds: 1500), () {
-        // Display for 1.5 seconds
-        if (state.showLevelUpOverlay) {
-          // Only hide if still showing (prevent race conditions)
-          state = state.copyWith(showLevelUpOverlay: false);
-        }
-      });
+      _triggerLevelUpVisualsAndSound(); // Trigger visual and audio feedback for level up
     }
   }
 
+  /// Determines new speed, spawn interval, gradient, and level based on score.
+  Map<String, dynamic> _determineDifficultyUpdate(
+    int newScore,
+    double currentSpeed,
+    double currentInterval,
+    int currentGradientIndex,
+    int currentLevel,
+  ) {
+    double newSpeed = currentSpeed;
+    double newInterval = currentInterval;
+    int newGradientIndex = currentGradientIndex;
+    int newLevel = currentLevel;
+    bool showLevelUp = false;
+
+    // Apply speed increase
+    if (newScore > 0 && newScore % kScoreThresholdForSpeedIncrease == 0) {
+      newSpeed += kSpeedIncrementFactor;
+      // print('Speed increased to: $newSpeed at score $newScore'); // Removed debug print
+    }
+
+    // Apply interval decrease and level up logic
+    if (newScore > 0 && newScore % kScoreThresholdForIntervalDecrease == 0) {
+      newInterval = (newInterval - kIntervalDecrementAmount).clamp(
+        kMinSpawnInterval,
+        double.infinity,
+      );
+      newLevel++;
+      showLevelUp = true;
+
+      // Randomly pick a new gradient that is different from the current one
+      int newRandomIndex = _random.nextInt(
+        AppColors.backgroundGradients.length,
+      );
+      while (newRandomIndex == _lastGradientIndex &&
+          AppColors.backgroundGradients.length > 1) {
+        newRandomIndex = _random.nextInt(AppColors.backgroundGradients.length);
+      }
+      newGradientIndex = newRandomIndex;
+      _lastGradientIndex = newGradientIndex;
+    }
+
+    return {
+      'speed': newSpeed,
+      'interval': newInterval,
+      'gradientIndex': newGradientIndex,
+      'level': newLevel,
+      'showLevelUpOverlay': showLevelUp,
+    };
+  }
+
+  /// Triggers the visual overlay and sound effect for a level up.
+  void _triggerLevelUpVisualsAndSound() {
+    _audioPlayer.playSfx('celebrate.wav'); // Play level up sound
+    Future.delayed(
+      const Duration(milliseconds: kLevelUpOverlayDisplayDurationMs),
+      () {
+        if (state.showLevelUpOverlay) {
+          state = state.copyWith(showLevelUpOverlay: false);
+        }
+      },
+    );
+  }
+
+  /// Ends the current game session, handles high score saving and ads.
   void endGame() {
+    _handleGameOverScoreAndAds(); // Handle score saving and ad display
+    _audioPlayer.playSfx('game_over.mp3'); // Play game over sound
+    state = state.copyWith(status: GameStatus.gameOver);
+  }
+
+  /// Manages high score saving and interstitial ad display at game over.
+  void _handleGameOverScoreAndAds() {
     if (state.score > state.highScore) {
       final newHighScore = state.score;
       state = state.copyWith(
         highScore: newHighScore,
-        status: GameStatus.gameOver,
-      );
-      _scoreRepository.saveHighScore(newHighScore);
-    } else {
-      state = state.copyWith(status: GameStatus.gameOver);
+      ); // Update in-memory high score
+      _scoreRepository.saveHighScore(newHighScore); // Persist
     }
 
     _gameOverCount++;
     if (_gameOverCount >= kAdShowFrequency) {
-      _adService.showInterstitialAd(); // <--- MODIFIED: Use ad service to show
+      _adService.showInterstitialAd();
       _gameOverCount = 0; // Reset counter
     }
-    _audioPlayer.playSfx(
-      'game_over.mp3',
-    ); // <--- MODIFIED: Use the audio player interface
   }
 
+  /// Restarts the game, resetting current score and loading high score.
   void restartGame() {
-    // Good: Resets to initial state and reloads high score.
     state = state.copyWith(score: 0, status: GameStatus.initial);
     _loadHighScore();
   }
+
+  // NOTE: 'toggleMute' functionality is not included here as per your request
+  // and will be added later in Day 5.
 }
 
 // Global Providers: These are well-defined for Riverpod.
+// Ensure these providers are correctly defined in lib/domain/game_provider.dart
+// and imported where needed.
 final gameProvider = NotifierProvider<GameNotifier, GameState>(() {
   return GameNotifier();
 });
 
 final colorProvider = Provider<List<Color>>((ref) {
-  // This list of colors is correctly provided. If these colors
-  // are meant to be theme-related, you might consider moving
-  // them to AppColors, but if they are specifically game-play colors
-  // (e.g., the set of colors that falling objects can be), this is fine.
   return [Colors.red, Colors.blue, Colors.green, Colors.yellow];
 });
-
-// Assuming GameStatus and GameState are in game_state.dart as you provided earlier.
-// If they were in this file, they would also be fine.

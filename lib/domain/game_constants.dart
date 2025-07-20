@@ -1,5 +1,6 @@
 // lib/domain/game_constants.dart
 
+
 // --- Game Difficulty & Mechanics Constants ---
 // Score thresholds for increasing difficulty
 const int kScoreThresholdForSpeedIncrease = 5;
@@ -8,6 +9,11 @@ const int kScoreThresholdForIntervalDecrease = 10;
 const int kScoreThresholdForGradientChange = 25;
 const double kIntervalDecrementAmount = 0.1; // e.g., decrease by 0.1 seconds
 const double kMinSpawnInterval = 0.5; // Minimum spawn interval allowed
+// --- UI/Animation Constants ---
+
+
+const int kLevelUpOverlayDisplayDurationMs =
+    1500; // Duration for level up overlay to show in milliseconds (1.5 seconds)
 
 // Flame Game Component Constants
 const double kObjectBaseSpeed = 150; // Pixels per second for falling objects

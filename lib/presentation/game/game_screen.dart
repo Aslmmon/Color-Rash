@@ -1,3 +1,4 @@
+// lib/presentation/game/game_screen.dart
 import 'package:color_rash/core/ad_service.dart';
 import 'package:color_rash/core/audio_player.dart';
 import 'package:flame/game.dart';
@@ -24,39 +25,33 @@ class GameScreen extends ConsumerStatefulWidget {
 
 class _GameScreenState extends ConsumerState<GameScreen> {
   late final ColorRushGame _game;
-  BannerAd? _bannerAd; // <--- NEW
-  bool _isBannerAdLoaded = false; // <--- NEW
+  BannerAd? _bannerAd;
+  bool _isBannerAdLoaded = false;
 
   @override
   void initState() {
     super.initState();
-    // It's good practice to initialize game state/notifier outside build
-    // but the `ref.read` calls inside initState are fine.
-    // The game instance itself is initialized once.
     final colors = ref.read(colorProvider);
     final gameNotifier = ref.read(gameProvider.notifier);
     final IAudioPlayer audioPlayer = ref.read(audioPlayerProvider);
 
     _game = ColorRushGame(
-      status: gameNotifier.state.status, // Initial status
+      status: gameNotifier.state.status,
       gameColors: colors,
       notifier: gameNotifier,
       audioPlayer: audioPlayer,
     );
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!kIsWeb) {
-        // <--- NEW: Conditional call
         _loadBannerAd();
       } else {
-        print('Banner ads not supported on web platform.');
+        // print('Banner ads not supported on web platform.'); // Removed debug print
       }
     });
   }
 
   void _loadBannerAd() {
-    final IAdService adService = ref.read(
-      adServiceProvider,
-    ); // <--- NEW: Get Ad Service
+    final IAdService adService = ref.read(adServiceProvider);
     _bannerAd = BannerAd(
       adUnitId: adService.getBannerAdUnitId(),
       request: const AdRequest(),
@@ -70,7 +65,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
         onAdFailedToLoad: (ad, err) {
           _isBannerAdLoaded = false;
           ad.dispose();
-          print('Error loading banner ad: $err');
+          // print('Error loading banner ad: $err'); // Removed debug print
         },
       ),
     )..load();
@@ -78,72 +73,92 @@ class _GameScreenState extends ConsumerState<GameScreen> {
 
   @override
   void dispose() {
-    _bannerAd?.dispose(); // <--- NEW: Dispose banner ad when screen is disposed
+    _bannerAd?.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    // Watch game state for UI updates
     final gameState = ref.watch(gameProvider);
-    // Read notifier for method calls (avoid watching notifier itself)
     final gameNotifier = ref.read(gameProvider.notifier);
     final colors = ref.read(colorProvider);
+    _game.status = gameState.status; // Update Flame game status
 
-    // This updates the Flame game's internal status whenever the Riverpod state changes.
-    // It's crucial for Flame to react to UI-driven state changes.
-    _game.status = gameState.status;
+    return Scaffold(
+      body: _buildBackgroundGradient(context, gameState, gameNotifier, colors),
+    );
+  }
 
+  // --- Extracted Methods ---
+
+  /// Builds the animated container with the dynamic gradient background.
+  Widget _buildBackgroundGradient(
+    BuildContext context,
+    GameState gameState,
+    GameNotifier gameNotifier,
+    List<Color> colors,
+  ) {
     final List<Color> currentGradientColors =
         AppColors.backgroundGradients[gameState.currentGradientIndex];
 
-    return Scaffold(
-      body: AnimatedContainer(
-        duration: const Duration(seconds: 1),
-        // Duration for gradient color change
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: currentGradientColors,
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
+    return AnimatedContainer(
+      duration: const Duration(seconds: 1),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: currentGradientColors,
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
         ),
-        child: Column(
-          children: [
-            Expanded(
-              child: Stack(
-                children: [
-                  GameWidget(game: _game), // Flame game rendered here
-                  // Top UI: Score and High Score Display
-                  _buildScoreDisplay(context, gameState),
-                  // Bottom UI: Color Buttons
-                  _buildColorButtons(colors, _game),
-                  // Game Over / Start Overlay (conditionally rendered)
-                  if (gameState.status != GameStatus.playing)
-                    _buildGameOverlay(context, gameState, gameNotifier),
-                  if (gameState.showLevelUpOverlay)
-                    LevelUpOverlay(level: gameState.currentLevel),
-                ],
-              ),
-            ),
-            if (!kIsWeb && _isBannerAdLoaded && _bannerAd != null)
-              SizedBox(
-                width: _bannerAd?.size.width.toDouble(),
-                height: _bannerAd?.size.height.toDouble(),
-                child: AdWidget(ad: _bannerAd!),
-              ),
-          ],
-        ),
+      ),
+      child: Column(
+        children: [
+          _buildGameContentStack(context, gameState, gameNotifier, colors),
+          _buildBannerAdSection(),
+        ],
       ),
     );
   }
 
-  // Extracted method for Score and High Score display
+  /// Builds the main game content area, including the Flame game and UI overlays.
+  Widget _buildGameContentStack(
+    BuildContext context,
+    GameState gameState,
+    GameNotifier gameNotifier,
+    List<Color> colors,
+  ) {
+    return Expanded(
+      child: Stack(
+        children: [
+          GameWidget(game: _game), // Flame game rendered here
+          _buildScoreDisplay(context, gameState),
+          _buildColorButtons(colors, _game),
+          if (gameState.status != GameStatus.playing)
+            _buildGameOverlay(context, gameState, gameNotifier),
+          if (gameState.showLevelUpOverlay)
+            LevelUpOverlay(level: gameState.currentLevel),
+        ],
+      ),
+    );
+  }
+
+  /// Builds the section for displaying the banner ad.
+  Widget _buildBannerAdSection() {
+    if (!kIsWeb && _isBannerAdLoaded && _bannerAd != null) {
+      return SizedBox(
+        width: _bannerAd?.size.width.toDouble(),
+        height: _bannerAd?.size.height.toDouble(),
+        child: AdWidget(ad: _bannerAd!),
+      );
+    }
+    return const SizedBox.shrink(); // Hide if not loaded or on web
+  }
+
+  /// Builds the score and high score display at the top of the screen.
   Widget _buildScoreDisplay(BuildContext context, GameState gameState) {
     return Align(
       alignment: Alignment.topCenter,
       child: Padding(
-        padding: const EdgeInsets.all(32.0),
+        padding: const EdgeInsets.all(32.0), // Use constant here if defined
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -165,10 +180,11 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     );
   }
 
-  // Extracted method for Color Buttons
+  /// Builds the row of color buttons at the bottom of the screen.
   Widget _buildColorButtons(List<Color> colors, ColorRushGame game) {
     final double bannerAdHeight =
         _isBannerAdLoaded ? AdSize.banner.height.toDouble() : 0.0;
+    // Consider adding kButtonBottomPadding to game_constants.dart
     final double bottomPadding = 64.0 + bannerAdHeight;
 
     return Align(
@@ -191,7 +207,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     );
   }
 
-  // Extracted method for Game Over / Start Overlay
+  /// Builds the game over / start overlay.
   Widget _buildGameOverlay(
     BuildContext context,
     GameState gameState,
@@ -204,14 +220,13 @@ class _GameScreenState extends ConsumerState<GameScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             if (gameState.status == GameStatus.gameOver) ...[
-              // Use spread operator for multiple widgets
               Text(
                 'Game Over',
                 style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                   color: AppColors.primaryTextColor,
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 20), // Use constant if desired
               Text(
                 'Your Score: ${gameState.score}',
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
@@ -224,7 +239,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                   context,
                 ).textTheme.titleLarge?.copyWith(color: AppColors.accentColor),
               ),
-              const SizedBox(height: 30),
+              const SizedBox(height: 30), // Use constant if desired
             ],
             ElevatedButton(
               onPressed: () {
