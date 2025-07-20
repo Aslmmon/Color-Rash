@@ -103,7 +103,9 @@ class GameNotifier extends Notifier<GameState> {
       print(
         'Level Up! To Level: $newLevel. Gradient changed to index: $newGradientIndex at score $newScore',
       ); // For debugging
-      // _audioPlayer.playSfx('level_up.mp3'); // Assuming you have this sound for Day 4
+      _audioPlayer.playSfx(
+        'celebrate.wav',
+      ); // Assuming you have this sound for Day 4
 
       print(
         'Spawn interval decreased to: $newInterval at score $newScore',
