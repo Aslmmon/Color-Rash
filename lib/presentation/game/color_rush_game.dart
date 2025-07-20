@@ -10,12 +10,19 @@ import '../../domain/game_provider.dart';
 import '../../domain/game_state.dart';
 import '../theme/app_colors.dart';
 import 'components/falling_object.dart';
+import 'components/feedback_text_component.dart';
 
 class ColorRushGame extends FlameGame {
   GameStatus status;
   final List<Color> gameColors;
   final GameNotifier notifier; // Reference to our brain
   final IAudioPlayer audioPlayer; // <--- NEW: Accept the audio player interface
+  late final RectangleComponent _catchZoneLineComponent;
+  static const double _linePulseRange =
+      50.0; // Distance from line to trigger pulse
+  static const double _linePulseDuration = 0.3; // How fast the pulse happens
+  double _linePulseTimer = 0.0;
+  bool _isLinePulsing = false;
 
   ColorRushGame({
     required this.status,
@@ -32,13 +39,13 @@ class ColorRushGame extends FlameGame {
   Future<void> onLoad() async {
     final screenWidth = size.x;
     final catchZoneY = size.y - kCatchZoneHeight;
-    add(
-      RectangleComponent(
-        position: Vector2(0, catchZoneY),
-        size: Vector2(screenWidth, kCatchZoneLineWidth), // Use constant
-        paint: Paint()..color = AppColors.catchZoneLineColor.withOpacity(0.5),
-      ),
+    _catchZoneLineComponent = RectangleComponent(
+      // <--- Assign to the new field
+      position: Vector2(0, catchZoneY),
+      size: Vector2(screenWidth, kCatchZoneLineWidth),
+      paint: Paint()..color = AppColors.catchZoneLineColor.withOpacity(0.5),
     );
+    add(_catchZoneLineComponent); // Add the component
 
     _drawReceivers();
 
@@ -55,6 +62,9 @@ class ColorRushGame extends FlameGame {
         (obj) => obj.removeFromParent(),
       );
       _spawnTimer = 0.0; // Reset timer when game is not playing
+      _catchZoneLineComponent.paint.color = AppColors.catchZoneLineColor.withOpacity(0.5);
+      _isLinePulsing = false;
+      _linePulseTimer = 0.0;
       return;
     }
 
@@ -63,6 +73,51 @@ class ColorRushGame extends FlameGame {
     if (_spawnTimer >= notifier.state.currentSpawnInterval) {
       spawnObject();
       _spawnTimer = 0.0; // Reset timer for the next spawn
+    }
+    _updateCatchZoneLine(dt);
+  }
+
+  void _updateCatchZoneLine(double dt) {
+    bool objectInZone = false;
+    final catchZoneTop = size.y - kCatchZoneHeight;
+
+    // Check if any falling object is near the catch zone
+    for (final obj in children.whereType<FallingObject>()) {
+      if (obj.position.y + obj.radius > catchZoneTop - _linePulseRange &&
+          obj.position.y - obj.radius < catchZoneTop + kCatchZoneLineWidth) {
+        objectInZone = true;
+        break;
+      }
+    }
+
+    if (objectInZone) {
+      _isLinePulsing = true;
+      _linePulseTimer += dt;
+      final double cycle = (_linePulseTimer / _linePulseDuration) % 2;
+      final double intensity =
+          0.5 +
+          (0.5 * (1 - (cycle - 1).abs())); // Pulse from 0.5 to 1.0 opacity
+
+      _catchZoneLineComponent.paint.color = AppColors.accentColor.withOpacity(
+        intensity,
+      ); // Pulse with accent color
+    } else {
+      if (_isLinePulsing) {
+        // Fade out pulse effect
+        _linePulseTimer -= dt * 2; // Fade out faster
+        final double opacity = (_linePulseTimer / _linePulseDuration).clamp(
+          0.0,
+          1.0,
+        );
+        _catchZoneLineComponent.paint.color = AppColors.accentColor.withOpacity(
+          opacity,
+        );
+        if (opacity <= 0.0) {
+          _isLinePulsing = false;
+          _catchZoneLineComponent.paint.color = AppColors.catchZoneLineColor
+              .withOpacity(0.5); // Reset to default
+        }
+      }
     }
   }
 
@@ -106,16 +161,18 @@ class ColorRushGame extends FlameGame {
           ParticleSystemComponent(
             position: lowestObject.position, // Position at the tapped object
             particle: Particle.generate(
-              count: 35, // Number of particles
-              lifespan: 0.5, // How long each particle lives
+              count: kParticleCount, // Number of particles
+              lifespan: kParticleLifespan, // How long each particle lives
               generator:
                   (i) => AcceleratedParticle(
-                    speed: Vector2.random() * 100 - Vector2.all(50),
+                    speed:
+                        Vector2.random() * kParticleSpeed -
+                        Vector2.all(kParticleSpeed / 2),
                     // Random direction and speed
-                    acceleration: Vector2(0, 200),
+                    acceleration: Vector2(0, kParticleAccelerationY),
                     // Gravity-like fall
                     child: CircleParticle(
-                      radius: 3,
+                      radius: kParticleRadius,
                       paint:
                           Paint()
                             ..color = lowestObject.color, // Color of the object
@@ -130,12 +187,31 @@ class ColorRushGame extends FlameGame {
         audioPlayer.playSfx(
           'correct_tap.mp3',
         ); // <--- MODIFIED: Use the interface
+
+        // <--- NEW: Add "+1" feedback
+        add(
+          FeedbackTextComponent(
+            text: '+1',
+            position: lowestObject.position - Vector2(0, kObjectRadius),
+            // Above the object
+            color: AppColors.correctTapColor,
+          ),
+        );
       } else {
         // Play correct sound
         audioPlayer.playSfx(
           'error_tap.mp3',
         ); // <--- MODIFIED: Use the interface
         notifier.endGame();
+
+        add(
+          FeedbackTextComponent(
+            text: 'Miss!',
+            position: lowestObject.position - Vector2(0, kObjectRadius),
+            // Above the object
+            color: AppColors.incorrectTapColor,
+          ),
+        );
       }
     }
   }
