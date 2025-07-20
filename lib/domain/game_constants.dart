@@ -1,6 +1,5 @@
 // lib/domain/game_constants.dart
 
-
 // --- Game Difficulty & Mechanics Constants ---
 // Score thresholds for increasing difficulty
 const int kScoreThresholdForSpeedIncrease = 5;
@@ -10,7 +9,6 @@ const int kScoreThresholdForGradientChange = 25;
 const double kIntervalDecrementAmount = 0.1; // e.g., decrease by 0.1 seconds
 const double kMinSpawnInterval = 0.5; // Minimum spawn interval allowed
 // --- UI/Animation Constants ---
-
 
 const int kLevelUpOverlayDisplayDurationMs =
     1500; // Duration for level up overlay to show in milliseconds (1.5 seconds)
@@ -32,7 +30,7 @@ const double kParticleAccelerationY =
 const double kParticleRadius = 3;
 
 // --- Ad Integration Constants ---
-const int kAdShowFrequency = 3; // Show interstitial ad every X game overs
+const int kAdShowFrequency = 1; // Show interstitial ad every X game overs
 
 // Add common padding/spacing constants if needed across UI files
 const double kDefaultPadding = 16.0;

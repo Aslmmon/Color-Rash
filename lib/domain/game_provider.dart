@@ -195,9 +195,6 @@ class GameNotifier extends Notifier<GameState> {
     state = state.copyWith(score: 0, status: GameStatus.initial);
     _loadHighScore();
   }
-
-  // NOTE: 'toggleMute' functionality is not included here as per your request
-  // and will be added later in Day 5.
 }
 
 // Global Providers: These are well-defined for Riverpod.
