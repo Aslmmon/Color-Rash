@@ -13,6 +13,7 @@ import '../../services/google_ad_service.dart';
 import '../theme/app_colors.dart';
 import '../widgets/color_button.dart';
 import 'color_rush_game.dart';
+import 'components/level_up_overlay.dart';
 
 class GameScreen extends ConsumerStatefulWidget {
   const GameScreen({super.key});
@@ -93,30 +94,46 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     // It's crucial for Flame to react to UI-driven state changes.
     _game.status = gameState.status;
 
+    final List<Color> currentGradientColors =
+        AppColors.backgroundGradients[gameState.currentGradientIndex];
+
     return Scaffold(
-      body: Column(
-        children: [
-          Expanded(
-            child: Stack(
-              children: [
-                GameWidget(game: _game), // Flame game rendered here
-                // Top UI: Score and High Score Display
-                _buildScoreDisplay(context, gameState),
-                // Bottom UI: Color Buttons
-                _buildColorButtons(colors, _game),
-                // Game Over / Start Overlay (conditionally rendered)
-                if (gameState.status != GameStatus.playing)
-                  _buildGameOverlay(context, gameState, gameNotifier),
-              ],
-            ),
+      body: AnimatedContainer(
+        duration: const Duration(seconds: 1),
+        // Duration for gradient color change
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: currentGradientColors,
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
           ),
-          if (!kIsWeb && _isBannerAdLoaded && _bannerAd != null)
-            SizedBox(
-              width: _bannerAd?.size.width.toDouble(),
-              height: _bannerAd?.size.height.toDouble(),
-              child: AdWidget(ad: _bannerAd!),
+        ),
+        child: Column(
+          children: [
+            Expanded(
+              child: Stack(
+                children: [
+                  GameWidget(game: _game), // Flame game rendered here
+                  // Top UI: Score and High Score Display
+                  _buildScoreDisplay(context, gameState),
+                  // Bottom UI: Color Buttons
+                  _buildColorButtons(colors, _game),
+                  // Game Over / Start Overlay (conditionally rendered)
+                  if (gameState.status != GameStatus.playing)
+                    _buildGameOverlay(context, gameState, gameNotifier),
+                  if (gameState.showLevelUpOverlay)
+                    LevelUpOverlay(level: gameState.currentLevel),
+                ],
+              ),
             ),
-        ],
+            if (!kIsWeb && _isBannerAdLoaded && _bannerAd != null)
+              SizedBox(
+                width: _bannerAd?.size.width.toDouble(),
+                height: _bannerAd?.size.height.toDouble(),
+                child: AdWidget(ad: _bannerAd!),
+              ),
+          ],
+        ),
       ),
     );
   }

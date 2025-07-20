@@ -4,8 +4,8 @@
 // Score thresholds for increasing difficulty
 const int kScoreThresholdForSpeedIncrease = 5;
 const double kSpeedIncrementFactor = 0.1; // e.g., 10% increase per threshold
-
 const int kScoreThresholdForIntervalDecrease = 10;
+const int kScoreThresholdForGradientChange = 25;
 const double kIntervalDecrementAmount = 0.1; // e.g., decrease by 0.1 seconds
 const double kMinSpawnInterval = 0.5; // Minimum spawn interval allowed
 

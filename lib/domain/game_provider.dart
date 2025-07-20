@@ -1,12 +1,11 @@
-import 'dart:io';
+import 'dart:math';
 import 'dart:ui';
-import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart'; // Still needed for `Color`
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import '../core/ad_service.dart';
 import '../core/audio_player.dart';
 import '../data/score_repository.dart';
+import '../presentation/theme/app_colors.dart';
 import '../services/flame_audio_player.dart';
 import '../services/google_ad_service.dart';
 import 'game_constants.dart';
@@ -20,6 +19,10 @@ class GameNotifier extends Notifier<GameState> {
   late final IAdService _adService; // <--- NEW: Ad service interface
   late final IAudioPlayer
   _audioPlayer; // <--- NEW: Declare the audio player interface
+  final Random _random =
+      Random(); // <--- NEW: Random instance for gradient selection
+  int _lastGradientIndex =
+      0; // <--- NEW: To ensure next random gradient is different
 
   @override
   GameState build() {
@@ -53,8 +56,11 @@ class GameNotifier extends Notifier<GameState> {
       status: GameStatus.playing,
       score: 0,
       currentSpeed: 1.0,
-      currentSpawnInterval: 2.0,
-    ); // <--- MODIFIED
+      currentSpawnInterval: kObjectSpawnPeriodInitial,
+      currentGradientIndex: 0,
+      currentLevel: 1,
+      showLevelUpOverlay: false, // Ensure hidden on start
+    );
     _loadHighScore();
   }
 
@@ -66,6 +72,9 @@ class GameNotifier extends Notifier<GameState> {
     final newScore = state.score + 1;
     double newSpeed = state.currentSpeed;
     double newInterval = state.currentSpawnInterval; // Get current interval
+    int newGradientIndex = state.currentGradientIndex; // Get current index
+    int newLevel = state.currentLevel;
+    bool showLevelUp = false; // Assume false by default
 
     if (newScore > 0 && newScore % kScoreThresholdForSpeedIncrease == 0) {
       newSpeed += kSpeedIncrementFactor; // Increase the speed multiplier
@@ -80,6 +89,22 @@ class GameNotifier extends Notifier<GameState> {
         kMinSpawnInterval,
         double.infinity,
       ); // Decrease and clamp
+      newLevel++; // Increment level
+      showLevelUp = true; // Trigger level up overlay
+      int newRandomIndex = _random.nextInt(
+        AppColors.backgroundGradients.length,
+      );
+      while (newRandomIndex == _lastGradientIndex &&
+          AppColors.backgroundGradients.length > 1) {
+        newRandomIndex = _random.nextInt(AppColors.backgroundGradients.length);
+      }
+      newGradientIndex = newRandomIndex;
+      _lastGradientIndex = newGradientIndex; // Update last picked index
+      print(
+        'Level Up! To Level: $newLevel. Gradient changed to index: $newGradientIndex at score $newScore',
+      ); // For debugging
+      // _audioPlayer.playSfx('level_up.mp3'); // Assuming you have this sound for Day 4
+
       print(
         'Spawn interval decreased to: $newInterval at score $newScore',
       ); // For debugging
@@ -89,7 +114,20 @@ class GameNotifier extends Notifier<GameState> {
       score: newScore,
       currentSpeed: newSpeed,
       currentSpawnInterval: newInterval,
+      currentGradientIndex: newGradientIndex,
+      currentLevel: newLevel,
+      showLevelUpOverlay: showLevelUp,
     );
+
+    if (showLevelUp) {
+      Future.delayed(const Duration(milliseconds: 1500), () {
+        // Display for 1.5 seconds
+        if (state.showLevelUpOverlay) {
+          // Only hide if still showing (prevent race conditions)
+          state = state.copyWith(showLevelUpOverlay: false);
+        }
+      });
+    }
   }
 
   void endGame() {

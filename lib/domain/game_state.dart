@@ -10,14 +10,19 @@ class GameState {
   final GameStatus status;
   final double currentSpeed;
   final double currentSpawnInterval; // <--- NEW PROPERTY
+  final int currentGradientIndex; // <--- NEW PROPERTY
+  final int currentLevel; // <--- NEW PROPERTY
+  final bool showLevelUpOverlay;
 
   GameState({
     this.score = 0,
     this.highScore = 0,
     this.status = GameStatus.initial,
     this.currentSpeed = 1.0,
-    this.currentSpawnInterval = kObjectSpawnPeriodInitial, // <--- NEW: Default spawn interval (2 seconds)
-
+    this.currentSpawnInterval = kObjectSpawnPeriodInitial,
+    this.currentGradientIndex = 0,
+    this.currentLevel = 1, // <--- NEW: Start at Level 1
+    this.showLevelUpOverlay = false, // <--- NEW: Default hidden
   });
 
   // A convenience method to create a copy of the state with new values.
@@ -27,13 +32,19 @@ class GameState {
     GameStatus? status,
     double? currentSpeed,
     double? currentSpawnInterval, // <--- NEW
+    int? currentGradientIndex, // <--- NEW
+    int? currentLevel, // <--- NEW
+    bool? showLevelUpOverlay, // <--- NEW
   }) {
     return GameState(
       score: score ?? this.score,
       highScore: highScore ?? this.highScore,
       status: status ?? this.status,
       currentSpeed: currentSpeed ?? this.currentSpeed,
-      currentSpawnInterval: currentSpawnInterval ?? this.currentSpawnInterval, // <--- NEW
+      currentSpawnInterval: currentSpawnInterval ?? this.currentSpawnInterval,
+      currentGradientIndex: currentGradientIndex ?? this.currentGradientIndex,
+      currentLevel: currentLevel ?? this.currentLevel,
+      showLevelUpOverlay: showLevelUpOverlay ?? this.showLevelUpOverlay,
     );
   }
 }

@@ -36,6 +36,9 @@ class ColorRushGame extends FlameGame {
   double _spawnTimer = 0.0; // Timer to track when to spawn next object
 
   @override
+  Color backgroundColor() => Colors.transparent; // <--- ADD THIS LINE
+
+  @override
   Future<void> onLoad() async {
     final screenWidth = size.x;
     final catchZoneY = size.y - kCatchZoneHeight;
@@ -62,7 +65,8 @@ class ColorRushGame extends FlameGame {
         (obj) => obj.removeFromParent(),
       );
       _spawnTimer = 0.0; // Reset timer when game is not playing
-      _catchZoneLineComponent.paint.color = AppColors.catchZoneLineColor.withOpacity(0.5);
+      _catchZoneLineComponent.paint.color = AppColors.catchZoneLineColor
+          .withOpacity(0.5);
       _isLinePulsing = false;
       _linePulseTimer = 0.0;
       return;
