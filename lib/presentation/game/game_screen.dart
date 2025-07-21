@@ -15,6 +15,7 @@ import '../../services/flame_audio_player.dart';
 import '../../services/google_ad_service.dart';
 import '../theme/app_colors.dart';
 import '../widgets/color_button.dart';
+import '../widgets/game_button.dart';
 import 'color_rush_game.dart';
 import 'components/confetti_overlay.dart';
 import 'components/level_up_overlay.dart';
@@ -177,23 +178,29 @@ class _GameScreenState extends ConsumerState<GameScreen> {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20.0),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            IconButton(
-              icon: Icon(
+            GameButton(
+              iconData: Icon(
                 gameState.isPaused ? Icons.play_arrow : Icons.pause,
                 color: AppColors.primaryTextColor,
                 size: 30,
               ),
               onPressed: gameNotifier.togglePause,
+              iconColor:
+                  AppColors
+                      .primaryTextColor, // Optional: color for the icon if it's a solid SVG that can be tinted
             ),
-            IconButton(
-              icon: Icon(
+            GameButton(
+              iconData: Icon(
                 gameState.isMuted ? Icons.volume_off : Icons.volume_up,
                 color: AppColors.primaryTextColor,
                 size: 30,
               ),
               onPressed: gameNotifier.toggleMute,
+              iconColor:
+                  AppColors
+                      .primaryTextColor, // Optional: color for the icon if it's a solid SVG that can be tinted
             ),
           ],
         ),
