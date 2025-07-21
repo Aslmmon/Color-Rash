@@ -16,6 +16,7 @@ import '../../services/google_ad_service.dart';
 import '../theme/app_colors.dart';
 import '../widgets/color_button.dart';
 import 'color_rush_game.dart';
+import 'components/confetti_overlay.dart';
 import 'components/level_up_overlay.dart';
 
 class GameScreen extends ConsumerStatefulWidget {
@@ -145,12 +146,19 @@ class _GameScreenState extends ConsumerState<GameScreen> {
           _buildScoreDisplay(context, gameState),
           // <--- NEW: Top Control Buttons (Pause/Mute)
           _buildTopControlButtons(context, gameState, gameNotifier),
-
           _buildColorButtons(colors, _game),
           if (gameState.status != GameStatus.playing)
             _buildGameOverlay(context, gameState, gameNotifier),
           if (gameState.showLevelUpOverlay)
             LevelUpOverlay(level: gameState.currentLevel),
+          if (gameState.isPaused) // Show the pause overlay only when paused
+            _buildPauseOverlay(context, gameNotifier),
+          ConfettiOverlay(
+            confettiColors:
+                AppColors.backgroundGradients.expand((list) => list).toList(),
+            showConfetti:
+                gameState.showConfetti, // <--- Pass the state directly
+          ),
         ],
       ),
     );

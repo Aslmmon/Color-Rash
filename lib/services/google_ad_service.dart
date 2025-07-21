@@ -90,10 +90,11 @@ class GoogleAdService implements IAdService {
   }
 }
 
-
 // Riverpod provider for the GoogleAdService
 final adServiceProvider = Provider<IAdService>((ref) {
   final adService = GoogleAdService();
-  ref.onDispose(() => adService.dispose()); // Dispose the service when its provider is disposed
+  ref.onDispose(
+    () => adService.dispose(),
+  ); // Dispose the service when its provider is disposed
   return adService;
 });

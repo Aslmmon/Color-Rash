@@ -55,7 +55,7 @@ class GameNotifier extends Notifier<GameState> {
       currentGradientIndex: 0,
       currentLevel: 1,
       showLevelUpOverlay: false,
-      isPaused: state.isMuted,
+      isPaused: false,
       isMuted: false,
       showConfetti: false, // Ensure confetti is off on start
     );
@@ -76,7 +76,6 @@ class GameNotifier extends Notifier<GameState> {
     int newGradientIndex = state.currentGradientIndex;
     int newLevel = state.currentLevel;
     bool showLevelUp = false;
-    bool showConfettiNow = false; // Flag for immediate confetti trigger
 
     // Determine new difficulty parameters and if a level up occurs
     final difficultyUpdateResult = _determineDifficultyUpdate(
@@ -92,9 +91,7 @@ class GameNotifier extends Notifier<GameState> {
     newGradientIndex = difficultyUpdateResult['gradientIndex'] as int;
     newLevel = difficultyUpdateResult['level'] as int;
     showLevelUp = difficultyUpdateResult['showLevelUpOverlay'] as bool;
-    if (showLevelUp) {
-      showConfettiNow = true; // Trigger confetti for this state update
-    }
+
     state = state.copyWith(
       score: newScore,
       currentSpeed: newSpeed,
@@ -102,23 +99,11 @@ class GameNotifier extends Notifier<GameState> {
       currentGradientIndex: newGradientIndex,
       currentLevel: newLevel,
       showLevelUpOverlay: showLevelUp,
-      showConfetti: showConfettiNow, // Update confetti state
+      showConfetti: showLevelUp, // Update confetti state
     );
 
     if (showLevelUp) {
       _triggerLevelUpVisualsAndSound(); // Trigger visual and audio feedback for level up
-    }
-    // If confetti was just triggered, schedule its hide along with overlay hide
-    if (showConfettiNow) {
-      Future.delayed(
-        const Duration(milliseconds: kLevelUpOverlayDisplayDurationMs),
-        () {
-          if (state.showConfetti) {
-            // Only hide if still showing (prevent race conditions)
-            state = state.copyWith(showConfetti: false);
-          }
-        },
-      );
     }
   }
 
@@ -175,11 +160,15 @@ class GameNotifier extends Notifier<GameState> {
   /// Triggers the visual overlay and sound effect for a level up.
   void _triggerLevelUpVisualsAndSound() {
     _audioPlayer.playSfx('celebrate.wav'); // Play level up sound
+    // hide the level up overlay after a delay
     Future.delayed(
       const Duration(milliseconds: kLevelUpOverlayDisplayDurationMs),
       () {
         if (state.showLevelUpOverlay) {
-          state = state.copyWith(showLevelUpOverlay: false);
+          state = state.copyWith(
+            showLevelUpOverlay: false,
+            showConfetti: false,
+          );
         }
       },
     );
@@ -190,10 +179,7 @@ class GameNotifier extends Notifier<GameState> {
     _handleGameOverScoreAndAds(); // Handle score saving and ad display
     _audioPlayer.playSfx('game_over.mp3'); // Play game over sound
     _audioPlayer.stopBgm(); // Stop BGM on game over
-    state = state.copyWith(
-      status: GameStatus.gameOver,
-      showConfetti: false, // Ensure confetti is off on game over
-    );
+    state = state.copyWith(status: GameStatus.gameOver);
   }
 
   /// Manages high score saving and interstitial ad display at game over.
