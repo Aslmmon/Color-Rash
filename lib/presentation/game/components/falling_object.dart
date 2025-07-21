@@ -22,6 +22,11 @@ class FallingObject extends CircleComponent
   void update(double dt) {
     super.update(dt);
     // Calculate effective speed
+
+    if (game.notifier.state.isPaused) {
+      return; // Don't move if game is paused
+    }
+
     final double effectiveSpeed = kObjectBaseSpeed * speedMultiplier; // <--- MODIFIED
 
     // Move the circle downwards using the constant speed

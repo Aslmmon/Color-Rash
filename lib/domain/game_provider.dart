@@ -12,7 +12,6 @@ import '../services/flame_audio_player.dart';
 import '../services/google_ad_service.dart';
 import 'game_constants.dart';
 import 'game_state.dart';
-import 'game_provider.dart'; // Make sure this is imported if providers are external
 
 class GameNotifier extends Notifier<GameState> {
   late final ScoreRepository _scoreRepository;
@@ -56,8 +55,12 @@ class GameNotifier extends Notifier<GameState> {
       currentGradientIndex: 0,
       currentLevel: 1,
       showLevelUpOverlay: false,
+      isPaused: state.isMuted,
+      isMuted: false,
+      showConfetti: false, // Ensure confetti is off on start
     );
     _loadHighScore();
+    _audioPlayer.playBgm('bg_music.mp3'); // Play BGM on game start
   }
 
   /// Handles the player tapping a color.
@@ -73,6 +76,7 @@ class GameNotifier extends Notifier<GameState> {
     int newGradientIndex = state.currentGradientIndex;
     int newLevel = state.currentLevel;
     bool showLevelUp = false;
+    bool showConfettiNow = false; // Flag for immediate confetti trigger
 
     // Determine new difficulty parameters and if a level up occurs
     final difficultyUpdateResult = _determineDifficultyUpdate(
@@ -88,7 +92,9 @@ class GameNotifier extends Notifier<GameState> {
     newGradientIndex = difficultyUpdateResult['gradientIndex'] as int;
     newLevel = difficultyUpdateResult['level'] as int;
     showLevelUp = difficultyUpdateResult['showLevelUpOverlay'] as bool;
-
+    if (showLevelUp) {
+      showConfettiNow = true; // Trigger confetti for this state update
+    }
     state = state.copyWith(
       score: newScore,
       currentSpeed: newSpeed,
@@ -96,10 +102,23 @@ class GameNotifier extends Notifier<GameState> {
       currentGradientIndex: newGradientIndex,
       currentLevel: newLevel,
       showLevelUpOverlay: showLevelUp,
+      showConfetti: showConfettiNow, // Update confetti state
     );
 
     if (showLevelUp) {
       _triggerLevelUpVisualsAndSound(); // Trigger visual and audio feedback for level up
+    }
+    // If confetti was just triggered, schedule its hide along with overlay hide
+    if (showConfettiNow) {
+      Future.delayed(
+        const Duration(milliseconds: kLevelUpOverlayDisplayDurationMs),
+        () {
+          if (state.showConfetti) {
+            // Only hide if still showing (prevent race conditions)
+            state = state.copyWith(showConfetti: false);
+          }
+        },
+      );
     }
   }
 
@@ -170,7 +189,11 @@ class GameNotifier extends Notifier<GameState> {
   void endGame() {
     _handleGameOverScoreAndAds(); // Handle score saving and ad display
     _audioPlayer.playSfx('game_over.mp3'); // Play game over sound
-    state = state.copyWith(status: GameStatus.gameOver);
+    _audioPlayer.stopBgm(); // Stop BGM on game over
+    state = state.copyWith(
+      status: GameStatus.gameOver,
+      showConfetti: false, // Ensure confetti is off on game over
+    );
   }
 
   /// Manages high score saving and interstitial ad display at game over.
@@ -194,6 +217,25 @@ class GameNotifier extends Notifier<GameState> {
   void restartGame() {
     state = state.copyWith(score: 0, status: GameStatus.initial);
     _loadHighScore();
+    _audioPlayer.resumeBgm(); // Resume BGM on restart (if not muted)
+  }
+
+  // <--- NEW: Toggle Pause method
+  void togglePause() {
+    final newPauseState = !state.isPaused;
+    state = state.copyWith(isPaused: newPauseState);
+    if (newPauseState) {
+      _audioPlayer.pauseBgm();
+    } else {
+      _audioPlayer.resumeBgm();
+    }
+  }
+
+  // <--- NEW: Toggle Mute method
+  void toggleMute() {
+    final newMuteState = !state.isMuted;
+    state = state.copyWith(isMuted: newMuteState);
+    _audioPlayer.setMuted(newMuteState); // Tell the audio player to mute/unmute
   }
 }
 

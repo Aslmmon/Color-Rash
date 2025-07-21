@@ -65,6 +65,11 @@ class ColorRushGame extends FlameGame {
   void update(double dt) {
     super.update(dt);
 
+
+    if (notifier.state.isPaused) {
+      // If paused, don't update game elements that rely on time or movement
+      return;
+    }
     if (status != GameStatus.playing) {
       _handleGameResetAndCleanup(); // <--- NEW: Extracted cleanup logic
       return;

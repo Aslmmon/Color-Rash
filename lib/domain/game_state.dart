@@ -13,6 +13,9 @@ class GameState {
   final int currentGradientIndex; // <--- NEW PROPERTY
   final int currentLevel; // <--- NEW PROPERTY
   final bool showLevelUpOverlay;
+  final bool isPaused; // <--- NEW
+  final bool isMuted; // <--- NEW
+  final bool showConfetti; // <--- NEW
 
   GameState({
     this.score = 0,
@@ -23,6 +26,9 @@ class GameState {
     this.currentGradientIndex = 0,
     this.currentLevel = 1, // <--- NEW: Start at Level 1
     this.showLevelUpOverlay = false, // <--- NEW: Default hidden
+    this.isPaused = false, // <--- NEW: Default to not paused
+    this.isMuted = false, // <--- NEW: Default to not muted
+    this.showConfetti = false, // <--- NEW: Default to false
   });
 
   // A convenience method to create a copy of the state with new values.
@@ -35,6 +41,9 @@ class GameState {
     int? currentGradientIndex, // <--- NEW
     int? currentLevel, // <--- NEW
     bool? showLevelUpOverlay, // <--- NEW
+    bool? isPaused, // <--- NEW
+    bool? isMuted, // <--- NEW
+    bool? showConfetti, // <--- NEW
   }) {
     return GameState(
       score: score ?? this.score,
@@ -45,6 +54,9 @@ class GameState {
       currentGradientIndex: currentGradientIndex ?? this.currentGradientIndex,
       currentLevel: currentLevel ?? this.currentLevel,
       showLevelUpOverlay: showLevelUpOverlay ?? this.showLevelUpOverlay,
+      isPaused: isPaused ?? this.isPaused,
+      isMuted: isMuted ?? this.isMuted,
+      showConfetti: showConfetti ?? this.showConfetti,
     );
   }
 }

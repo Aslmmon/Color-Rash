@@ -1,12 +1,14 @@
 // lib/presentation/game/game_screen.dart
 import 'package:color_rash/core/ad_service.dart';
 import 'package:color_rash/core/audio_player.dart';
+import 'package:confetti/confetti.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
+import '../../domain/game_constants.dart';
 import '../../domain/game_provider.dart';
 import '../../domain/game_state.dart';
 import '../../services/flame_audio_player.dart';
@@ -27,6 +29,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   late final ColorRushGame _game;
   BannerAd? _bannerAd;
   bool _isBannerAdLoaded = false;
+  late ConfettiController _confettiController; // <--- NEW
 
   @override
   void initState() {
@@ -34,6 +37,9 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     final colors = ref.read(colorProvider);
     final gameNotifier = ref.read(gameProvider.notifier);
     final IAudioPlayer audioPlayer = ref.read(audioPlayerProvider);
+    _confettiController = ConfettiController(
+      duration: const Duration(milliseconds: kLevelUpOverlayDisplayDurationMs),
+    ); // <--- NEW: Initialize controller with same duration as overlay
 
     _game = ColorRushGame(
       status: gameNotifier.state.status,
@@ -74,6 +80,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   @override
   void dispose() {
     _bannerAd?.dispose();
+    _confettiController.dispose(); // <--- NEW: Dispose confetti controller
     super.dispose();
   }
 
@@ -83,7 +90,12 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     final gameNotifier = ref.read(gameProvider.notifier);
     final colors = ref.read(colorProvider);
     _game.status = gameState.status; // Update Flame game status
-
+    // <--- NEW: Play/Stop confetti based on state
+    // if (gameState.showConfetti && !_confettiController.state.playing) {
+    //   _confettiController.play();
+    // } else if (!gameState.showConfetti && _confettiController.isPlaying) {
+    //   _confettiController.stop();
+    // }
     return Scaffold(
       body: _buildBackgroundGradient(context, gameState, gameNotifier, colors),
     );
@@ -131,12 +143,77 @@ class _GameScreenState extends ConsumerState<GameScreen> {
         children: [
           GameWidget(game: _game), // Flame game rendered here
           _buildScoreDisplay(context, gameState),
+          // <--- NEW: Top Control Buttons (Pause/Mute)
+          _buildTopControlButtons(context, gameState, gameNotifier),
+
           _buildColorButtons(colors, _game),
           if (gameState.status != GameStatus.playing)
             _buildGameOverlay(context, gameState, gameNotifier),
           if (gameState.showLevelUpOverlay)
             LevelUpOverlay(level: gameState.currentLevel),
         ],
+      ),
+    );
+  }
+
+  // <--- NEW: Encapsulates Top Control Buttons (Pause/Mute)
+  Widget _buildTopControlButtons(
+    BuildContext context,
+    GameState gameState,
+    GameNotifier gameNotifier,
+  ) {
+    return Positioned(
+      top: 20,
+      left: 0,
+      right: 0,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            IconButton(
+              icon: Icon(
+                gameState.isPaused ? Icons.play_arrow : Icons.pause,
+                color: AppColors.primaryTextColor,
+                size: 30,
+              ),
+              onPressed: gameNotifier.togglePause,
+            ),
+            IconButton(
+              icon: Icon(
+                gameState.isMuted ? Icons.volume_off : Icons.volume_up,
+                color: AppColors.primaryTextColor,
+                size: 30,
+              ),
+              onPressed: gameNotifier.toggleMute,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // <--- NEW: Pause Overlay widget
+  Widget _buildPauseOverlay(BuildContext context, GameNotifier gameNotifier) {
+    return Container(
+      color: Colors.black.withOpacity(0.7),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'Paused',
+              style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                color: AppColors.primaryTextColor,
+              ),
+            ),
+            const SizedBox(height: 40),
+            ElevatedButton(
+              onPressed: gameNotifier.togglePause,
+              child: const Text('Resume', style: TextStyle(fontSize: 20)),
+            ),
+          ],
+        ),
       ),
     );
   }
