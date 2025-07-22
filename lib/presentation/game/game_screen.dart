@@ -92,12 +92,6 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     final gameNotifier = ref.read(gameProvider.notifier);
     final colors = ref.read(colorProvider);
     _game.status = gameState.status; // Update Flame game status
-    // <--- NEW: Play/Stop confetti based on state
-    // if (gameState.showConfetti && !_confettiController.state.playing) {
-    //   _confettiController.play();
-    // } else if (!gameState.showConfetti && _confettiController.isPlaying) {
-    //   _confettiController.stop();
-    // }
     return Scaffold(
       body: _buildBackgroundGradient(context, gameState, gameNotifier, colors),
     );
@@ -181,26 +175,28 @@ class _GameScreenState extends ConsumerState<GameScreen> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             GameButton(
-              iconData: Icon(
-                gameState.isPaused ? Icons.play_arrow : Icons.pause,
-                color: AppColors.primaryTextColor,
-                size: 30,
-              ),
+              // <--- MODIFIED: Use simplified GameButton
               onPressed: gameNotifier.togglePause,
-              iconColor:
-                  AppColors
-                      .primaryTextColor, // Optional: color for the icon if it's a solid SVG that can be tinted
-            ),
-            GameButton(
-              iconData: Icon(
-                gameState.isMuted ? Icons.volume_off : Icons.volume_up,
-                color: AppColors.primaryTextColor,
+              // Circular button
+              child: Icon(
+                gameState.isPaused ? Icons.play_arrow : Icons.pause,
+                color: AppColors.buttonTextColor,
                 size: 30,
               ),
+            ),
+            SizedBox(width: 10),
+
+            GameButton(
+              // <--- MODIFIED: Use simplified GameButton
               onPressed: gameNotifier.toggleMute,
-              iconColor:
-                  AppColors
-                      .primaryTextColor, // Optional: color for the icon if it's a solid SVG that can be tinted
+              // Circular button
+              child: Icon(
+                gameState.isMuted
+                    ? Icons.volume_off_outlined
+                    : Icons.volume_down_outlined,
+                color: AppColors.buttonTextColor,
+                size: 30,
+              ),
             ),
           ],
         ),
@@ -218,14 +214,23 @@ class _GameScreenState extends ConsumerState<GameScreen> {
           children: [
             Text(
               'Paused',
-              style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                 color: AppColors.primaryTextColor,
               ),
             ),
             const SizedBox(height: 40),
-            ElevatedButton(
+
+            GameButton(
+              width: 200,
+              height: 60,
               onPressed: gameNotifier.togglePause,
-              child: const Text('Resume', style: TextStyle(fontSize: 20)),
+              child: Text(
+                'Resume',
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  color: AppColors.primaryTextColor,
+                  fontSize: 18,
+                ),
+              ),
             ),
           ],
         ),
@@ -260,6 +265,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                 color: AppColors.primaryTextColor,
               ),
             ),
+            SizedBox(height: 10),
             Text(
               'High Score: ${gameState.highScore}',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -333,7 +339,10 @@ class _GameScreenState extends ConsumerState<GameScreen> {
               ),
               const SizedBox(height: 30), // Use constant if desired
             ],
-            ElevatedButton(
+
+            GameButton(
+              width: 200,
+              height: 60,
               onPressed: () {
                 if (gameState.status == GameStatus.gameOver) {
                   gameNotifier.restartGame();
@@ -345,6 +354,10 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                 gameState.status == GameStatus.initial
                     ? 'Start Game'
                     : 'Play Again',
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  color: AppColors.buttonTextColor,
+                  fontSize: 14
+                ),
               ),
             ),
           ],

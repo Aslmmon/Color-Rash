@@ -4,6 +4,7 @@ description: "A new Flutter project."
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
+
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
 # followed by an optional build number separated by a +.
@@ -41,8 +42,10 @@ dependencies:
   flame_audio: ^2.5.0
   google_mobile_ads: ^6.0.0
   confetti: ^0.7.0 # Use the latest stable version
-  flutter_svg: ^2.2.0 # Use the latest stable version
   flutter_svg_provider: ^1.0.7
+  flutter_native_splash: ^2.4.6
+  flutter_launcher_icons: ^0.14.4
+  animated_button: ^0.3.1
 
 dev_dependencies:
   flutter_test:
@@ -55,6 +58,15 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
   flame_lint: ^1.4.0
+flutter_native_splash:
+  color: "#FFFFFF" # Hex color code for the background of the splash screen.
+  # This will be the primary background for your splash.
+  image: assets/images/logo.png # Path to your splash image.
+flutter_launcher_icons:
+  android: "launcher_icon" # Or specify true to use default 'mipmap/ic_launcher'
+  ios: true                 # Generates icons for iOS
+  image_path: "assets/images/logo.png" # Path to your source icon image
+
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -67,8 +79,8 @@ flutter:
   # the material Icons class.
   uses-material-design: true
   assets:
-   - assets/audio/
-   - assets/images/
+    - assets/audio/
+    - assets/images/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

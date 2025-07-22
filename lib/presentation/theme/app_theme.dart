@@ -23,33 +23,7 @@ class AppTheme {
           bodyColor: AppColors.primaryTextColor,
           displayColor: AppColors.primaryTextColor,
         ),
-      ).copyWith(
-        // Customize specific text styles
-        headlineLarge: const TextStyle(
-          fontSize: 48,
-          fontWeight: FontWeight.bold,
-          color: AppColors.primaryTextColor,
-        ),
-        headlineMedium: const TextStyle(
-          fontSize: 32,
-          fontWeight: FontWeight.bold,
-          color: AppColors.primaryTextColor,
-        ),
-        titleLarge: const TextStyle(
-          fontSize: 24,
-          fontWeight: FontWeight.bold,
-          color: AppColors.primaryTextColor,
-        ),
-        bodyMedium: const TextStyle(
-          fontSize: 16,
-          color: AppColors.primaryTextColor,
-        ),
-        bodySmall: const TextStyle(
-          fontSize: 14,
-          color: AppColors.secondaryTextColor,
-        ),
       ),
-
       // Define button themes
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
