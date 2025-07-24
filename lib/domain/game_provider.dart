@@ -235,3 +235,18 @@ final gameProvider = NotifierProvider<GameNotifier, GameState>(() {
 final colorProvider = Provider<List<Color>>((ref) {
   return [Colors.red, Colors.blue, Colors.green, Colors.yellow];
 });
+
+// 2. Audio Player Provider
+final audioPlayerProvider = Provider<IAudioPlayer>((ref) {
+  return FlameAudioPlayer();
+});
+
+
+// Riverpod provider for the GoogleAdService
+final adServiceProvider = Provider<IAdService>((ref) {
+  final adService = GoogleAdService();
+  ref.onDispose(
+        () => adService.dispose(),
+  ); // Dispose the service when its provider is disposed
+  return adService;
+});

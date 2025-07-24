@@ -1,14 +1,14 @@
-// lib/services/flame_audio_player.dart
 import 'package:flame_audio/flame_audio.dart';
 import 'package:color_rash/core/audio_player.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class FlameAudioPlayer implements IAudioPlayer {
   bool _isGloballyMuted = false;
-  String?
-  _currentBgmFileName; // <--- NEW: To store the name of the currently playing BGM
-  bool _wasBgmPlayingBeforePauseOrMute =
-      false; // <--- NEW: To track if BGM should resume
+  String? _currentBgmFileName;
+  bool _wasBgmPlayingBeforePauseOrMute = false;
+
+  // Define a default/unmuted volume level for BGM
+  static const double _bgmDefaultVolume =
+      0.5; // Adjust this value (0.0 to 1.0) for desired BGM loudness
 
   @override
   Future<void> playSfx(String fileName) async {
@@ -19,41 +19,32 @@ class FlameAudioPlayer implements IAudioPlayer {
 
   @override
   void playBgm(String fileName) {
-    _currentBgmFileName =
-        fileName; // <--- Store the filename whenever BGM is started
-    if (!_isGloballyMuted && !FlameAudio.bgm.isPlaying) {
-      // If not muted and not already playing, start looping
+    _currentBgmFileName = fileName;
+    if (!FlameAudio.bgm.isPlaying) {
+      // Only start if not muted and not already playing, setting volume based on current mute state
+      FlameAudio.bgm.audioPlayer.setVolume(
+        _isGloballyMuted ? 0.0 : _bgmDefaultVolume,
+      ); // Set initial volume
       FlameAudio.bgm.play(fileName);
-      _wasBgmPlayingBeforePauseOrMute = true; // Mark that it's now playing
+      _wasBgmPlayingBeforePauseOrMute = true;
     }
   }
 
   @override
   void stopBgm() {
     FlameAudio.bgm.stop();
-    _wasBgmPlayingBeforePauseOrMute = false; // It's definitively stopped
+    _wasBgmPlayingBeforePauseOrMute = false;
   }
 
   @override
   void setMuted(bool muted) {
     _isGloballyMuted = muted;
     if (_isGloballyMuted) {
-      if (FlameAudio.bgm.isPlaying) {
-        // If BGM is playing when muted, pause it and remember it was playing
-        FlameAudio.bgm.pause();
-        _wasBgmPlayingBeforePauseOrMute = true;
-      } else {
-        // If it was already paused/stopped, just update mute state
-        _wasBgmPlayingBeforePauseOrMute =
-            false; // Or preserve its actual state if you need finer control
-      }
+      FlameAudio.bgm.audioPlayer.setVolume(0.0); // MUTE: Set volume to 0
     } else {
-      // If unmuted, and it was playing before being muted, resume it
-      if (_wasBgmPlayingBeforePauseOrMute && !FlameAudio.bgm.isPlaying) {
-        FlameAudio.bgm.resume();
-        _wasBgmPlayingBeforePauseOrMute =
-            false; // Reset the flag after resuming
-      }
+      FlameAudio.bgm.audioPlayer.setVolume(
+        _bgmDefaultVolume,
+      ); // UNMUTE: Restore volume to default
     }
   }
 
@@ -61,28 +52,19 @@ class FlameAudioPlayer implements IAudioPlayer {
   void pauseBgm() {
     if (FlameAudio.bgm.isPlaying) {
       FlameAudio.bgm.pause();
-      _wasBgmPlayingBeforePauseOrMute =
-          true; // Remember it was playing before this pause
+      _wasBgmPlayingBeforePauseOrMute = true;
     }
   }
 
   @override
   void resumeBgm() {
-    if (!_isGloballyMuted &&
-        !FlameAudio.bgm.isPlaying &&
-        _currentBgmFileName != null) {
-      // If not muted, not currently playing, and we have a filename,
-      // try to resume/restart it. FlameAudio.bgm.resume() will work if it was just paused.
-      // If it was stopped, you need to call loop/play again.
+    if (!_isGloballyMuted && _currentBgmFileName != null) {
+      // Ensure volume is correct before playing/resuming
       FlameAudio.bgm.play(
         _currentBgmFileName!,
+        volume: _bgmDefaultVolume,
       ); // Calling play will resume if paused, or restart if stopped.
-      _wasBgmPlayingBeforePauseOrMute = true; // Mark as playing
+      _wasBgmPlayingBeforePauseOrMute = true;
     }
   }
 }
-
-final audioPlayerProvider = Provider<IAudioPlayer>((ref) {
-  // Use the concrete FlameAudioPlayer implementation
-  return FlameAudioPlayer();
-});

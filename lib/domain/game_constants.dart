@@ -32,6 +32,16 @@ const double kParticleRadius = 3;
 // --- Ad Integration Constants ---
 const int kAdShowFrequency = 1; // Show interstitial ad every X game overs
 
+// Add these Ad Unit IDs
+const String kInterstitialAdUnitIdAndroid = 'ca-app-pub-3940256099942544/1033173712'; // Test ID
+const String kInterstitialAdUnitIdiOS = 'ca-app-pub-3940256099942544/4411468910';     // Test ID
+const String kBannerAdUnitIdAndroid = 'ca-app-pub-3940256099942544/6300978111';       // Test ID
+const String kBannerAdUnitIdiOS = 'ca-app-pub-3940256099942544/2934735716';           // Test ID
+
+
+const int kButtonPressAnimationDurationMs = 150;
+const double kButtonPressScaleFactor = 0.9;
+const double kColorButtonBorderWidth = 3.0; //
 // Add common padding/spacing constants if needed across UI files
 const double kDefaultPadding = 16.0;
 const double kLargePadding = 32.0;

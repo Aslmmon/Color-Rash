@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:color_rash/domain/game_constants.dart'; // Ensure this is imported
 
 class ColorButton extends StatefulWidget {
-  // <--- CHANGE to StatefulWidget
   final Color color;
   final VoidCallback onTap;
 
@@ -22,15 +21,18 @@ class _ColorButtonState extends State<ColorButton>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 150), // Duration of the animation
-      lowerBound: 0.0, // Minimum value of the animation (for reverse)
+
+      duration: const Duration(milliseconds: kButtonPressAnimationDurationMs),
+      // Duration of the animation
+      lowerBound: 0.0,
+      // Minimum value of the animation (for reverse)
       upperBound: 1.0, // Maximum value of the animation (for forward)
     );
 
     // Define the scale animation: shrinks to 90% size when pressed
     _scaleAnimation = Tween<double>(
       begin: 1.0,
-      end: 0.9,
+      end: kButtonPressScaleFactor,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
   }
 
@@ -59,15 +61,9 @@ class _ColorButtonState extends State<ColorButton>
   Widget build(BuildContext context) {
     return GestureDetector(
       onTapDown: _onTapDown,
-      // <--- Use new tap down handler
       onTapUp: _onTapUp,
-      // <--- Use new tap up handler
       onTapCancel: _onTapCancel,
-      // <--- Use new tap cancel handler
-      // IMPORTANT: Remove the direct onTap: widget.onTap, otherwise it will fire twice or conflict
-      // The actual widget.onTap() call is now within _onTapUp()
       child: ScaleTransition(
-        // <--- Wrap with ScaleTransition
         scale: _scaleAnimation,
         child: Container(
           width: kObjectRadius * 2,
@@ -77,7 +73,7 @@ class _ColorButtonState extends State<ColorButton>
             shape: BoxShape.circle,
             border: Border.all(
               color: Colors.white,
-              width: 3,
+              width: kColorButtonBorderWidth,
             ), // Border width could be a constant
           ),
         ),
