@@ -65,9 +65,7 @@ class ColorRushGame extends FlameGame {
   void update(double dt) {
     super.update(dt);
 
-
     if (notifier.state.isPaused) {
-      // If paused, don't update game elements that rely on time or movement
       return;
     }
     if (status != GameStatus.playing) {
@@ -222,7 +220,16 @@ class ColorRushGame extends FlameGame {
 
   // spawnObject and _drawReceivers methods remain as is (already extracted)
   void spawnObject() {
-    final randomX = _random.nextDouble() * size.x;
+    // Define the effective width where the object's center can be,
+    // ensuring it doesn't go off screen.
+    // The range for randomX should be from kObjectRadius to (size.x - kObjectRadius).
+
+    final double minSpawnX = kObjectRadius;
+    final double maxSpawnX = size.x - kObjectRadius;
+    final double spawnableRange = maxSpawnX - minSpawnX;
+    final double randomX = minSpawnX + (_random.nextDouble() * spawnableRange);
+
+
     final randomColor = gameColors[_random.nextInt(gameColors.length)];
     add(
       FallingObject(

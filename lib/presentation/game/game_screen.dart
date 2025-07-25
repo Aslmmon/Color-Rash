@@ -30,7 +30,6 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   late final ColorRushGame _game;
   BannerAd? _bannerAd;
   bool _isBannerAdLoaded = false;
-  late ConfettiController _confettiController; // <--- NEW
 
   @override
   void initState() {
@@ -38,9 +37,6 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     final colors = ref.read(colorProvider);
     final gameNotifier = ref.read(gameProvider.notifier);
     final IAudioPlayer audioPlayer = ref.read(audioPlayerProvider);
-    _confettiController = ConfettiController(
-      duration: const Duration(milliseconds: kLevelUpOverlayDisplayDurationMs),
-    ); // <--- NEW: Initialize controller with same duration as overlay
 
     _game = ColorRushGame(
       status: gameNotifier.state.status,
@@ -81,7 +77,6 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   @override
   void dispose() {
     _bannerAd?.dispose();
-    _confettiController.dispose(); // <--- NEW: Dispose confetti controller
     super.dispose();
   }
 
@@ -90,9 +85,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     final gameState = ref.watch(gameProvider);
     final gameNotifier = ref.read(gameProvider.notifier);
     final colors = ref.read(colorProvider);
-    /**
-     * stopeed GameStatus update
-     */
+
     _game.status = gameState.status; // Update Flame game status
     return Scaffold(
       body: _buildBackgroundGradient(context, gameState, gameNotifier, colors),
@@ -110,7 +103,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
         AppColors.backgroundGradients[gameState.currentGradientIndex];
 
     return AnimatedContainer(
-      duration: const Duration(seconds: 1),
+      duration: const Duration(seconds: kBackgroundGradientChangeDurationMs),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: currentGradientColors,
