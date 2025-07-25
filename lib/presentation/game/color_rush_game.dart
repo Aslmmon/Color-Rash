@@ -247,7 +247,7 @@ class ColorRushGame extends FlameGame {
     final screenHeight = size.y;
     final receiverWidth = screenWidth / gameColors.length;
     final receiverHeight = kReceiverHeight;
-    final double bannerAdHeight = isBannerAdLoaded ? AdSize.banner.height.toDouble() : 0.0;
+     final double bannerAdHeight = isBannerAdLoaded ? AdSize.banner.height.toDouble() : 20.0;
 
     for (var i = 0; i < gameColors.length; i++) {
       final receiver = RectangleComponent(

@@ -63,7 +63,7 @@ const int kBackgroundGradientChangeDurationMs =
     1; // Duration for background gradient color change (1 second)
 
 const double kTextFontSizeInMobile = 12.5;
-const double kTextFontSizeInWeb = 70;
+const double kTextFontSizeInWeb = 25;
 
 // Control Button (Pause/Mute) specific constants
 const double kControlButtonSize = 60.0;

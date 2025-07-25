@@ -1,4 +1,5 @@
 // lib/presentation/widgets/color_input_buttons.dart
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart'; // Needed for AdSize.banner.height.toDouble()
 import 'package:color_rash/domain/game_constants.dart'; // For kButtonBottomPadding
@@ -19,12 +20,14 @@ class ColorInputButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double bannerAdHeight = isBannerAdLoaded ? AdSize.banner.height.toDouble() : 0.0;
+    final double bannerAdHeight =
+        isBannerAdLoaded ? AdSize.banner.height.toDouble() : 50.0;
 
+    print("banner hight is "+ AdSize.banner.height.toString());
     return Align(
       alignment: Alignment.bottomCenter,
       child: Padding(
-        padding: EdgeInsets.only(bottom: bannerAdHeight-30),
+        padding: EdgeInsets.only(bottom: !kIsWeb ? bannerAdHeight : 85.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children:
@@ -34,6 +37,7 @@ class ColorInputButtons extends StatelessWidget {
                       color: color,
                       onTap: () => game.attemptCatch(color),
                     ),
+
                   )
                   .toList(),
         ),
