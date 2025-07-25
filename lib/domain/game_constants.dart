@@ -62,6 +62,9 @@ const kObjectSpawnPeriodInitial = 2.0;
 const int kBackgroundGradientChangeDurationMs =
     1; // Duration for background gradient color change (1 second)
 
+const double kTextFontSizeInMobile = 12.5;
+const double kTextFontSizeInWeb = 70;
+
 // Control Button (Pause/Mute) specific constants
 const double kControlButtonSize = 60.0;
 const double kControlBtnBorderRadius = 30.0; // For circular buttons
@@ -73,7 +76,7 @@ const double kPauseOverlayOpacity =
 const double kPauseButtonWidth = 200.0;
 const double kPauseButtonHeight = 60.0;
 const double kPauseButtonTextSize =
-    18.0; // Specific font size for "Resume" button
+    14.0; // Specific font size for "Resume" button
 
 // Game Over Overlay specific constants
 const double kGameOverOverlayOpacity =
@@ -83,11 +86,6 @@ const double kRestartButtonHeight = 60.0;
 const double kRestartButtonTextSize =
     14.0; // Specific font size for "Start/Play Again" button
 
-// lib/domain/game_constants.dart
-
-// ... (your existing constants)
-
-// General Padding/Spacing constants (ensure these are present)
 const double kSmallSpacing = 10.0; // <--- NEW: For the SizedBox height 10.0
 
 const double kGameOverScoreSpacing =
@@ -97,6 +95,5 @@ const double kGameOverHighscoreSpacing =
 
 const double kPauseOverlaySpacing =
     40.0; // <--- NEW: Spacing between "Paused" text and "Resume" button
-
 
 const int kMaxLevel = 15; // Or whatever number of levels you want for an ending

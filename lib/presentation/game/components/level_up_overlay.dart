@@ -1,4 +1,6 @@
 // lib/presentation/widgets/level_up_overlay.dart
+import 'package:color_rash/domain/game_constants.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:color_rash/presentation/theme/app_colors.dart'; // For colors
 
@@ -58,7 +60,7 @@ class _LevelUpOverlayState extends State<LevelUpOverlay>
                 'LEVEL ${widget.level}',
                 style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                   color: AppColors.accentColor, // Use accent color for pop
-                  fontSize: 60, // Make it extra big
+                  fontSize: kIsWeb ? kTextFontSizeInWeb : kTextFontSizeInMobile,
                   shadows: [
                     Shadow(
                       blurRadius: 10.0,

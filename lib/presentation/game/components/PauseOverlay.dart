@@ -1,5 +1,6 @@
 // lib/presentation/widgets/pause_overlay.dart
 import 'package:color_rash/domain/game_provider.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:color_rash/presentation/theme/app_colors.dart'; // For AppColors
 import 'package:color_rash/presentation/widgets/game_button.dart'; // For GameButton
@@ -24,6 +25,9 @@ class PauseOverlay extends StatelessWidget {
               style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                 // Using headlineLarge for consistency
                 color: AppColors.primaryTextColor,
+                  fontSize:
+                  kIsWeb
+                      ? kTextFontSizeInWeb : kTextFontSizeInMobile
               ),
             ),
             const SizedBox(height: kPauseOverlaySpacing), // Using constant

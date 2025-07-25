@@ -4,6 +4,7 @@
 
 import 'package:color_rash/domain/game_constants.dart';
 import 'package:flutter/cupertino.dart' show BuildContext, StatelessWidget;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
@@ -40,6 +41,8 @@ class GameOverOverlay extends StatelessWidget {
                 'Game Over',
                 style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                   color: AppColors.primaryTextColor,
+                  fontSize:kIsWeb ? kTextFontSizeInWeb: kTextFontSizeInMobile, // Make it extra big for WIN!
+
                 ),
               )
             else if (gameState.status == GameStatus.won) // <--- NEW
@@ -48,7 +51,7 @@ class GameOverOverlay extends StatelessWidget {
                 style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                   color: AppColors.accentColor,
                   // Celebrate with a different color!
-                  fontSize: 70, // Make it extra big for WIN!
+                  fontSize:kIsWeb ? kTextFontSizeInWeb: kTextFontSizeInMobile, // Make it extra big for WIN!
                 ),
               ),
 
@@ -60,13 +63,19 @@ class GameOverOverlay extends StatelessWidget {
                 'Your Score: ${gameState.score}',
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                   color: AppColors.primaryTextColor,
+                  fontSize:kIsWeb ? kTextFontSizeInWeb: kTextFontSizeInMobile, // Make it extra big for WIN!
+
                 ),
               ),
+              const SizedBox(height: 20,),
               Text(
                 'High Score: ${gameState.highScore}',
                 style: Theme.of(
                   context,
-                ).textTheme.titleLarge?.copyWith(color: AppColors.accentColor),
+                ).textTheme.titleLarge?.copyWith(color: AppColors.accentColor,
+                  fontSize:kIsWeb ? kTextFontSizeInWeb: kTextFontSizeInMobile, // Make it extra big for WIN!
+                ),
+
               ),
               const SizedBox(height: kGameOverHighscoreSpacing),
             ],

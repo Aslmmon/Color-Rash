@@ -5,6 +5,7 @@ import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flame/particles.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import '../../core/audio_player.dart';
 import '../../domain/game_constants.dart';
@@ -20,6 +21,7 @@ class ColorRushGame extends FlameGame {
   final GameNotifier notifier;
   final IAudioPlayer audioPlayer;
   late final RectangleComponent _catchZoneLineComponent;
+  final bool isBannerAdLoaded; // To correctly calculate padding
 
   // Constants for line feedback are here. Could be moved to game_constants.dart
   // if they are considered universal game parameters.
@@ -34,6 +36,7 @@ class ColorRushGame extends FlameGame {
     required this.gameColors,
     required this.notifier,
     required this.audioPlayer,
+    required this.isBannerAdLoaded
   });
 
   final Random _random = Random();
@@ -244,10 +247,12 @@ class ColorRushGame extends FlameGame {
     final screenHeight = size.y;
     final receiverWidth = screenWidth / gameColors.length;
     final receiverHeight = kReceiverHeight;
+    final double bannerAdHeight = isBannerAdLoaded ? AdSize.banner.height.toDouble() : 0.0;
 
     for (var i = 0; i < gameColors.length; i++) {
       final receiver = RectangleComponent(
-        position: Vector2(i * receiverWidth, screenHeight - receiverHeight),
+
+        position: Vector2(i * receiverWidth, screenHeight - receiverHeight- bannerAdHeight),
         size: Vector2(receiverWidth, receiverHeight),
       )..paint.color = gameColors[i];
       add(receiver);

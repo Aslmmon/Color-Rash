@@ -43,6 +43,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
       gameColors: colors,
       notifier: gameNotifier,
       audioPlayer: audioPlayer,
+      isBannerAdLoaded: _isBannerAdLoaded, // Pass the initial
     );
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!kIsWeb) {

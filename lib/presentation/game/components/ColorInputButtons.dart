@@ -19,15 +19,12 @@ class ColorInputButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double bannerAdHeight =
-        isBannerAdLoaded ? AdSize.banner.height.toDouble() : 0.0;
-    final double bottomPadding =
-        kButtonBottomPadding + bannerAdHeight; // Use constant
+    final double bannerAdHeight = isBannerAdLoaded ? AdSize.banner.height.toDouble() : 0.0;
 
     return Align(
       alignment: Alignment.bottomCenter,
       child: Padding(
-        padding: EdgeInsets.only(bottom: bottomPadding),
+        padding: EdgeInsets.only(bottom: bannerAdHeight-30),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children:
