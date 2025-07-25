@@ -229,7 +229,6 @@ class ColorRushGame extends FlameGame {
     final double spawnableRange = maxSpawnX - minSpawnX;
     final double randomX = minSpawnX + (_random.nextDouble() * spawnableRange);
 
-
     final randomColor = gameColors[_random.nextInt(gameColors.length)];
     add(
       FallingObject(

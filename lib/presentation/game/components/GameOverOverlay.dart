@@ -1,10 +1,16 @@
 // lib/presentation/widgets/game_over_overlay.dart
-import 'package:color_rash/domain/game_provider.dart';
-import 'package:flutter/material.dart';
-import 'package:color_rash/domain/game_state.dart'; // For GameState
-import 'package:color_rash/presentation/theme/app_colors.dart'; // For AppColors
-import 'package:color_rash/presentation/widgets/game_button.dart'; // For GameButton
+
+// ... (existing imports)
+
 import 'package:color_rash/domain/game_constants.dart';
+import 'package:flutter/cupertino.dart' show BuildContext, StatelessWidget;
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+
+import '../../../domain/game_provider.dart';
+import '../../../domain/game_state.dart';
+import '../../theme/app_colors.dart';
+import '../../widgets/game_button.dart';
 
 class GameOverOverlay extends StatelessWidget {
   final GameState gameState;
@@ -18,23 +24,38 @@ class GameOverOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // ... (existing Container, Center, Column setup)
+
     return Container(
       color: AppColors.gameOverOverlayColor.withOpacity(
         kGameOverOverlayOpacity,
-      ), // Using constant
+      ),
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (gameState.status == GameStatus.gameOver) ...[
+            // <--- MODIFIED: Display different text based on status
+            if (gameState.status == GameStatus.gameOver)
               Text(
                 'Game Over',
                 style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                   color: AppColors.primaryTextColor,
                 ),
+              )
+            else if (gameState.status == GameStatus.won) // <--- NEW
+              Text(
+                'YOU WIN!',
+                style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                  color: AppColors.accentColor,
+                  // Celebrate with a different color!
+                  fontSize: 70, // Make it extra big for WIN!
+                ),
               ),
+
+            // Only show score details if it's game over OR won
+            if (gameState.status == GameStatus.gameOver ||
+                gameState.status == GameStatus.won) ...[
               const SizedBox(height: kGameOverScoreSpacing),
-              // Using constant
               Text(
                 'Your Score: ${gameState.score}',
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
@@ -48,33 +69,31 @@ class GameOverOverlay extends StatelessWidget {
                 ).textTheme.titleLarge?.copyWith(color: AppColors.accentColor),
               ),
               const SizedBox(height: kGameOverHighscoreSpacing),
-              // Using constant
             ],
 
             GameButton(
               width: kRestartButtonWidth,
-              // Using constant
               height: kRestartButtonHeight,
-              // Using constant
               onPressed: () {
-                if (gameState.status == GameStatus.gameOver) {
+                // Logic to restart applies for both Game Over and Won states
+                if (gameState.status == GameStatus.gameOver ||
+                    gameState.status == GameStatus.won) {
                   gameNotifier.restartGame();
                 } else {
-                  gameNotifier.startGame();
+                  gameNotifier.startGame(); // Start the game if initial
                 }
               },
               color: AppColors.buttonColor,
-              // Using theme color for the button
               borderRadius: kControlBtnBorderRadius,
-              // Using a circular-ish button style from GameControlButtons
               child: Text(
-                gameState.status == GameStatus.initial
+                gameState.status ==
+                        GameStatus
+                            .initial // Check original status for button text
                     ? 'Start Game'
                     : 'Play Again',
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  // Using titleLarge for consistency
                   color: AppColors.buttonTextColor,
-                  fontSize: kRestartButtonTextSize, // Using constant
+                  fontSize: kRestartButtonTextSize,
                 ),
               ),
             ),

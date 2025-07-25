@@ -60,7 +60,7 @@ const kObjectSpawnPeriodInitial = 2.0;
 
 // --- UI/Animation Constants ---
 const int kBackgroundGradientChangeDurationMs =
-    1000; // Duration for background gradient color change (1 second)
+    1; // Duration for background gradient color change (1 second)
 
 // Control Button (Pause/Mute) specific constants
 const double kControlButtonSize = 60.0;
@@ -95,4 +95,8 @@ const double kGameOverScoreSpacing =
 const double kGameOverHighscoreSpacing =
     30.0; // Spacing between "High Score" and button
 
-const double kPauseOverlaySpacing = 40.0; // <--- NEW: Spacing between "Paused" text and "Resume" button
+const double kPauseOverlaySpacing =
+    40.0; // <--- NEW: Spacing between "Paused" text and "Resume" button
+
+
+const int kMaxLevel = 15; // Or whatever number of levels you want for an ending

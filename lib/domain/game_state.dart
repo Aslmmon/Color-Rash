@@ -1,7 +1,7 @@
 // Defines the possible states of our game.
 import 'package:color_rash/domain/game_constants.dart'; // <--- NEW
 
-enum GameStatus { initial, playing, gameOver }
+enum GameStatus { initial, playing, gameOver, won }
 
 // A class to hold all our game's state data in one place.
 class GameState {

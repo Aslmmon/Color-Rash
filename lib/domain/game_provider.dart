@@ -17,9 +17,6 @@ class GameNotifier extends Notifier<GameState> {
   late final ScoreRepository _scoreRepository;
   late final IAdService _adService;
   late final IAudioPlayer _audioPlayer;
-
-  final Random _random = Random();
-  int _lastGradientIndex = 0;
   int _gameOverCount = 0;
 
   @override
@@ -92,6 +89,17 @@ class GameNotifier extends Notifier<GameState> {
     newLevel = difficultyUpdateResult['level'] as int;
     showLevelUp = difficultyUpdateResult['showLevelUpOverlay'] as bool;
 
+    GameStatus finalStatus = state.status; // Default to current status
+    if (newLevel > kMaxLevel) {
+      // Use >= in case you skip levels
+      finalStatus = GameStatus.won;
+      _audioPlayer.playSfx(
+        'celebrate.wav',
+      ); // <--- NEW: Play a win sound effect
+      // You might want a different, more spectacular confetti burst here
+      // state = state.copyWith(showConfetti: true, showLevelUpOverlay: false); // Optional: keep confetti on
+    }
+
     state = state.copyWith(
       score: newScore,
       currentSpeed: newSpeed,
@@ -99,7 +107,8 @@ class GameNotifier extends Notifier<GameState> {
       currentGradientIndex: newGradientIndex,
       currentLevel: newLevel,
       showLevelUpOverlay: showLevelUp,
-      showConfetti: showLevelUp, // Update confetti state
+      showConfetti: showLevelUp,
+      status: finalStatus, // <--- MODIFIED: Update status if won
     );
 
     if (showLevelUp) {
@@ -136,16 +145,9 @@ class GameNotifier extends Notifier<GameState> {
       newLevel++;
       showLevelUp = true;
 
-      // Randomly pick a new gradient that is different from the current one
-      int newRandomIndex = _random.nextInt(
-        AppColors.backgroundGradients.length,
-      );
-      while (newRandomIndex == _lastGradientIndex &&
-          AppColors.backgroundGradients.length > 1) {
-        newRandomIndex = _random.nextInt(AppColors.backgroundGradients.length);
-      }
-      newGradientIndex = newRandomIndex;
-      _lastGradientIndex = newGradientIndex;
+      // Increment the index and use modulo to cycle back to 0 if it exceeds length
+      newGradientIndex =
+          (currentGradientIndex + 1) % AppColors.backgroundGradients.length;
     }
 
     return {
@@ -241,12 +243,11 @@ final audioPlayerProvider = Provider<IAudioPlayer>((ref) {
   return FlameAudioPlayer();
 });
 
-
 // Riverpod provider for the GoogleAdService
 final adServiceProvider = Provider<IAdService>((ref) {
   final adService = GoogleAdService();
   ref.onDispose(
-        () => adService.dispose(),
+    () => adService.dispose(),
   ); // Dispose the service when its provider is disposed
   return adService;
 });
