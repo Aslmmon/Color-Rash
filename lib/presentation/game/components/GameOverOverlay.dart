@@ -1,7 +1,3 @@
-// lib/presentation/widgets/game_over_overlay.dart
-
-// ... (existing imports)
-
 import 'package:color_rash/domain/game_constants.dart';
 import 'package:flutter/cupertino.dart' show BuildContext, StatelessWidget;
 import 'package:flutter/foundation.dart';

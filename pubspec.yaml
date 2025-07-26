@@ -46,6 +46,8 @@ dependencies:
   flutter_native_splash: ^2.4.6
   flutter_launcher_icons: ^0.14.4
   animated_button: ^0.3.1
+  firebase_core: ^3.15.2
+  firebase_crashlytics: ^4.3.10
 
 dev_dependencies:
   flutter_test:

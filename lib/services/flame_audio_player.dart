@@ -5,13 +5,15 @@ class FlameAudioPlayer implements IAudioPlayer {
   bool _isGloballyMuted = false;
   String? _currentBgmFileName;
 
+  static const double _EffectsDefaultVolume =
+      0.8; // Adjust this value (0.0 to 1.0) for desired BGM loudness
   static const double _bgmDefaultVolume =
-      0.5; // Adjust this value (0.0 to 1.0) for desired BGM loudness
+      1; // Adjust this value (0.0 to 1.0) for desired BGM loudness
 
   @override
   Future<void> playSfx(String fileName) async {
     if (!_isGloballyMuted) {
-      await FlameAudio.play(fileName);
+      await FlameAudio.play(fileName, volume: _EffectsDefaultVolume);
     }
   }
 

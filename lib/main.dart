@@ -1,16 +1,27 @@
 import 'package:color_rash/presentation/game/game_screen.dart';
 import 'package:color_rash/presentation/theme/app_theme.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
-void main() {
-  WidgetsFlutterBinding.ensureInitialized(); // <--- NEW: Crucial for plugins
-  MobileAds.instance.initialize(); // <--- NEW: Initialize Google Mobile Ads SDK
-  // <--- NEW: Set app to full screen
+import 'firebase_options.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  if (!kIsWeb) {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+
+    FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+
+    MobileAds.instance.initialize();
+  }
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-  // Optional: Set preferred orientations if your game should only be portrait/landscape
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
@@ -24,6 +35,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return MaterialApp(
       title: 'Color Rash',
       debugShowCheckedModeBanner: false,

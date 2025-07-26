@@ -1,7 +1,6 @@
 // lib/presentation/widgets/color_input_buttons.dart
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart'; // Needed for AdSize.banner.height.toDouble()
 import 'package:color_rash/presentation/game/color_rush_game.dart'; // For ColorRushGame
 import 'package:color_rash/presentation/widgets/color_button.dart'; // For ColorButton
 
