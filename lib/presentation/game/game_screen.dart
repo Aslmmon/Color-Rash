@@ -43,13 +43,10 @@ class _GameScreenState extends ConsumerState<GameScreen> {
       gameColors: colors,
       notifier: gameNotifier,
       audioPlayer: audioPlayer,
-      isBannerAdLoaded: _isBannerAdLoaded, // Pass the initial
     );
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!kIsWeb) {
         _loadBannerAd();
-      } else {
-        // print('Banner ads not supported on web platform.'); // Removed debug print
       }
     });
   }
@@ -134,11 +131,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
           GameWidget(game: _game), // Flame game rendered here
           ScoreDisplay(gameState: gameState),
           GameControlButtons(gameState: gameState, gameNotifier: gameNotifier),
-          ColorInputButtons(
-            colors: colors,
-            game: _game, // Pass the game instance
-            isBannerAdLoaded: _isBannerAdLoaded, // Pass the flag
-          ),
+          ColorInputButtons(colors: colors, game: _game),
           if (gameState.status != GameStatus.playing)
             GameOverOverlay(gameState: gameState, gameNotifier: gameNotifier),
           if (gameState.showLevelUpOverlay)
@@ -166,6 +159,9 @@ class _GameScreenState extends ConsumerState<GameScreen> {
         child: AdWidget(ad: _bannerAd!),
       );
     }
-    return const SizedBox.shrink(); // Hide if not loaded or on web
+    return const SizedBox(
+      width: 50,
+      height: 50,
+    ); // Hide if not loaded or on web
   }
 }

@@ -203,12 +203,18 @@ class GameNotifier extends Notifier<GameState> {
 
   /// Restarts the game, resetting current score and loading high score.
   void restartGame() {
-    state = state.copyWith(score: 0, status: GameStatus.initial);
+    state = state.copyWith(
+      status: GameStatus.playing,
+      score: 0,
+      currentSpeed: 1.0,
+      currentSpawnInterval: kObjectSpawnPeriodInitial,
+      currentGradientIndex: 0,
+      currentLevel: 1,
+    );
     _loadHighScore();
-    _audioPlayer.resumeBgm(); // Resume BGM on restart (if not muted)
+    _audioPlayer.playBgm('bg_music.mp3'); // Play BGM on game start
   }
 
-  // <--- NEW: Toggle Pause method
   void togglePause() {
     final newPauseState = !state.isPaused;
     state = state.copyWith(isPaused: newPauseState);

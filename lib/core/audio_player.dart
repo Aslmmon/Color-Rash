@@ -1,9 +1,13 @@
 abstract class IAudioPlayer {
   Future<void> playSfx(String fileName);
 
-  void playBgm(String fileName); // <--- NEW
-  void stopBgm(); // <--- NEW
-  void setMuted(bool muted); // <--- NEW: For global mute control
-  void pauseBgm(); // <--- NEW: For pausing
-  void resumeBgm(); // <--- NEW: For resuming
+  void playBgm(String fileName);
+
+  void stopBgm();
+
+  void setMuted(bool muted);
+
+  void pauseBgm();
+
+  void resumeBgm();
 }

@@ -1,12 +1,9 @@
-// lib/presentation/game/color_rush_game.dart
 import 'dart:math';
 import 'dart:ui';
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flame/particles.dart';
 import 'package:flutter/material.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
-
 import '../../core/audio_player.dart';
 import '../../domain/game_constants.dart';
 import '../../domain/game_provider.dart';
@@ -21,10 +18,6 @@ class ColorRushGame extends FlameGame {
   final GameNotifier notifier;
   final IAudioPlayer audioPlayer;
   late final RectangleComponent _catchZoneLineComponent;
-  final bool isBannerAdLoaded; // To correctly calculate padding
-
-  // Constants for line feedback are here. Could be moved to game_constants.dart
-  // if they are considered universal game parameters.
   static const double _linePulseRange = 50.0;
   static const double _linePulseDuration = 0.3;
 
@@ -36,7 +29,6 @@ class ColorRushGame extends FlameGame {
     required this.gameColors,
     required this.notifier,
     required this.audioPlayer,
-    required this.isBannerAdLoaded
   });
 
   final Random _random = Random();
@@ -165,11 +157,9 @@ class ColorRushGame extends FlameGame {
 
     if (lowestObject.position.y > catchZone) {
       if (lowestObject.color == tappedColor) {
-        _handleCorrectTap(lowestObject); // <--- NEW: Extracted for correct tap
+        _handleCorrectTap(lowestObject);
       } else {
-        _handleIncorrectTap(
-          lowestObject,
-        ); // <--- NEW: Extracted for incorrect tap
+        _handleIncorrectTap(lowestObject);
       }
     }
   }
@@ -247,12 +237,10 @@ class ColorRushGame extends FlameGame {
     final screenHeight = size.y;
     final receiverWidth = screenWidth / gameColors.length;
     final receiverHeight = kReceiverHeight;
-     final double bannerAdHeight = isBannerAdLoaded ? AdSize.banner.height.toDouble() : 20.0;
 
     for (var i = 0; i < gameColors.length; i++) {
       final receiver = RectangleComponent(
-
-        position: Vector2(i * receiverWidth, screenHeight - receiverHeight- bannerAdHeight),
+        position: Vector2(i * receiverWidth, screenHeight - receiverHeight),
         size: Vector2(receiverWidth, receiverHeight),
       )..paint.color = gameColors[i];
       add(receiver);
