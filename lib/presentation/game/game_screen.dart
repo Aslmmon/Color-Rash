@@ -30,6 +30,8 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   late final ColorRushGame _game;
   BannerAd? _bannerAd;
   bool _isBannerAdLoaded = false;
+  static final List<Color> _allConfettiColors =
+      AppColors.backgroundGradients.expand((list) => list).toList();
 
   @override
   void initState() {
@@ -97,14 +99,13 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     GameNotifier gameNotifier,
     List<Color> colors,
   ) {
-    final List<Color> currentGradientColors =
-        AppColors.backgroundGradients[gameState.currentGradientIndex];
+    //final List<Color> currentGradientColors = AppColors.backgroundGradients[gameState.currentGradientIndex];
 
     return AnimatedContainer(
       duration: const Duration(seconds: kBackgroundGradientChangeDurationMs),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: currentGradientColors,
+          colors: AppColors.backgroundGradients.first,
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
         ),
@@ -128,7 +129,8 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     return Expanded(
       child: Stack(
         children: [
-          GameWidget(game: _game), // Flame game rendered here
+          GameWidget(game: _game),
+          // Flame game rendered here
           ScoreDisplay(gameState: gameState),
           GameControlButtons(gameState: gameState, gameNotifier: gameNotifier),
           ColorInputButtons(colors: colors, game: _game),
@@ -139,12 +141,10 @@ class _GameScreenState extends ConsumerState<GameScreen> {
           if (gameState.isPaused) // Show the pause overlay only when paused
             PauseOverlay(gameNotifier: gameNotifier),
 
-          ConfettiOverlay(
-            confettiColors:
-                AppColors.backgroundGradients.expand((list) => list).toList(),
-            showConfetti:
-                gameState.showConfetti, // <--- Pass the state directly
-          ),
+          // ConfettiOverlay(
+          //   confettiColors: _allConfettiColors,
+          //   showConfetti: gameState.showConfetti, // <--- Pass the state directly
+          // ),
         ],
       ),
     );

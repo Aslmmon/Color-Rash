@@ -1,6 +1,7 @@
 // lib/domain/game_notifier.dart
 import 'dart:math';
 import 'dart:ui';
+import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart'; // Still needed for `Color`
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -57,7 +58,7 @@ class GameNotifier extends Notifier<GameState> {
       showConfetti: false, // Ensure confetti is off on start
     );
     _loadHighScore();
-    _audioPlayer.playBgm('bg_music.mp3'); // Play BGM on game start
+    _audioPlayer.playBgm(AppAudioPaths.bgm); // Play BGM on game start
   }
 
   /// Handles the player tapping a color.
@@ -94,7 +95,7 @@ class GameNotifier extends Notifier<GameState> {
       // Use >= in case you skip levels
       finalStatus = GameStatus.won;
       _audioPlayer.playSfx(
-        'celebrate.wav',
+        AppAudioPaths.celebrate,
       ); // <--- NEW: Play a win sound effect
       // You might want a different, more spectacular confetti burst here
       // state = state.copyWith(showConfetti: true, showLevelUpOverlay: false); // Optional: keep confetti on
@@ -161,7 +162,7 @@ class GameNotifier extends Notifier<GameState> {
 
   /// Triggers the visual overlay and sound effect for a level up.
   void _triggerLevelUpVisualsAndSound() {
-    _audioPlayer.playSfx('celebrate.wav'); // Play level up sound
+    _audioPlayer.playSfx(AppAudioPaths.celebrate); // Play level up sound
     // hide the level up overlay after a delay
     Future.delayed(
       const Duration(milliseconds: kLevelUpOverlayDisplayDurationMs),
@@ -179,7 +180,7 @@ class GameNotifier extends Notifier<GameState> {
   /// Ends the current game session, handles high score saving and ads.
   void endGame() {
     _handleGameOverScoreAndAds(); // Handle score saving and ad display
-    _audioPlayer.playSfx('game_over.mp3'); // Play game over sound
+    _audioPlayer.playSfx(AppAudioPaths.gameOver); // Play game over sound
     _audioPlayer.stopBgm(); // Stop BGM on game over
     state = state.copyWith(status: GameStatus.gameOver);
   }
@@ -212,7 +213,7 @@ class GameNotifier extends Notifier<GameState> {
       currentLevel: 1,
     );
     _loadHighScore();
-    _audioPlayer.playBgm('bg_music.mp3'); // Play BGM on game start
+    _audioPlayer.playBgm(AppAudioPaths.bgm); // Play BGM on game start
   }
 
   void togglePause() {

@@ -37,6 +37,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
 
     return MaterialApp(
+      showPerformanceOverlay: true, // <--- Add this line
       title: 'Color Rash',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.darkTheme, // <-- Use your custom theme here

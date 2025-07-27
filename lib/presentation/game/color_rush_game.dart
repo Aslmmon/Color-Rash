@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flame/particles.dart';
+import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
 import '../../core/audio_player.dart';
 import '../../domain/game_constants.dart';
@@ -54,6 +55,14 @@ class ColorRushGame extends FlameGame {
       paint: Paint()..color = AppColors.catchZoneLineColor.withOpacity(0.5),
     );
     add(_catchZoneLineComponent);
+
+    FlameAudio.audioCache.loadAll([
+      AppAudioPaths.bgm,
+      AppAudioPaths.errorTap,
+      AppAudioPaths.correctTap,
+      AppAudioPaths.celebrate,
+      AppAudioPaths.gameOver,
+    ]);
   }
 
   @override
@@ -188,7 +197,7 @@ class ColorRushGame extends FlameGame {
     );
     tappedObject.removeFromParent();
     notifier.incrementScore();
-    audioPlayer.playSfx('correct_tap.mp3');
+    audioPlayer.playSfx(AppAudioPaths.correctTap);
     add(
       FeedbackTextComponent(
         text: '+1',
@@ -200,7 +209,7 @@ class ColorRushGame extends FlameGame {
 
   /// Executes actions for an incorrect tap (sound, feedback, game end).
   void _handleIncorrectTap(FallingObject tappedObject) {
-    audioPlayer.playSfx('error_tap.mp3');
+    audioPlayer.playSfx(AppAudioPaths.errorTap);
     notifier.endGame();
     add(
       FeedbackTextComponent(
@@ -209,6 +218,7 @@ class ColorRushGame extends FlameGame {
         color: AppColors.incorrectTapColor,
       ),
     );
+    tappedObject.removeFromParent();
   }
 
   // spawnObject and _drawReceivers methods remain as is (already extracted)

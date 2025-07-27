@@ -97,3 +97,21 @@ const double kPauseOverlaySpacing =
     40.0; // <--- NEW: Spacing between "Paused" text and "Resume" button
 
 const int kMaxLevel = 15; // Or whatever number of levels you want for an ending
+
+class AppFilePaths {
+  static const String logo = 'assets/images/logo.png';
+  static const String background = 'assets/images/background.png';
+  static const String pauseIcon = 'assets/icons/pause.png';
+  static const String muteIcon = 'assets/icons/mute.png';
+  static const String unmuteIcon = 'assets/icons/unmute.png';
+  static const String playIcon = 'assets/icons/play.png';
+  static const String restartIcon = 'assets/icons/restart.png';
+}
+
+class AppAudioPaths {
+  static const String bgm = 'bg_music.ogg';
+  static const String correctTap = 'correct_tap.ogg';
+  static const String errorTap = 'error_tap.ogg';
+  static const String celebrate = 'celebrate.ogg';
+  static const String gameOver = 'game_over.ogg';
+}
