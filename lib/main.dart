@@ -1,7 +1,6 @@
 import 'package:color_rash/presentation/game/game_screen.dart';
 import 'package:color_rash/presentation/theme/app_theme.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -21,9 +20,7 @@ void main() async {
     // Get the monitoring service instance from the provider scope
     // This requires creating a temporary ProviderContainer for initial setup
     final container = ProviderContainer();
-    final appMonitoringService = container.read(
-      appMonitoringServiceProvider,
-    );
+    final appMonitoringService = container.read(appMonitoringServiceProvider);
     await appMonitoringService.initialize();
     FlutterError.onError =
         appMonitoringService.recordFlutterFatalError; // <--- MODIFIED
@@ -47,7 +44,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       showPerformanceOverlay: true,
-      // <--- Add this line
       title: 'Color Rash',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.darkTheme,

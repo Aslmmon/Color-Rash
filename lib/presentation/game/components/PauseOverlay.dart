@@ -25,9 +25,7 @@ class PauseOverlay extends StatelessWidget {
               style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                 // Using headlineLarge for consistency
                 color: AppColors.primaryTextColor,
-                  fontSize:
-                  kIsWeb
-                      ? kTextFontSizeInWeb : kTextFontSizeInMobile
+                fontSize: kIsWeb ? kTextFontSizeInWeb : kTextFontSizeInMobile,
               ),
             ),
             const SizedBox(height: kPauseOverlaySpacing), // Using constant

@@ -17,12 +17,44 @@ class AppTheme {
 
       // Define text themes
       // Using GoogleFonts for a custom font, ensure it's added in pubspec.yaml
-      textTheme: GoogleFonts.pressStart2pTextTheme(
+      textTheme: GoogleFonts.lilitaOneTextTheme(
         // Example: A pixel art font
-        ThemeData.dark().textTheme.apply(
-          bodyColor: AppColors.primaryTextColor,
-          displayColor: AppColors.primaryTextColor,
-        ),
+        ThemeData.dark().textTheme
+            .apply(
+              bodyColor: AppColors.primaryTextColor,
+              displayColor: AppColors.primaryTextColor,
+            )
+            .copyWith(
+              bodyMedium: GoogleFonts.lilitaOne().copyWith(
+                // Example: Outfit for body text
+                fontSize: 16,
+                color: AppColors.primaryTextColor,
+              ),
+              bodySmall: GoogleFonts.lilitaOne().copyWith(
+                // Example: Outfit for smaller text
+                fontSize: 14,
+                color: AppColors.secondaryTextColor,
+              ),
+              titleLarge: GoogleFonts.lilitaOne().copyWith(
+                // Example: Outfit for smaller text
+                fontSize: 24,
+                color: AppColors.secondaryTextColor,
+              ),
+              headlineSmall: GoogleFonts.lilitaOne().copyWith(
+                // Using Outfit for headlineSmall
+                fontSize: 18,
+                // As per your GameScreen, you use 18 for Pause/Resume button
+                color: AppColors.primaryTextColor,
+                fontWeight: FontWeight.bold,
+              ),
+              headlineLarge: GoogleFonts.lilitaOne().copyWith(
+                // Using Outfit for headlineSmall
+                fontSize: 32,
+                // As per your GameScreen, you use 18 for Pause/Resume button
+                color: AppColors.primaryTextColor,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
       ),
       // Define button themes
       elevatedButtonTheme: ElevatedButtonThemeData(

@@ -60,7 +60,10 @@ class _LevelUpOverlayState extends State<LevelUpOverlay>
                 'LEVEL ${widget.level}',
                 style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                   color: AppColors.accentColor, // Use accent color for pop
-                  fontSize: kIsWeb ? kTextFontSizeInWeb : kTextFontSizeInMobile,
+                  fontSize:
+                      kIsWeb
+                          ? kTextFontSizeInWeb
+                          : kTextFontSizeInMobileOverlay,
                   shadows: [
                     Shadow(
                       blurRadius: 10.0,
@@ -70,13 +73,12 @@ class _LevelUpOverlayState extends State<LevelUpOverlay>
                   ],
                 ),
               ),
-              // You could add a small additional message here
-              // Text(
-              //   'Difficulty Increased!',
-              //   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              //     color: AppColors.primaryTextColor,
-              //   ),
-              // ),
+              Text(
+                'Difficulty Increased!',
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  color: AppColors.primaryTextColor,
+                ),
+              ),
             ],
           ),
         ),

@@ -62,8 +62,11 @@ const kObjectSpawnPeriodInitial = 2.0;
 const int kBackgroundGradientChangeDurationMs =
     1; // Duration for background gradient color change (1 second)
 
-const double kTextFontSizeInMobile = 12.5;
+const double kTextFontSizeInMobile = 25;
+const double kTextFontSizeInMobileOverlay = 32;
+
 const double kTextFontSizeInWeb = 25;
+
 
 // Control Button (Pause/Mute) specific constants
 const double kControlButtonSize = 60.0;
@@ -76,15 +79,15 @@ const double kPauseOverlayOpacity =
 const double kPauseButtonWidth = 200.0;
 const double kPauseButtonHeight = 60.0;
 const double kPauseButtonTextSize =
-    14.0; // Specific font size for "Resume" button
+    24.0; // Specific font size for "Resume" button
 
 // Game Over Overlay specific constants
 const double kGameOverOverlayOpacity =
-    0.5; // Opacity of the game over overlay (0.0 to 1.0)
+    0.7; // Opacity of the game over overlay (0.0 to 1.0)
 const double kRestartButtonWidth = 200.0; // <--- HERE IT IS
 const double kRestartButtonHeight = 60.0;
 const double kRestartButtonTextSize =
-    14.0; // Specific font size for "Start/Play Again" button
+    24.0; // Specific font size for "Start/Play Again" button
 
 const double kSmallSpacing = 10.0; // <--- NEW: For the SizedBox height 10.0
 
