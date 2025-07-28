@@ -1,6 +1,5 @@
 import 'package:flame_audio/flame_audio.dart';
 import 'package:color_rash/core/audio_player.dart';
-import 'package:flutter_soloud/flutter_soloud.dart';
 
 import '../domain/game_constants.dart';
 

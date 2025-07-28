@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
+import 'domain/game_provider.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -17,8 +18,17 @@ void main() async {
       options: DefaultFirebaseOptions.currentPlatform,
     );
 
-    FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+    // Get the monitoring service instance from the provider scope
+    // This requires creating a temporary ProviderContainer for initial setup
+    final container = ProviderContainer();
+    final appMonitoringService = container.read(
+      appMonitoringServiceProvider,
+    );
+    await appMonitoringService.initialize();
+    FlutterError.onError =
+        appMonitoringService.recordFlutterFatalError; // <--- MODIFIED
 
+    // Mobile Ads initialization
     MobileAds.instance.initialize();
   }
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
@@ -35,12 +45,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return MaterialApp(
-      showPerformanceOverlay: true, // <--- Add this line
+      showPerformanceOverlay: true,
+      // <--- Add this line
       title: 'Color Rash',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.darkTheme, // <-- Use your custom theme here
+      theme: AppTheme.darkTheme,
+      // <-- Use your custom theme here
       home: const GameScreen(), // <-- Updated this line
     );
   }

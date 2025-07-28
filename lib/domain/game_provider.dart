@@ -1,14 +1,13 @@
 // lib/domain/game_notifier.dart
-import 'dart:math';
 import 'dart:ui';
-import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart'; // Still needed for `Color`
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import '../core/ad_service.dart';
+import '../core/app_monitoring_service.dart';
 import '../core/audio_player.dart';
 import '../data/score_repository.dart';
 import '../presentation/theme/app_colors.dart';
+import '../services/firebase_monitoring_service.dart';
 import '../services/flame_audio_player.dart';
 import '../services/google_ad_service.dart';
 import 'game_constants.dart';
@@ -18,11 +17,13 @@ class GameNotifier extends Notifier<GameState> {
   late final ScoreRepository _scoreRepository;
   late final IAdService _adService;
   late final IAudioPlayer _audioPlayer;
+  late final IAppMonitoringService _appMonitoringService;
+
   int _gameOverCount = 0;
 
   @override
   GameState build() {
-    _initializeDependencies(); // <--- NEW: Extracted method
+    _initializeDependencies();
     _loadHighScore();
     _adService.loadInterstitialAd();
     return GameState();
@@ -33,6 +34,7 @@ class GameNotifier extends Notifier<GameState> {
     _scoreRepository = ref.read(scoreRepositoryProvider);
     _adService = ref.read(adServiceProvider);
     _audioPlayer = ref.read(audioPlayerProvider);
+    _appMonitoringService = ref.read(appMonitoringServiceProvider);
   }
 
   /// Loads the high score from the repository and updates the game state.
@@ -59,6 +61,8 @@ class GameNotifier extends Notifier<GameState> {
     );
     _loadHighScore();
     _audioPlayer.playBgm(AppAudioPaths.bgm); // Play BGM on game start
+    _appMonitoringService.logEvent('game_started'); // <--- NEW
+    _appMonitoringService.startTrace('game_session_duration'); // <--- NEW
   }
 
   /// Handles the player tapping a color.
@@ -97,8 +101,6 @@ class GameNotifier extends Notifier<GameState> {
       _audioPlayer.playSfx(
         AppAudioPaths.celebrate,
       ); // <--- NEW: Play a win sound effect
-      // You might want a different, more spectacular confetti burst here
-      // state = state.copyWith(showConfetti: true, showLevelUpOverlay: false); // Optional: keep confetti on
     }
 
     state = state.copyWith(
@@ -114,6 +116,10 @@ class GameNotifier extends Notifier<GameState> {
 
     if (showLevelUp) {
       _triggerLevelUpVisualsAndSound(); // Trigger visual and audio feedback for level up
+      _appMonitoringService.logEvent(
+        'level_up',
+        parameters: {'level': newLevel},
+      ); // <--- NEW
     }
   }
 
@@ -183,6 +189,15 @@ class GameNotifier extends Notifier<GameState> {
     _audioPlayer.playSfx(AppAudioPaths.gameOver); // Play game over sound
     _audioPlayer.stopBgm(); // Stop BGM on game over
     state = state.copyWith(status: GameStatus.gameOver);
+    _appMonitoringService.logEvent(
+      'game_ended',
+      parameters: {
+        'score': state.score,
+        'high_score': state.highScore,
+        'status': state.status.toString(),
+      },
+    ); // <--- NEW
+    _appMonitoringService.stopTrace('game_session_duration'); // <--- NEW
   }
 
   /// Manages high score saving and interstitial ad display at game over.
@@ -216,6 +231,14 @@ class GameNotifier extends Notifier<GameState> {
     _audioPlayer.playBgm(AppAudioPaths.bgm); // Play BGM on game start
   }
 
+  void _testCustomError() {
+    try {
+      throw ArgumentError('This is a test non-fatal error!');
+    } catch (e, s) {
+      _appMonitoringService.logError(e, s, reason: 'test_non_fatal_error');
+    }
+  }
+
   void togglePause() {
     final newPauseState = !state.isPaused;
     state = state.copyWith(isPaused: newPauseState);
@@ -234,9 +257,7 @@ class GameNotifier extends Notifier<GameState> {
   }
 }
 
-// Global Providers: These are well-defined for Riverpod.
-// Ensure these providers are correctly defined in lib/domain/game_provider.dart
-// and imported where needed.
+// Global Providers: These are well-defined for Riverpod
 final gameProvider = NotifierProvider<GameNotifier, GameState>(() {
   return GameNotifier();
 });
@@ -257,4 +278,10 @@ final adServiceProvider = Provider<IAdService>((ref) {
     () => adService.dispose(),
   ); // Dispose the service when its provider is disposed
   return adService;
+});
+
+final appMonitoringServiceProvider = Provider<IAppMonitoringService>((ref) {
+  final service = FirebaseMonitoringService();
+  // No explicit dispose for Firebase SDKs as they are global singletons
+  return service;
 });
