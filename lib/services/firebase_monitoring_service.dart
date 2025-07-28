@@ -1,11 +1,9 @@
-// lib/services/firebase_monitoring_service.dart
 import 'package:flutter/foundation.dart';
 import 'package:firebase_analytics/firebase_analytics.dart'; // <--- NEW
 import 'package:firebase_crashlytics/firebase_crashlytics.dart'; // <--- Existing
 import 'package:firebase_performance/firebase_performance.dart'; // <--- NEW
 
 import 'package:color_rash/core/app_monitoring_service.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart'; // <--- Import the interface
 
 /// Concrete implementation of IAppMonitoringService using Firebase services.
 class FirebaseMonitoringService implements IAppMonitoringService {
@@ -32,8 +30,8 @@ class FirebaseMonitoringService implements IAppMonitoringService {
 
   // --- Analytics Implementation ---
   @override
-  void logEvent(String name, {Map<String, dynamic>? parameters}) {
-    _analytics.logEvent(name: name, parameters: parameters as dynamic);
+  void logEvent(String name, {Map<String, Object>? parameters}) {
+    _analytics.logEvent(name: name, parameters: parameters);
   }
 
   @override
@@ -93,4 +91,3 @@ class FirebaseMonitoringService implements IAppMonitoringService {
     }
   }
 }
-

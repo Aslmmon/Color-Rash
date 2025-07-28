@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart'; // For FlutterErrorDetails, StackTrace
 abstract class IAppMonitoringService {
   // --- Analytics ---
   /// Logs a custom analytical event.
-  void logEvent(String name, {Map<String, dynamic>? parameters});
+  void logEvent(String name, {Map<String, Object>? parameters});
 
   /// Sets a user property for analytics (e.g., player_type, difficulty_preference).
   void setUserProperty(String name, String? value);

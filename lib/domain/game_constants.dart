@@ -99,6 +99,7 @@ const double kPauseOverlaySpacing =
 const int kMaxLevel = 15; // Or whatever number of levels you want for an ending
 const int minPlayersInAudioPool = 1;
 const int maxPlayersInAudioPool = 3;
+
 class AppFilePaths {
   static const String logo = 'assets/images/logo.png';
   static const String background = 'assets/images/background.png';
