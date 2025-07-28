@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../core/ad_service.dart';
 import '../core/app_monitoring_service.dart';
 import '../core/audio_player.dart';
-import '../data/score_repository.dart';
+import '../data/settings_repository.dart';
 import '../presentation/theme/app_colors.dart';
 import '../services/firebase_monitoring_service.dart';
 import '../services/flame_audio_player.dart';
@@ -14,7 +14,7 @@ import 'game_constants.dart';
 import 'game_state.dart';
 
 class GameNotifier extends Notifier<GameState> {
-  late final ScoreRepository _scoreRepository;
+  late final SettingsRepository _settingsRepository;
   late final IAdService _adService;
   late final IAudioPlayer _audioPlayer;
   late final IAppMonitoringService _appMonitoringService;
@@ -24,25 +24,70 @@ class GameNotifier extends Notifier<GameState> {
   @override
   GameState build() {
     _initializeDependencies();
-    _loadHighScore();
+    _loadHighScoreAndSettings();
     _adService.loadInterstitialAd();
     return GameState();
   }
 
   /// Initializes the necessary service dependencies from Riverpod.
   void _initializeDependencies() {
-    _scoreRepository = ref.read(scoreRepositoryProvider);
+    _settingsRepository = ref.read(settingsRepositoryProvider);
     _adService = ref.read(adServiceProvider);
     _audioPlayer = ref.read(audioPlayerProvider);
     _appMonitoringService = ref.read(appMonitoringServiceProvider);
   }
 
   /// Loads the high score from the repository and updates the game state.
-  Future<void> _loadHighScore() async {
-    final loadedHighScore = await _scoreRepository.getHighScore();
+  Future<void> _loadHighScoreAndSettings() async {
+    final loadedHighScore = await _settingsRepository.getHighScore();
+    final hasSeenTutorial = await _settingsRepository.getHasSeenTutorial();
+
     if (loadedHighScore != state.highScore) {
-      state = state.copyWith(highScore: loadedHighScore);
+      state = state.copyWith(
+        highScore: loadedHighScore,
+        hasSeenTutorial: hasSeenTutorial,
+      );
     }
+  }
+
+  Future<void> restartTutorial() async {
+    state = state.copyWith(
+      hasSeenTutorial: false,
+    ); // Update state to show tutorial
+    await _settingsRepository.setHasSeenTutorial(false); // Persist the change
+    // No explicit status change here; GameScreen watches hasSeenTutorial.
+    // When the user next presses 'Start Game'/'Play Again', the tutorial will appear.
+  }
+
+  void resetToInitialState() {
+    state = state.copyWith(
+      status: GameStatus.initial,
+      // Explicitly set to initial
+      score: 0,
+      // Reset score
+      currentSpeed: 1.0,
+      // Reset difficulty
+      currentSpawnInterval: kObjectSpawnPeriodInitial,
+      currentGradientIndex: 0,
+      currentLevel: 1,
+      showLevelUpOverlay: false,
+      isPaused: false,
+      isMuted: state.isMuted,
+      // Preserve mute state
+      hasSeenTutorial: true,
+      showConfetti: false,
+    );
+    _audioPlayer.stopBgm(); // Stop BGM when returning to menu
+    _adService.loadInterstitialAd(); // Load new ad for next game session
+  }
+
+  Future<void> returnToMainMenu() async {
+    resetToInitialState();
+  }
+
+  Future<void> markTutorialSeen() async {
+    state = state.copyWith(hasSeenTutorial: true);
+    await _settingsRepository.setHasSeenTutorial(true); // Persist the change
   }
 
   /// Starts a new game session, resetting scores and game state.
@@ -57,9 +102,13 @@ class GameNotifier extends Notifier<GameState> {
       showLevelUpOverlay: false,
       isPaused: false,
       isMuted: false,
-      showConfetti: false, // Ensure confetti is off on start
+      showConfetti: false,
+      // Ensure confetti is off on start
+      // hasSeenTutorial is preserved from _loadHighScoreAndSettings.
+      // For development, if you want to reset tutorial for testing:
+      hasSeenTutorial: false,
     );
-    _loadHighScore();
+    _loadHighScoreAndSettings();
     _audioPlayer.playBgm(AppAudioPaths.bgm); // Play BGM on game start
     _appMonitoringService.logEvent('game_started'); // <--- NEW
     _appMonitoringService.startTrace('game_session_duration'); // <--- NEW
@@ -207,7 +256,7 @@ class GameNotifier extends Notifier<GameState> {
       state = state.copyWith(
         highScore: newHighScore,
       ); // Update in-memory high score
-      _scoreRepository.saveHighScore(newHighScore); // Persist
+      _settingsRepository.saveHighScore(newHighScore); // Persist
     }
 
     _gameOverCount++;
@@ -227,7 +276,7 @@ class GameNotifier extends Notifier<GameState> {
       currentGradientIndex: 0,
       currentLevel: 1,
     );
-    _loadHighScore();
+    _loadHighScoreAndSettings();
     _audioPlayer.playBgm(AppAudioPaths.bgm); // Play BGM on game start
   }
 

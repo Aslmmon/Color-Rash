@@ -16,6 +16,7 @@ class GameState {
   final bool isPaused; // <--- NEW
   final bool isMuted; // <--- NEW
   final bool showConfetti; // <--- NEW
+  final bool hasSeenTutorial; // <--- NEW PROPERTY
 
   GameState({
     this.score = 0,
@@ -29,6 +30,8 @@ class GameState {
     this.isPaused = false, // <--- NEW: Default to not paused
     this.isMuted = false, // <--- NEW: Default to not muted
     this.showConfetti = false, // <--- NEW: Default to false
+    this.hasSeenTutorial = false, // <--- NEW: Default to false (not seen)
+
   });
 
   // A convenience method to create a copy of the state with new values.
@@ -44,6 +47,7 @@ class GameState {
     bool? isPaused, // <--- NEW
     bool? isMuted, // <--- NEW
     bool? showConfetti, // <--- NEW
+    bool? hasSeenTutorial, // <--- NEW
   }) {
     return GameState(
       score: score ?? this.score,
@@ -57,6 +61,7 @@ class GameState {
       isPaused: isPaused ?? this.isPaused,
       isMuted: isMuted ?? this.isMuted,
       showConfetti: showConfetti ?? this.showConfetti,
+      hasSeenTutorial: hasSeenTutorial ?? this.hasSeenTutorial, // <--- NEW
     );
   }
 }

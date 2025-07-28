@@ -24,7 +24,7 @@ class AppColors {
       Colors.red; // For the line where circles are caught
 
   // Button Colors
-  static const Color buttonColor = Colors.blueAccent;
+  static const Color buttonColor = AppColors.accentColor;
   static const Color buttonTextColor = Colors.white;
   static const Color buttonBorderColor = Colors.white; // For the color buttons
 

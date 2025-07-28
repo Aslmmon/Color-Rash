@@ -1,13 +1,13 @@
 import 'package:color_rash/domain/game_constants.dart';
-import 'package:flutter/cupertino.dart' show BuildContext, StatelessWidget;
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart'; // For kIsWeb
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 import '../../../domain/game_provider.dart';
 import '../../../domain/game_state.dart';
 import '../../theme/app_colors.dart';
 import '../../widgets/game_button.dart';
+
+import '../game_screen.dart'; // Ensure AppStrings is imported
 
 class GameOverOverlay extends StatelessWidget {
   final GameState gameState;
@@ -21,7 +21,28 @@ class GameOverOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // ... (existing Container, Center, Column setup)
+    // Determine the main overlay text based on game status
+    final String mainOverlayText;
+    final Color mainOverlayTextColor;
+    final double mainOverlayTextSize;
+
+    if (gameState.status == GameStatus.gameOver) {
+      mainOverlayText = AppStrings.gameOverTitle;
+      mainOverlayTextColor = AppColors.primaryTextColor;
+      mainOverlayTextSize =
+          kIsWeb ? kHeadlineLargeFontSizeWeb : kHeadlineLargeFontSizeMobile;
+    } else if (gameState.status == GameStatus.won) {
+      mainOverlayText = AppStrings.youWinTitle;
+      mainOverlayTextColor = AppColors.accentColor;
+      mainOverlayTextSize =
+          kIsWeb ? kWinTitleFontSizeWeb : kWinTitleFontSizeMobile;
+    } else {
+      // GameStatus.initial
+      mainOverlayText = AppStrings.appTitle; // Or a welcome message if you like
+      mainOverlayTextColor = AppColors.accentColor;
+      mainOverlayTextSize =
+          kIsWeb ? kHeadlineLargeFontSizeWeb : kHeadlineLargeFontSizeMobile;
+    }
 
     return Container(
       color: AppColors.gameOverOverlayColor.withOpacity(
@@ -31,85 +52,110 @@ class GameOverOverlay extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // <--- MODIFIED: Display different text based on status
-            if (gameState.status == GameStatus.gameOver)
-              Text(
-                'Game Over',
-                style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                  color: AppColors.primaryTextColor,
-                  fontSize:
-                      kIsWeb
-                          ? kTextFontSizeInWeb
-                          : kTextFontSizeInMobile, // Make it extra big for WIN!
-                ),
-              )
-            else if (gameState.status == GameStatus.won) // <--- NEW
-              Text(
-                'YOU WIN!',
-                style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                  color: AppColors.accentColor,
-                  // Celebrate with a different color!
-                  fontSize:
-                      kIsWeb
-                          ? kTextFontSizeInWeb
-                          : kTextFontSizeInMobile, // Make it extra big for WIN!
-                ),
+            // Display main overlay text (Game Over, You Win, or App Title)
+            Text(
+              mainOverlayText,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                color: mainOverlayTextColor,
+                fontSize: mainOverlayTextSize,
               ),
-
+            ),
+            const SizedBox(height: kGameOverScoreSpacing),
             // Only show score details if it's game over OR won
             if (gameState.status == GameStatus.gameOver ||
                 gameState.status == GameStatus.won) ...[
               const SizedBox(height: kGameOverScoreSpacing),
               Text(
-                'Your Score: ${gameState.score}',
+                '${AppStrings.yourScoreLabel} ${gameState.score}',
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                   color: AppColors.primaryTextColor,
-                  fontSize:
-                      kIsWeb
-                          ? kTextFontSizeInWeb
-                          : kTextFontSizeInMobile, // Make it extra big for WIN!
+                  fontSize: kIsWeb ? kTextFontSizeInWeb : kTextFontSizeInMobile,
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: kGameOverScoreSpacing),
+              // Consistent spacing
               Text(
-                'High Score: ${gameState.highScore}',
+                '${AppStrings.highScoreLabel} ${gameState.highScore}',
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   color: AppColors.accentColor,
-                  fontSize:
-                      kIsWeb
-                          ? kTextFontSizeInWeb
-                          : kTextFontSizeInMobile, // Make it extra big for WIN!
+                  fontSize: kIsWeb ? kTextFontSizeInWeb : kTextFontSizeInMobile,
                 ),
               ),
               const SizedBox(height: kGameOverHighscoreSpacing),
             ],
 
+            // Primary Play/Restart Button
             GameButton(
               width: kRestartButtonWidth,
               height: kRestartButtonHeight,
               onPressed: () {
-                // Logic to restart applies for both Game Over and Won states
+                // If it's Game Over or Won, restart the game (pop GameScreen to MainMenu and then MainMenu pushes GameScreen)
                 if (gameState.status == GameStatus.gameOver ||
                     gameState.status == GameStatus.won) {
-                  gameNotifier.restartGame();
+                  gameNotifier
+                      .restartGame(); // This sets status to initial, and loads ad
                 } else {
-                  gameNotifier.startGame(); // Start the game if initial
+                  gameNotifier.startGame(); // Starts the game
                 }
               },
               color: AppColors.buttonColor,
               borderRadius: kControlBtnBorderRadius,
               child: Text(
-                gameState.status ==
-                        GameStatus
-                            .initial // Check original status for button text
-                    ? 'Start Game'
-                    : 'Play Again',
+                gameState.status == GameStatus.initial
+                    ? AppStrings.startGameButton
+                    : AppStrings.playAgainButton,
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   color: AppColors.buttonTextColor,
                   fontSize: kRestartButtonTextSize,
                 ),
               ),
             ),
+
+            // --- Show Tutorial Button (ONLY in Initial State) ---
+            if (gameState.status ==
+                GameStatus.initial) // <--- NEW VISIBILITY LOGIC
+              const SizedBox(height: kDefaultPadding), // Spacing
+            if (gameState.status ==
+                GameStatus.initial) // <--- NEW VISIBILITY LOGIC
+              GameButton(
+                width: kRestartButtonWidth,
+                height: kRestartButtonHeight / 1.5,
+                // Slightly smaller
+                onPressed: gameNotifier.restartTutorial,
+                color: AppColors.buttonColor.withOpacity(0.7),
+                borderRadius: kControlBtnBorderRadius,
+                child: Text(
+                  AppStrings.showTutorialButton,
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    color: AppColors.buttonTextColor,
+                    fontSize: kRestartButtonTextSize * 0.8,
+                  ),
+                ),
+              ),
+
+            // --- Return to Main Menu Button (ONLY after a game has ended) ---
+            if (gameState.status == GameStatus.gameOver ||
+                gameState.status == GameStatus.won) // <--- NEW VISIBILITY LOGIC
+              const SizedBox(height: kDefaultPadding),
+            if (gameState.status == GameStatus.gameOver ||
+                gameState.status == GameStatus.won) // <--- NEW VISIBILITY LOGIC
+              GameButton(
+                width: kRestartButtonWidth,
+                height: kRestartButtonHeight / 1.5,
+                onPressed: () {
+                  gameNotifier
+                      .returnToMainMenu(); // Reset game state (to initial)
+                },
+                color: AppColors.buttonColor.withOpacity(0.6),
+                borderRadius: kControlBtnBorderRadius,
+                child: Text(
+                  "Main Menu",
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    color: AppColors.buttonTextColor,
+                  ),
+                ),
+              ),
           ],
         ),
       ),

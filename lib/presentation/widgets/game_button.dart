@@ -1,4 +1,5 @@
 // lib/presentation/widgets/game_button.dart
+import 'package:color_rash/presentation/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:animated_button/animated_button.dart'; // <--- Import AnimatedButton
 
@@ -22,7 +23,7 @@ class GameButton extends StatelessWidget {
     required this.child, // Child is now required
     this.width = 45.0,
     this.height = 45.0,
-    this.color = Colors.blueAccent, // Default button color
+    this.color = AppColors.accentColor, // Default button color
     this.borderRadius = 15.0, // Default border radius
 
     this.shadowDegree = ShadowDegree.light, // Default shadow

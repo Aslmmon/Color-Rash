@@ -1,5 +1,6 @@
 import 'package:color_rash/core/ad_service.dart';
 import 'package:color_rash/core/audio_player.dart';
+import 'package:color_rash/presentation/widgets/tutorial_overlay.dart';
 import 'package:confetti/confetti.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/foundation.dart';
@@ -142,6 +143,8 @@ class _GameScreenState extends ConsumerState<GameScreen> {
             showConfetti:
                 gameState.showConfetti, // <--- Pass the state directly
           ),
+          if (gameState.status == GameStatus.initial && !gameState.hasSeenTutorial)
+            TutorialOverlay(gameNotifier: gameNotifier),
         ],
       ),
     );

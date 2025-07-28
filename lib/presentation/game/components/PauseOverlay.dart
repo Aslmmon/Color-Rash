@@ -35,7 +35,7 @@ class PauseOverlay extends StatelessWidget {
               height: kPauseButtonHeight,
               // Using constant
               onPressed: gameNotifier.togglePause,
-              color: AppColors.buttonColor,
+              color: AppColors.accentColor,
               // Using app theme color
               borderRadius: kControlBtnBorderRadius,
               // Assuming similar style as control buttons

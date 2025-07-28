@@ -67,7 +67,6 @@ const double kTextFontSizeInMobileOverlay = 32;
 
 const double kTextFontSizeInWeb = 25;
 
-
 // Control Button (Pause/Mute) specific constants
 const double kControlButtonSize = 60.0;
 const double kControlBtnBorderRadius = 30.0; // For circular buttons
@@ -102,7 +101,16 @@ const double kPauseOverlaySpacing =
 const int kMaxLevel = 15; // Or whatever number of levels you want for an ending
 const int minPlayersInAudioPool = 1;
 const int maxPlayersInAudioPool = 3;
+// lib/domain/game_constants.dart
+// ... (your existing constants)
 
+const double kHeadlineLargeFontSizeMobile = 48.0; // Example base for mobile
+const double kHeadlineLargeFontSizeWeb = 60.0;   // Example larger for web
+
+const double kWinTitleFontSizeMobile = 70.0; // Specific huge size for "YOU WIN!" on mobile
+const double kWinTitleFontSizeWeb = 90.0;     // Specific huge size for "YOU WIN!" on web
+
+// ... (other constants)
 class AppFilePaths {
   static const String logo = 'assets/images/logo.png';
   static const String background = 'assets/images/background.png';
@@ -119,4 +127,54 @@ class AppAudioPaths {
   static const String errorTap = 'error_tap.ogg';
   static const String celebrate = 'celebrate.ogg';
   static const String gameOver = 'game_over.ogg';
+}
+// lib/domain/app_strings.dart
+
+class AppStrings {
+  // --- Game Names/Titles ---
+  static const String appTitle = 'Color Rash';
+
+  // --- Tutorial Overlay Strings ---
+  static const String tutorialWelcomeTitle = 'WELCOME  TO COLOR RASH!';
+  static const String tutorialWelcomeBody =
+      'Tap the screen quickly to match falling colors and conquer the levels!';
+
+  static const String tutorialMatchColorTitle = 'MATCH THE COLOR!';
+  static const String tutorialMatchColorBody =
+      'Tap the Colored Circles buttons  at the bottom that precisely matches the color of the falling circle.';
+
+  static const String tutorialTimingKeyTitle = 'TIMING IS KEY!';
+  static const String tutorialTimingKeyBody =
+      'Only tap when the falling circle reaches below the glowing line at the bottom. Too early or too late is a miss!';
+
+  static const String tutorialSurviveScoreTitle = 'SURVIVE & SCORE!';
+  static const String tutorialSurviveScoreBody =
+      'Score points for every correct tap! Miss a color, or let a circle pass, it will be Game Over!';
+
+  static const String tutorialGetReadyTitle = 'GET READY FOR A RASH!';
+  static const String tutorialGetReadyBody =
+      'The game gets faster and the colors change as you score more points. Reach Level {level} to win!'; // Placeholder for level
+
+  static const String tutorialButtonBack = 'Back';
+  static const String tutorialButtonNext = 'Next';
+  static const String tutorialButtonGotItLetSPlay = 'Got It! Let\'s Play!';
+
+  // --- Game Over Overlay Strings ---
+  static const String gameOverTitle = 'Game Over';
+  static const String youWinTitle = 'YOU WIN!';
+  static const String yourScoreLabel = 'Your Score:';
+  static const String highScoreLabel = 'High Score:';
+  static const String startGameButton = 'Start Game';
+  static const String playAgainButton = 'Play Again';
+  static const String pausedTitle = 'Paused';
+  static const String resumeButton = 'Resume';
+
+  // --- Other UI Strings ---
+  static const String scoreLabel = 'Score:';
+  static const String showTutorialButton = 'Show Tutorial';
+
+  // --- Ad/Monitoring Strings (if you want to abstract these too) ---
+  // static const String adErrorLoadingBanner = 'Error loading banner ad:';
+  // static const String interstitialAdsNotSupportedWeb = 'Interstitial ads not supported on web platform.';
+  // static const String bannerAdsNotSupportedWeb = 'Banner ads not supported on web platform.';
 }

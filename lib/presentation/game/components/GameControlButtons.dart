@@ -20,7 +20,6 @@ class GameControlButtons extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // These values are derived from gameState and gameNotifier, keeping this widget stateless
-    final Color buttonBgColor = AppColors.buttonColor;
 
     return Positioned(
       top: kDefaultPadding, // Using constant
@@ -31,7 +30,6 @@ class GameControlButtons extends StatelessWidget {
         children: [
           GameButton(
             onPressed: gameNotifier.togglePause,
-            color: buttonBgColor,
             width: kControlButtonSize,
             height: kControlButtonSize,
             borderRadius: kControlBtnBorderRadius,
@@ -43,7 +41,6 @@ class GameControlButtons extends StatelessWidget {
           ),
           GameButton(
             onPressed: gameNotifier.toggleMute,
-            color: buttonBgColor,
             width: kControlButtonSize,
             height: kControlButtonSize,
             borderRadius: kControlBtnBorderRadius,
