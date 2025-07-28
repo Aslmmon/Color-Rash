@@ -18,6 +18,8 @@ class ColorRushGame extends FlameGame {
   final List<Color> gameColors;
   final GameNotifier notifier;
   final IAudioPlayer audioPlayer;
+  late AudioPool _correctTapSoundPool; // <--- NEW
+  late AudioPool _errorTapSoundPool; // <--- NEW
   late final RectangleComponent _catchZoneLineComponent;
   static const double _linePulseRange = 50.0;
   static const double _linePulseDuration = 0.3;
@@ -40,8 +42,9 @@ class ColorRushGame extends FlameGame {
 
   @override
   Future<void> onLoad() async {
-    _initializeGameComponents(); // <--- NEW: Extracted method for initial setup
+    _initializeGameComponents();
     _drawReceivers();
+    await _initializeAudioPools();
     return super.onLoad();
   }
 
@@ -55,14 +58,6 @@ class ColorRushGame extends FlameGame {
       paint: Paint()..color = AppColors.catchZoneLineColor.withOpacity(0.5),
     );
     add(_catchZoneLineComponent);
-
-    FlameAudio.audioCache.loadAll([
-      AppAudioPaths.bgm,
-      AppAudioPaths.errorTap,
-      AppAudioPaths.correctTap,
-      AppAudioPaths.celebrate,
-      AppAudioPaths.gameOver,
-    ]);
   }
 
   @override
@@ -255,5 +250,35 @@ class ColorRushGame extends FlameGame {
       )..paint.color = gameColors[i];
       add(receiver);
     }
+  }
+
+  Future<void> _initializeAudioPools() async {
+    await FlameAudio.audioCache.loadAll([
+      AppAudioPaths.bgm,
+      AppAudioPaths.errorTap,
+      AppAudioPaths.correctTap,
+      AppAudioPaths.celebrate,
+      AppAudioPaths.gameOver,
+    ]);
+    _correctTapSoundPool = await FlameAudio.createPool(
+      AppAudioPaths.correctTap,
+      minPlayers: minPlayersInAudioPool,
+      maxPlayers: maxPlayersInAudioPool,
+    );
+    _errorTapSoundPool = await FlameAudio.createPool(
+      AppAudioPaths.errorTap,
+      minPlayers: minPlayersInAudioPool,
+      maxPlayers: maxPlayersInAudioPool,
+    );
+    audioPlayer.registerAudioPools(
+      correctTapPool: _correctTapSoundPool,
+      errorTapPool: _errorTapSoundPool,
+    );
+  }
+
+  @override
+  void onRemove() {
+    audioPlayer.disposeAudioPools();
+    super.onRemove();
   }
 }

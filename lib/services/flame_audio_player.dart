@@ -1,9 +1,14 @@
 import 'package:flame_audio/flame_audio.dart';
 import 'package:color_rash/core/audio_player.dart';
+import 'package:flutter_soloud/flutter_soloud.dart';
+
+import '../domain/game_constants.dart';
 
 class FlameAudioPlayer implements IAudioPlayer {
   bool _isGloballyMuted = false;
   String? _currentBgmFileName;
+  late AudioPool _correctTapPool;
+  late AudioPool _errorTapPool;
 
   static const double _EffectsDefaultVolume =
       0.8; // Adjust this value (0.0 to 1.0) for desired BGM loudness
@@ -11,9 +16,29 @@ class FlameAudioPlayer implements IAudioPlayer {
       1; // Adjust this value (0.0 to 1.0) for desired BGM loudness
 
   @override
-  Future<void> playSfx(String fileName) async {
+  void playSfx(String fileName) {
     if (!_isGloballyMuted) {
-      await FlameAudio.play(fileName, volume: _EffectsDefaultVolume);
+      switch (fileName) {
+        case AppAudioPaths.correctTap:
+          _correctTapPool.start(volume: _EffectsDefaultVolume);
+          break;
+        case AppAudioPaths.errorTap:
+          _errorTapPool.start(volume: _EffectsDefaultVolume);
+          break;
+        // For other SFX that are less frequent, you can still use FlameAudio.play directly
+        // or create pools for them as well.
+        case AppAudioPaths.celebrate:
+        case AppAudioPaths.gameOver:
+          FlameAudio.play(
+            fileName,
+            volume: _EffectsDefaultVolume,
+          ); // Use direct play for less frequent sounds
+          break;
+        default:
+          // Fallback for unknown SFX if any
+          FlameAudio.play(fileName, volume: _EffectsDefaultVolume);
+          break;
+      }
     }
   }
 
@@ -61,5 +86,20 @@ class FlameAudioPlayer implements IAudioPlayer {
         volume: _bgmDefaultVolume,
       ); // Calling play will resume if paused, or restart if stopped.
     }
+  }
+
+  @override
+  void registerAudioPools({
+    required AudioPool correctTapPool,
+    required AudioPool errorTapPool,
+  }) {
+    _correctTapPool = correctTapPool;
+    _errorTapPool = errorTapPool;
+  }
+
+  @override
+  void disposeAudioPools() {
+    _correctTapPool.dispose();
+    _errorTapPool.dispose();
   }
 }

@@ -1,5 +1,7 @@
+import 'package:flame_audio/flame_audio.dart';
+
 abstract class IAudioPlayer {
-  Future<void> playSfx(String fileName);
+  void playSfx(String fileName);
 
   void playBgm(String fileName);
 
@@ -10,4 +12,13 @@ abstract class IAudioPlayer {
   void pauseBgm();
 
   void resumeBgm();
+
+  void registerAudioPools({
+    // Using named parameters for clarity
+    required AudioPool correctTapPool,
+    required AudioPool errorTapPool,
+    // Add parameters for other pools if you create them
+  });
+
+  void disposeAudioPools();
 }

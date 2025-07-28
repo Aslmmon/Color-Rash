@@ -99,13 +99,11 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     GameNotifier gameNotifier,
     List<Color> colors,
   ) {
-    //final List<Color> currentGradientColors = AppColors.backgroundGradients[gameState.currentGradientIndex];
-
     return AnimatedContainer(
       duration: const Duration(seconds: kBackgroundGradientChangeDurationMs),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: AppColors.backgroundGradients.first,
+          colors: AppColors.backgroundGradients[gameState.currentGradientIndex],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
         ),
@@ -130,7 +128,6 @@ class _GameScreenState extends ConsumerState<GameScreen> {
       child: Stack(
         children: [
           GameWidget(game: _game),
-          // Flame game rendered here
           ScoreDisplay(gameState: gameState),
           GameControlButtons(gameState: gameState, gameNotifier: gameNotifier),
           ColorInputButtons(colors: colors, game: _game),
@@ -140,11 +137,11 @@ class _GameScreenState extends ConsumerState<GameScreen> {
             LevelUpOverlay(level: gameState.currentLevel),
           if (gameState.isPaused) // Show the pause overlay only when paused
             PauseOverlay(gameNotifier: gameNotifier),
-
-          // ConfettiOverlay(
-          //   confettiColors: _allConfettiColors,
-          //   showConfetti: gameState.showConfetti, // <--- Pass the state directly
-          // ),
+          ConfettiOverlay(
+            confettiColors: _allConfettiColors,
+            showConfetti:
+                gameState.showConfetti, // <--- Pass the state directly
+          ),
         ],
       ),
     );
