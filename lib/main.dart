@@ -43,7 +43,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      showPerformanceOverlay: false,
+      showPerformanceOverlay: true,
       title: 'Color Rash',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.darkTheme,

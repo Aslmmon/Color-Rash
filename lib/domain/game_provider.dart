@@ -335,9 +335,6 @@ class GameNotifier extends Notifier<GameState> {
   }
 
   void grantLevelBoost() {
-    debugPrint(
-      "grantLevelBoost called with current level: ${state.currentLevel}",
-    );
     final int boostedLevel = (state.startLevelOverride + 2).clamp(
       1,
       kMaxLevel,
