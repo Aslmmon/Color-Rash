@@ -49,19 +49,16 @@ class GameOverlay extends StatelessWidget {
         return GameOverStateOverlay(
           gameState: gameState,
           gameNotifier: gameNotifier,
-          adService:
-              adService, // Pass adService here too if needed for rewarded ad
         );
       case GameStatus.won:
         return GameWonStateOverlay(
           gameState: gameState,
           gameNotifier: gameNotifier,
-          adService:
-              adService, // Pass adService here too if needed for rewarded ad
         );
       case GameStatus.playing:
         // GameOverlay is typically not visible when status is playing,
         // but if it somehow is, return an empty widget or log an error.
+
         return const SizedBox.shrink();
     }
   }

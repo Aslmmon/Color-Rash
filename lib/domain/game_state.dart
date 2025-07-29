@@ -17,7 +17,7 @@ class GameState {
   final bool isMuted; // <--- NEW
   final bool showConfetti; // <--- NEW
   final bool hasSeenTutorial; // <--- NEW PROPERTY
-  final int?
+  final int
   startLevelOverride; // <--- NEW PROPERTY: Nullable int for level boost
 
   GameState({
@@ -33,7 +33,7 @@ class GameState {
     this.isMuted = false, // <--- NEW: Default to not muted
     this.showConfetti = false, // <--- NEW: Default to false
     this.hasSeenTutorial = false, // <--- NEW: Default to false (not seen)
-    this.startLevelOverride, // <--- NEW: Defaults to null
+    this.startLevelOverride = 1, // <--- NEW: Defaults to null
   });
 
   // A convenience method to create a copy of the state with new values.
@@ -65,9 +65,26 @@ class GameState {
       isMuted: isMuted ?? this.isMuted,
       showConfetti: showConfetti ?? this.showConfetti,
       hasSeenTutorial: hasSeenTutorial ?? this.hasSeenTutorial,
-      // <--- NEW
-      startLevelOverride:
-          startLevelOverride ?? this.startLevelOverride, // <--- NEW
+      startLevelOverride: startLevelOverride ?? this.startLevelOverride,
     );
+  }
+
+  @override
+  String toString() {
+    return 'GameState('
+        'score: $score, '
+        'highScore: $highScore, '
+        'status: ${status.toString().split('.').last}, ' // Gets enum name (e.g., 'playing')
+        'currentSpeed: $currentSpeed, '
+        'currentSpawnInterval: $currentSpawnInterval, '
+        'currentGradientIndex: $currentGradientIndex, '
+        'currentLevel: $currentLevel, '
+        'showLevelUpOverlay: $showLevelUpOverlay, '
+        'isPaused: $isPaused, '
+        'isMuted: $isMuted, '
+        'showConfetti: $showConfetti, '
+        'hasSeenTutorial: $hasSeenTutorial, '
+        'startLevelOverride: $startLevelOverride'
+        ')';
   }
 }

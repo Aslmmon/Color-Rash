@@ -13,13 +13,11 @@ import '../../core/ad_service.dart'; // For IAdService
 class GameWonStateOverlay extends StatelessWidget {
   final GameState gameState;
   final GameNotifier gameNotifier;
-  final IAdService adService;
 
   const GameWonStateOverlay({
     super.key,
     required this.gameState,
     required this.gameNotifier,
-    required this.adService,
   });
 
   @override
@@ -30,7 +28,6 @@ class GameWonStateOverlay extends StatelessWidget {
         AppColors.accentColor; // Accent color for WIN!
     final double mainOverlayTextSize =
         kIsWeb ? kWinTitleFontSizeWeb : kWinTitleFontSizeMobile;
-
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,

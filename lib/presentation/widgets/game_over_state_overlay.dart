@@ -12,13 +12,11 @@ import '../../core/ad_service.dart'; // For IAdService
 class GameOverStateOverlay extends StatelessWidget {
   final GameState gameState;
   final GameNotifier gameNotifier;
-  final IAdService adService;
 
   const GameOverStateOverlay({
     super.key,
     required this.gameState,
     required this.gameNotifier,
-    required this.adService,
   });
 
   @override
@@ -28,7 +26,6 @@ class GameOverStateOverlay extends StatelessWidget {
     final Color mainOverlayTextColor = AppColors.primaryTextColor;
     final double mainOverlayTextSize =
         kIsWeb ? kHeadlineLargeFontSizeWeb : kHeadlineLargeFontSizeMobile;
-
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -89,9 +86,7 @@ class GameOverStateOverlay extends StatelessWidget {
           width: kRestartButtonWidth,
           height: kRestartButtonHeight / 1.5,
           // Slightly smaller
-          onPressed: () {
-            gameNotifier.returnToMainMenu(); // Reset game state (to initial)
-          },
+          onPressed: () => gameNotifier.returnToMainMenu(),
           color: AppColors.buttonColor.withOpacity(0.6),
           borderRadius: kControlBtnBorderRadius,
           child: Text(

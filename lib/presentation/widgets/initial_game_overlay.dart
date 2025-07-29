@@ -30,6 +30,7 @@ class InitialStateOverlay extends StatelessWidget {
     final double mainOverlayTextSize =
         kIsWeb ? kHeadlineLargeFontSizeWeb : kHeadlineLargeFontSizeMobile;
 
+    debugPrint("grantLevelBoost GameState in InitialGameOverlay ${gameState}");
     final String startLevelHintText =
         '${AppStrings.startLevelHint} ${gameState.startLevelOverride ?? 1}';
 
@@ -56,14 +57,6 @@ class InitialStateOverlay extends StatelessWidget {
           height: kRestartButtonHeight,
           onPressed: () {
             gameNotifier.startGame(); // Starts the game
-            // Navigate from MainMenuScreen (the parent that pushes this) to GameScreen
-            // This push is correct if InitialStateOverlay is part of MainMenuScreen's direct content.
-            // If InitialStateOverlay is used within GameScreen itself, this push needs review.
-            // For now, assuming MainMenuScreen will push GameScreen.
-            // Let's ensure MainMenuScreen handles the push explicitly.
-            // Navigator.of(
-            //   context,
-            // ).push(MaterialPageRoute(builder: (context) => const GameScreen()));
           },
           color: AppColors.buttonColor,
           borderRadius: kControlBtnBorderRadius,
@@ -106,8 +99,7 @@ class InitialStateOverlay extends StatelessWidget {
                 // Consistent with tutorial button
                 onPressed: () {
                   adService.showRewardedAd(() {
-                    gameNotifier
-                        .grantLevelBoost(); // Callback for when reward is earned
+                    gameNotifier.grantLevelBoost(); // Callback for when reward is earned
                   });
                 },
                 color: AppColors.correctTapColor.withOpacity(0.8),

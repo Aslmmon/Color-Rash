@@ -26,6 +26,7 @@ class GameNotifier extends Notifier<GameState> {
     _initializeDependencies();
     _loadHighScoreAndSettings();
     _adService.loadInterstitialAd();
+    _adService.loadRewardedAd();
     return GameState();
   }
 
@@ -97,30 +98,23 @@ class GameNotifier extends Notifier<GameState> {
     // When the user next presses 'Start Game'/'Play Again', the tutorial will appear.
   }
 
-  void resetToInitialState() {
+  void returnToMainMenu() {
     state = state.copyWith(
       status: GameStatus.initial,
-      // Explicitly set to initial
       score: 0,
-      // Reset score
       currentSpeed: 1.0,
-      // Reset difficulty
       currentSpawnInterval: kObjectSpawnPeriodInitial,
       currentGradientIndex: 0,
       currentLevel: 1,
       showLevelUpOverlay: false,
       isPaused: false,
       isMuted: state.isMuted,
-      // Preserve mute state
+      startLevelOverride: 1,
       hasSeenTutorial: true,
       showConfetti: false,
     );
     _audioPlayer.stopBgm(); // Stop BGM when returning to menu
     _adService.loadInterstitialAd(); // Load new ad for next game session
-  }
-
-  Future<void> returnToMainMenu() async {
-    resetToInitialState();
   }
 
   Future<void> markTutorialSeen() async {
@@ -154,13 +148,12 @@ class GameNotifier extends Notifier<GameState> {
       isPaused: false,
       isMuted: state.isMuted,
       showConfetti: false,
-      startLevelOverride: null, // <--- Crucial: Reset override after use
+      startLevelOverride: 1, // <--- Crucial: Reset override after use
     );
     _loadHighScoreAndSettings();
     _audioPlayer.playBgm(AppAudioPaths.bgm); // Play BGM on game start
     _appMonitoringService.logEvent('game_started'); // <--- NEW
     _appMonitoringService.startTrace('game_session_duration'); // <--- NEW
-    _adService.loadRewardedAd();
   }
 
   /// Handles the player tapping a color.
@@ -324,7 +317,7 @@ class GameNotifier extends Notifier<GameState> {
       currentSpawnInterval: kObjectSpawnPeriodInitial,
       currentGradientIndex: 0,
       currentLevel: 1,
-      startLevelOverride: null, // <--- Crucial: Reset override
+      startLevelOverride: 1, // <--- Crucial: Reset override
     );
     _loadHighScoreAndSettings();
     _audioPlayer.playBgm(AppAudioPaths.bgm); // Play BGM on game start
@@ -342,30 +335,21 @@ class GameNotifier extends Notifier<GameState> {
   }
 
   void grantLevelBoost() {
-    if (state.status == GameStatus.initial ||
-        state.status == GameStatus.gameOver ||
-        state.status == GameStatus.won) {
-      // Only grant boost if not actively playing
-      final int boostedLevel = (state.currentLevel + 2).clamp(
-        1,
-        kMaxLevel,
-      ); // Boost by 2, clamp to max level
-      state = state.copyWith(
-        startLevelOverride: boostedLevel,
-      ); // Set the override level
-      _appMonitoringService.logEvent(
-        'rewarded_ad_level_boost_granted',
-        parameters: {'boosted_level': boostedLevel},
-      );
-      debugPrint('Level boosted to $boostedLevel from rewarded ad!');
-    } else {
-      _appMonitoringService.logError(
-        Exception('Rewarded ad granted during active play.'),
-        StackTrace.current,
-        reason: 'rewarded_ad_during_play',
-      );
-      debugPrint('Rewarded ad rewarded, but not applied (game in progress).');
-    }
+    debugPrint(
+      "grantLevelBoost called with current level: ${state.currentLevel}",
+    );
+    final int boostedLevel = (state.startLevelOverride + 2).clamp(
+      1,
+      kMaxLevel,
+    ); // Boost by 2, clamp to max level
+    state = state.copyWith(
+      startLevelOverride: boostedLevel,
+    ); // Set the override level
+    _appMonitoringService.logEvent(
+      'rewarded_ad_level_boost_granted',
+      parameters: {'boosted_level': boostedLevel},
+    );
+    debugPrint('Level boosted to $boostedLevel from rewarded ad!');
   }
 
   // <--- NEW: Toggle Mute method
