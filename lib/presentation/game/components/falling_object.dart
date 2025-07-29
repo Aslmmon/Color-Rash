@@ -15,8 +15,7 @@ class FallingObject extends CircleComponent
     required super.position,
     required this.color,
     this.speedMultiplier = 1.0, // <--- NEW: Default to 1.0 if not provided
-  })
-    : super(radius: kObjectRadius, paint: Paint()..color = color);
+  }) : super(radius: kObjectRadius, paint: Paint()..color = color);
 
   @override
   void update(double dt) {
@@ -27,7 +26,8 @@ class FallingObject extends CircleComponent
       return; // Don't move if game is paused
     }
 
-    final double effectiveSpeed = kObjectBaseSpeed * speedMultiplier; // <--- MODIFIED
+    final double effectiveSpeed =
+        kObjectBaseSpeed * speedMultiplier; // <--- MODIFIED
 
     // Move the circle downwards using the constant speed
     position.y += effectiveSpeed * dt;

@@ -105,10 +105,12 @@ const int maxPlayersInAudioPool = 3;
 // ... (your existing constants)
 
 const double kHeadlineLargeFontSizeMobile = 48.0; // Example base for mobile
-const double kHeadlineLargeFontSizeWeb = 60.0;   // Example larger for web
+const double kHeadlineLargeFontSizeWeb = 60.0; // Example larger for web
 
-const double kWinTitleFontSizeMobile = 70.0; // Specific huge size for "YOU WIN!" on mobile
-const double kWinTitleFontSizeWeb = 90.0;     // Specific huge size for "YOU WIN!" on web
+const double kWinTitleFontSizeMobile =
+    70.0; // Specific huge size for "YOU WIN!" on mobile
+const double kWinTitleFontSizeWeb =
+    90.0; // Specific huge size for "YOU WIN!" on web
 
 // ... (other constants)
 class AppFilePaths {
@@ -173,8 +175,9 @@ class AppStrings {
   static const String scoreLabel = 'Score:';
   static const String showTutorialButton = 'Show Tutorial';
 
-  // --- Ad/Monitoring Strings (if you want to abstract these too) ---
-  // static const String adErrorLoadingBanner = 'Error loading banner ad:';
-  // static const String interstitialAdsNotSupportedWeb = 'Interstitial ads not supported on web platform.';
-  // static const String bannerAdsNotSupportedWeb = 'Banner ads not supported on web platform.';
+  static const String adErrorLoadingBanner = 'Error loading banner ad:';
+  static const String interstitialAdsNotSupportedWeb =
+      'Interstitial ads not supported on web platform.';
+  static const String bannerAdsNotSupportedWeb =
+      'Banner ads not supported on web platform.';
 }

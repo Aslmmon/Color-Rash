@@ -27,7 +27,8 @@ class GameScreen extends ConsumerStatefulWidget {
   ConsumerState<GameScreen> createState() => _GameScreenState();
 }
 
-class _GameScreenState extends ConsumerState<GameScreen> {
+class _GameScreenState extends ConsumerState<GameScreen>
+    with WidgetsBindingObserver {
   late final ColorRushGame _game;
   BannerAd? _bannerAd;
   bool _isBannerAdLoaded = false;
@@ -37,6 +38,8 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this); // <--- REGISTER Observer
+
     final colors = ref.read(colorProvider);
     final gameNotifier = ref.read(gameProvider.notifier);
     final IAudioPlayer audioPlayer = ref.read(audioPlayerProvider);
@@ -77,6 +80,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this); // <--- UNREGISTER Observer
     _bannerAd?.dispose();
     super.dispose();
   }
@@ -143,7 +147,8 @@ class _GameScreenState extends ConsumerState<GameScreen> {
             showConfetti:
                 gameState.showConfetti, // <--- Pass the state directly
           ),
-          if (gameState.status == GameStatus.initial && !gameState.hasSeenTutorial)
+          if (gameState.status == GameStatus.initial &&
+              !gameState.hasSeenTutorial)
             TutorialOverlay(gameNotifier: gameNotifier),
         ],
       ),
@@ -163,5 +168,39 @@ class _GameScreenState extends ConsumerState<GameScreen> {
       width: 50,
       height: 50,
     ); // Hide if not loaded or on web
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    final gameNotifier = ref.read(gameProvider.notifier);
+    switch (state) {
+      case AppLifecycleState
+          .paused: // App is in the background or screen is locked
+        if (!gameNotifier.state.isPaused &&
+            gameNotifier.state.status == GameStatus.playing) {
+          gameNotifier
+              .togglePause(); // Pause the game if it's playing and not already paused
+        }
+        break;
+      case AppLifecycleState.resumed: // App comes to foreground
+        // Optional: you could auto-resume here, but often user preference is to manually resume.
+        // If you want to auto-resume, ensure gameNotifier.state.isPaused is true before resuming.
+        break;
+      case AppLifecycleState
+          .inactive: // Temporary pause, e.g., incoming call. Often behaves like paused.
+        if (!gameNotifier.state.isPaused &&
+            gameNotifier.state.status == GameStatus.playing) {
+          gameNotifier.togglePause();
+        }
+        break;
+      case AppLifecycleState.detached: // App is terminated
+        break;
+      case AppLifecycleState.hidden: // App is hidden (iOS 16+ or Android 13+)
+        if (!gameNotifier.state.isPaused &&
+            gameNotifier.state.status == GameStatus.playing) {
+          gameNotifier.togglePause();
+        }
+        break;
+    }
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flame_audio/flame_audio.dart';
 import 'package:color_rash/core/audio_player.dart';
+import 'package:flutter/cupertino.dart';
 
 import '../domain/game_constants.dart';
 
@@ -10,7 +11,7 @@ class FlameAudioPlayer implements IAudioPlayer {
   late AudioPool _errorTapPool;
 
   static const double _EffectsDefaultVolume =
-      0.8; // Adjust this value (0.0 to 1.0) for desired BGM loudness
+      0.5; // Adjust this value (0.0 to 1.0) for desired BGM loudness
   static const double _bgmDefaultVolume =
       1; // Adjust this value (0.0 to 1.0) for desired BGM loudness
 
@@ -60,12 +61,15 @@ class FlameAudioPlayer implements IAudioPlayer {
   @override
   void setMuted(bool muted) {
     _isGloballyMuted = muted;
+    debugPrint("isGloballyMuted  " +_isGloballyMuted.toString());
     if (_isGloballyMuted) {
       FlameAudio.bgm.audioPlayer.setVolume(0.0); // MUTE: Set volume to 0
     } else {
       FlameAudio.bgm.audioPlayer.setVolume(
         _bgmDefaultVolume,
-      ); // UNMUTE: Restore volume to default
+      );
+      FlameAudio.bgm.resume();
+
     }
   }
 
@@ -79,11 +83,7 @@ class FlameAudioPlayer implements IAudioPlayer {
   @override
   void resumeBgm() {
     if (!_isGloballyMuted && _currentBgmFileName != null) {
-      // Ensure volume is correct before playing/resuming
-      FlameAudio.bgm.play(
-        _currentBgmFileName!,
-        volume: _bgmDefaultVolume,
-      ); // Calling play will resume if paused, or restart if stopped.
+      FlameAudio.bgm.resume();
     }
   }
 

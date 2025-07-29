@@ -223,7 +223,7 @@ class ColorRushGame extends FlameGame {
     // The range for randomX should be from kObjectRadius to (size.x - kObjectRadius).
 
     final double minSpawnX = kObjectRadius;
-    final double maxSpawnX = size.x - kObjectRadius;
+    final double maxSpawnX = size.x - kObjectRadius * 2;
     final double spawnableRange = maxSpawnX - minSpawnX;
     final double randomX = minSpawnX + (_random.nextDouble() * spawnableRange);
 
