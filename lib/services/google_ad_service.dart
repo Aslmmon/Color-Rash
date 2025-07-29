@@ -7,6 +7,9 @@ import 'package:color_rash/domain/game_constants.dart'; // <--- NEW: Import game
 
 class GoogleAdService implements IAdService {
   InterstitialAd? _interstitialAd;
+  RewardedAd? _rewardedAd; // <--- NEW: Rewarded Ad instance
+  bool _isRewardedAdLoading =
+      false; // <--- NEW: To prevent multiple simultaneous loads
 
   // Helper method to get the correct interstitial ad unit ID based on platform
   String _getInterstitialAdUnitId() {
@@ -82,7 +85,72 @@ class GoogleAdService implements IAdService {
     return _getBannerAdUnitId();
   }
 
+  String _getRewardedAdUnitId() {
+    if (kIsWeb) {
+      return '';
+    } else if (Platform.isAndroid) {
+      return kRewardedAdUnitIdAndroid; // Android TEST ID for Rewarded Ad
+    } else if (Platform.isIOS) {
+      return kRewardedAdUnitIdiOS; // iOS TEST ID for Rewarded Ad
+    }
+    return '';
+  }
+
+  @override
+  void loadRewardedAd() {
+    if (kIsWeb || _isRewardedAdLoading || _rewardedAd != null) {
+      // Don't load if on web, already loading, or already loaded
+      return;
+    }
+    _isRewardedAdLoading = true;
+
+    RewardedAd.load(
+      adUnitId: _getRewardedAdUnitId(),
+      request: const AdRequest(),
+      rewardedAdLoadCallback: RewardedAdLoadCallback(
+        onAdLoaded: (ad) {
+          _rewardedAd = ad;
+          _isRewardedAdLoading = false;
+          print('Rewarded ad loaded.'); // Debugging
+        },
+        onAdFailedToLoad: (error) {
+          _rewardedAd = null;
+          _isRewardedAdLoading = false;
+          print('Rewarded ad failed to load: $error'); // Debugging
+        },
+      ),
+    );
+  }
+
+  @override
+  void showRewardedAd(Function onUserEarnedReward) {
+    if (_rewardedAd != null) {
+      _rewardedAd!.fullScreenContentCallback = FullScreenContentCallback(
+        onAdDismissedFullScreenContent: (ad) {
+          ad.dispose();
+          _rewardedAd = null;
+          loadRewardedAd(); // Load the next one for future use
+        },
+        onAdFailedToShowFullScreenContent: (ad, error) {
+          ad.dispose();
+          _rewardedAd = null;
+          loadRewardedAd();
+          print('Rewarded ad failed to show: $error'); // Debugging
+        },
+      );
+      _rewardedAd?.show(
+        onUserEarnedReward: (ad, reward) {
+          onUserEarnedReward(); // Call the callback provided by GameNotifier
+        },
+      );
+    } else {
+      print('Rewarded ad not loaded yet.'); // Debugging
+      loadRewardedAd(); // Try to load if it's null
+    }
+  }
+
   void dispose() {
     _interstitialAd?.dispose();
+    _rewardedAd?.dispose(); // <--- NEW: Dispose rewarded ad too
   }
 }

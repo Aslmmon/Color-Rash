@@ -4,5 +4,8 @@ abstract class IAdService {
   void showInterstitialAd();
   String getBannerAdUnitId(); // <--- NEW: Method to get banner ID
 
+  void loadRewardedAd();
+  void showRewardedAd(Function onUserEarnedReward); // Callback for when reward is earned
+
 // Add other ad types if you decide to implement them later
 }

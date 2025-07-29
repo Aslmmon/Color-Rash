@@ -1,3 +1,4 @@
+import 'package:color_rash/core/ad_service.dart';
 import 'package:color_rash/domain/game_constants.dart';
 import 'package:flutter/foundation.dart'; // For kIsWeb
 import 'package:flutter/material.dart';
@@ -7,16 +8,16 @@ import '../../../domain/game_state.dart';
 import '../../theme/app_colors.dart';
 import '../../widgets/game_button.dart';
 
-import '../game_screen.dart'; // Ensure AppStrings is imported
-
-class GameOverOverlay extends StatelessWidget {
+class GameOverlay extends StatelessWidget {
   final GameState gameState;
   final GameNotifier gameNotifier;
+  final IAdService adService; // <--- NEW: Accept Ad Service
 
-  const GameOverOverlay({
+  const GameOverlay({
     super.key,
     required this.gameState,
     required this.gameNotifier,
+    required this.adService, // <--- NEW: Make it required
   });
 
   @override
@@ -43,6 +44,11 @@ class GameOverOverlay extends StatelessWidget {
       mainOverlayTextSize =
           kIsWeb ? kHeadlineLargeFontSizeWeb : kHeadlineLargeFontSizeMobile;
     }
+
+    final bool showRewardedAdButton =
+        gameState.status == GameStatus.initial &&
+        (gameState.currentLevel <
+            kMaxLevel); // Only show if player can still gain levels
 
     return Container(
       color: AppColors.gameOverOverlayColor.withOpacity(
@@ -131,6 +137,40 @@ class GameOverOverlay extends StatelessWidget {
                     color: AppColors.buttonTextColor,
                     fontSize: kRestartButtonTextSize * 0.8,
                   ),
+                ),
+              ),
+
+            if (showRewardedAdButton) // Use the calculated boolean
+              const SizedBox(height: kDefaultPadding),
+            if (showRewardedAdButton)
+              GameButton(
+                width: kRestartButtonWidth,
+                height: kRestartButtonHeight,
+                // Use a consistent button width
+                onPressed: () {
+                  adService.showRewardedAd(() {
+                    gameNotifier
+                        .grantLevelBoost(); // Callback for when reward is earned
+                  });
+                },
+                color: AppColors.correctTapColor.withOpacity(0.8),
+                // Distinct color for reward
+                borderRadius: kControlBtnBorderRadius,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.video_collection,
+                      color: AppColors.primaryTextColor,
+                    ),
+                    Text(
+                      '${AppStrings.watchAdForBoost} ${AppStrings.levelBoostAmount}',
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: AppColors.primaryTextColor,
+                      ),
+                    ),
+                  ],
                 ),
               ),
 

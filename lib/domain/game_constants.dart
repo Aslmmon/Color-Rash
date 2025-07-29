@@ -42,6 +42,11 @@ const String kBannerAdUnitIdAndroid =
 const String kBannerAdUnitIdiOS =
     'ca-app-pub-3940256099942544/2934735716'; // Test ID
 
+const String kRewardedAdUnitIdAndroid =
+    'ca-app-pub-3940256099942544/5224354917'; // Test ID
+const String kRewardedAdUnitIdiOS =
+    'ca-app-pub-3940256099942544/1712485301'; // Test ID
+
 const int kButtonPressAnimationDurationMs = 150;
 const double kButtonPressScaleFactor = 0.9;
 const double kColorButtonBorderWidth = 3.0; //
@@ -180,4 +185,9 @@ class AppStrings {
       'Interstitial ads not supported on web platform.';
   static const String bannerAdsNotSupportedWeb =
       'Banner ads not supported on web platform.';
+
+  static const String watchAdForBoost = 'Watch Ad for';
+  static const String levelBoostAmount = '+2 Levels!'; // Or '+2 Levels'
+  static const String mainMenuButton =
+      'Main Menu'; // Make sure this is here if used in GameOverOverlay
 }

@@ -32,6 +32,7 @@ class _GameScreenState extends ConsumerState<GameScreen>
   late final ColorRushGame _game;
   BannerAd? _bannerAd;
   bool _isBannerAdLoaded = false;
+  late final IAdService _adService;
   static final List<Color> _allConfettiColors =
       AppColors.backgroundGradients.expand((list) => list).toList();
 
@@ -43,6 +44,7 @@ class _GameScreenState extends ConsumerState<GameScreen>
     final colors = ref.read(colorProvider);
     final gameNotifier = ref.read(gameProvider.notifier);
     final IAudioPlayer audioPlayer = ref.read(audioPlayerProvider);
+    _adService = ref.read(adServiceProvider);
 
     _game = ColorRushGame(
       status: gameNotifier.state.status,
@@ -58,9 +60,8 @@ class _GameScreenState extends ConsumerState<GameScreen>
   }
 
   void _loadBannerAd() {
-    final IAdService adService = ref.read(adServiceProvider);
     _bannerAd = BannerAd(
-      adUnitId: adService.getBannerAdUnitId(),
+      adUnitId: _adService.getBannerAdUnitId(),
       request: const AdRequest(),
       size: AdSize.banner,
       listener: BannerAdListener(
@@ -137,7 +138,11 @@ class _GameScreenState extends ConsumerState<GameScreen>
           GameControlButtons(gameState: gameState, gameNotifier: gameNotifier),
           ColorInputButtons(colors: colors, game: _game),
           if (gameState.status != GameStatus.playing)
-            GameOverOverlay(gameState: gameState, gameNotifier: gameNotifier),
+            GameOverlay(
+              gameState: gameState,
+              gameNotifier: gameNotifier,
+              adService: _adService,
+            ),
           if (gameState.showLevelUpOverlay)
             LevelUpOverlay(level: gameState.currentLevel),
           if (gameState.isPaused) // Show the pause overlay only when paused

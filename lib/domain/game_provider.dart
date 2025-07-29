@@ -50,6 +50,44 @@ class GameNotifier extends Notifier<GameState> {
     }
   }
 
+  Map<String, dynamic> _calculateDifficultyForLevel(int targetLevel) {
+    double speed = 1.0;
+    double interval = kObjectSpawnPeriodInitial;
+    int gradientIndex = 0;
+
+    // Simulate progression up to the targetLevel
+    // Loop for each level-up threshold passed
+    for (
+      int currentThresholdLevel = 1;
+      currentThresholdLevel < targetLevel;
+      currentThresholdLevel++
+    ) {
+      // Assuming kScoreThresholdForIntervalDecrease determines when a level progresses
+      // and difficulty increases.
+      // We simulate moving from (currentThresholdLevel - 1) to currentThresholdLevel.
+
+      // Increase speed for each level up
+      speed += kSpeedIncrementFactor;
+
+      // Decrease interval for each level up
+      interval = (interval - kIntervalDecrementAmount).clamp(
+        kMinSpawnInterval,
+        double.infinity,
+      );
+
+      // Cycle gradient for each level up
+      gradientIndex =
+          (gradientIndex + 1) % AppColors.backgroundGradients.length;
+    }
+
+    return {
+      'speed': speed,
+      'interval': interval,
+      'gradientIndex': gradientIndex,
+      'level': targetLevel, // Return targetLevel as the calculated level
+    };
+  }
+
   Future<void> restartTutorial() async {
     state = state.copyWith(
       hasSeenTutorial: false,
@@ -92,26 +130,37 @@ class GameNotifier extends Notifier<GameState> {
 
   /// Starts a new game session, resetting scores and game state.
   void startGame() {
+    int initialLevel = 1;
+    double initialSpeed = 1.0;
+    double initialSpawnInterval = kObjectSpawnPeriodInitial;
+    int initialGradientIndex = 0;
+    if (state.startLevelOverride != null && state.startLevelOverride! > 0) {
+      final calculatedParams = _calculateDifficultyForLevel(
+        state.startLevelOverride!,
+      );
+      initialLevel = calculatedParams['level'] as int;
+      initialSpeed = calculatedParams['speed'] as double;
+      initialSpawnInterval = calculatedParams['interval'] as double;
+      initialGradientIndex = calculatedParams['gradientIndex'] as int;
+    }
     state = state.copyWith(
       status: GameStatus.playing,
       score: 0,
-      currentSpeed: 1.0,
-      currentSpawnInterval: kObjectSpawnPeriodInitial,
-      currentGradientIndex: 0,
-      currentLevel: 1,
+      currentSpeed: initialSpeed,
+      currentSpawnInterval: initialSpawnInterval,
+      currentGradientIndex: initialGradientIndex,
+      currentLevel: initialLevel,
       showLevelUpOverlay: false,
       isPaused: false,
-      isMuted: false,
+      isMuted: state.isMuted,
       showConfetti: false,
-      // Ensure confetti is off on start
-      // hasSeenTutorial is preserved from _loadHighScoreAndSettings.
-      // For development, if you want to reset tutorial for testing:
-      hasSeenTutorial: false,
+      startLevelOverride: null, // <--- Crucial: Reset override after use
     );
     _loadHighScoreAndSettings();
     _audioPlayer.playBgm(AppAudioPaths.bgm); // Play BGM on game start
     _appMonitoringService.logEvent('game_started'); // <--- NEW
     _appMonitoringService.startTrace('game_session_duration'); // <--- NEW
+    _adService.loadRewardedAd();
   }
 
   /// Handles the player tapping a color.
@@ -275,17 +324,11 @@ class GameNotifier extends Notifier<GameState> {
       currentSpawnInterval: kObjectSpawnPeriodInitial,
       currentGradientIndex: 0,
       currentLevel: 1,
+      startLevelOverride: null, // <--- Crucial: Reset override
     );
     _loadHighScoreAndSettings();
     _audioPlayer.playBgm(AppAudioPaths.bgm); // Play BGM on game start
-  }
-
-  void _testCustomError() {
-    try {
-      throw ArgumentError('This is a test non-fatal error!');
-    } catch (e, s) {
-      _appMonitoringService.logError(e, s, reason: 'test_non_fatal_error');
-    }
+    _adService.loadInterstitialAd(); // Load new ad for next game session
   }
 
   void togglePause() {
@@ -295,6 +338,33 @@ class GameNotifier extends Notifier<GameState> {
       _audioPlayer.pauseBgm();
     } else {
       _audioPlayer.resumeBgm();
+    }
+  }
+
+  void grantLevelBoost() {
+    if (state.status == GameStatus.initial ||
+        state.status == GameStatus.gameOver ||
+        state.status == GameStatus.won) {
+      // Only grant boost if not actively playing
+      final int boostedLevel = (state.currentLevel + 2).clamp(
+        1,
+        kMaxLevel,
+      ); // Boost by 2, clamp to max level
+      state = state.copyWith(
+        startLevelOverride: boostedLevel,
+      ); // Set the override level
+      _appMonitoringService.logEvent(
+        'rewarded_ad_level_boost_granted',
+        parameters: {'boosted_level': boostedLevel},
+      );
+      debugPrint('Level boosted to $boostedLevel from rewarded ad!');
+    } else {
+      _appMonitoringService.logError(
+        Exception('Rewarded ad granted during active play.'),
+        StackTrace.current,
+        reason: 'rewarded_ad_during_play',
+      );
+      debugPrint('Rewarded ad rewarded, but not applied (game in progress).');
     }
   }
 
