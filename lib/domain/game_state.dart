@@ -17,7 +17,8 @@ class GameState {
   final bool isMuted; // <--- NEW
   final bool showConfetti; // <--- NEW
   final bool hasSeenTutorial; // <--- NEW PROPERTY
-  final int? startLevelOverride; // <--- NEW PROPERTY: Nullable int for level boost
+  final int?
+  startLevelOverride; // <--- NEW PROPERTY: Nullable int for level boost
 
   GameState({
     this.score = 0,
@@ -33,7 +34,6 @@ class GameState {
     this.showConfetti = false, // <--- NEW: Default to false
     this.hasSeenTutorial = false, // <--- NEW: Default to false (not seen)
     this.startLevelOverride, // <--- NEW: Defaults to null
-
   });
 
   // A convenience method to create a copy of the state with new values.
@@ -51,9 +51,7 @@ class GameState {
     bool? showConfetti, // <--- NEW
     bool? hasSeenTutorial, // <--- NEW
     int? startLevelOverride, // <--- NEW
-
   }) {
-
     return GameState(
       score: score ?? this.score,
       highScore: highScore ?? this.highScore,
@@ -66,9 +64,10 @@ class GameState {
       isPaused: isPaused ?? this.isPaused,
       isMuted: isMuted ?? this.isMuted,
       showConfetti: showConfetti ?? this.showConfetti,
-      hasSeenTutorial: hasSeenTutorial ?? this.hasSeenTutorial, // <--- NEW
-      startLevelOverride: startLevelOverride ?? this.startLevelOverride, // <--- NEW
-
+      hasSeenTutorial: hasSeenTutorial ?? this.hasSeenTutorial,
+      // <--- NEW
+      startLevelOverride:
+          startLevelOverride ?? this.startLevelOverride, // <--- NEW
     );
   }
 }

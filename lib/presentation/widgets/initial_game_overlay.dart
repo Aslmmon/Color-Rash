@@ -1,0 +1,149 @@
+// lib/presentation/widgets/initial_game_overlay.dart
+import 'package:flutter/foundation.dart'; // For kIsWeb
+import 'package:flutter/material.dart';
+
+import 'package:color_rash/domain/game_constants.dart';
+import 'package:color_rash/presentation/theme/app_colors.dart';
+import 'package:color_rash/presentation/widgets/game_button.dart';
+
+import '../../../domain/game_provider.dart'; // For GameNotifier
+import '../../../domain/game_state.dart'; // For GameState
+import '../../core/ad_service.dart';
+
+class InitialStateOverlay extends StatelessWidget {
+  final GameState gameState;
+  final GameNotifier gameNotifier;
+  final IAdService adService;
+
+  const InitialStateOverlay({
+    super.key,
+    required this.gameState,
+    required this.gameNotifier,
+    required this.adService,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    // These values were previously calculated in GameOverlay
+    final String mainOverlayText = AppStrings.appTitle;
+    final Color mainOverlayTextColor = AppColors.accentColor;
+    final double mainOverlayTextSize =
+        kIsWeb ? kHeadlineLargeFontSizeWeb : kHeadlineLargeFontSizeMobile;
+
+    final String startLevelHintText =
+        '${AppStrings.startLevelHint} ${gameState.startLevelOverride ?? 1}';
+
+    // Logic for showing Rewarded Ad button in initial state
+    final bool showRewardedAdButton = (gameState.currentLevel < kMaxLevel);
+
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        // Display main overlay text (App Title)
+        Text(
+          mainOverlayText,
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+            color: mainOverlayTextColor,
+            fontSize: mainOverlayTextSize,
+          ),
+        ),
+
+        const SizedBox(height: kGameOverScoreSpacing), // Spacing before button
+        // Primary Start Game Button
+        GameButton(
+          width: kRestartButtonWidth,
+          height: kRestartButtonHeight,
+          onPressed: () {
+            gameNotifier.startGame(); // Starts the game
+            // Navigate from MainMenuScreen (the parent that pushes this) to GameScreen
+            // This push is correct if InitialStateOverlay is part of MainMenuScreen's direct content.
+            // If InitialStateOverlay is used within GameScreen itself, this push needs review.
+            // For now, assuming MainMenuScreen will push GameScreen.
+            // Let's ensure MainMenuScreen handles the push explicitly.
+            // Navigator.of(
+            //   context,
+            // ).push(MaterialPageRoute(builder: (context) => const GameScreen()));
+          },
+          color: AppColors.buttonColor,
+          borderRadius: kControlBtnBorderRadius,
+          child: Text(
+            AppStrings.startGameButton,
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              color: AppColors.buttonTextColor,
+              fontSize: kRestartButtonTextSize,
+            ),
+          ),
+        ),
+
+        // --- Show Tutorial Button ---
+        const SizedBox(height: kDefaultPadding), // Spacing
+        GameButton(
+          width: kRestartButtonWidth,
+          height: kRestartButtonHeight / 1.5,
+          // Slightly smaller
+          onPressed: gameNotifier.restartTutorial,
+          color: AppColors.buttonColor.withOpacity(0.7),
+          borderRadius: kControlBtnBorderRadius,
+          child: Text(
+            AppStrings.showTutorialButton,
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+              color: AppColors.buttonTextColor,
+              fontSize: kRestartButtonTextSize * 0.8,
+            ),
+          ),
+        ),
+
+        // --- Rewarded Ad Button ---
+        if (showRewardedAdButton) // Use the calculated boolean
+          const SizedBox(height: kDefaultPadding),
+        if (showRewardedAdButton)
+          Column(
+            children: [
+              GameButton(
+                width: kRestartButtonWidth * 1.2,
+                height: kRestartButtonHeight / 1.5,
+                // Consistent with tutorial button
+                onPressed: () {
+                  adService.showRewardedAd(() {
+                    gameNotifier
+                        .grantLevelBoost(); // Callback for when reward is earned
+                  });
+                },
+                color: AppColors.correctTapColor.withOpacity(0.8),
+                borderRadius: kControlBtnBorderRadius,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.video_collection,
+                      color: AppColors.primaryTextColor,
+                      size: 25,
+                    ),
+                    SizedBox(height: kSmallSpacing),
+                    // Spacing between icon and text
+                    Text(
+                      '${AppStrings.watchAdForBoost} ${AppStrings.levelBoostAmount}',
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: AppColors.primaryTextColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // Start Level Hint Text
+              const SizedBox(height: kDefaultPadding), // Spacing
+              Text(
+                startLevelHintText,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: AppColors.secondaryTextColor,
+                ),
+              ),
+            ],
+          ),
+      ],
+    );
+  }
+}

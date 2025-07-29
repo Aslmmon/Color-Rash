@@ -141,6 +141,8 @@ class AppStrings {
   // --- Game Names/Titles ---
   static const String appTitle = 'Color Rash';
 
+  static const String startLevelHint = 'You will begin at Level';
+
   // --- Tutorial Overlay Strings ---
   static const String tutorialWelcomeTitle = 'WELCOME  TO COLOR RASH!';
   static const String tutorialWelcomeBody =
