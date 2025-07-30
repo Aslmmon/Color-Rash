@@ -1,0 +1,73 @@
+# .github/workflows/android_build.yml
+name: Flutter Android Build
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push events to the main branch
+  push:
+    branches: [ release ]
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+
+      # Sets up Flutter environment
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.29.2' # Or specify your exact Flutter version (e.g., '3.19.6')
+          channel: 'stable'
+
+      # Caches Flutter dependencies to speed up subsequent builds
+      - name: Cache Flutter dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ runner.tool_cache }}/flutter
+            ${{ runner.tool_cache }}/dart
+            ~/.pub-cache
+          key: ${{ runner.os }}-flutter-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-flutter-
+
+      # Installs project dependencies
+      - name: Get Flutter dependencies
+        run: flutter pub get
+
+      # Resolves Android-specific build issues related to Kotlin/Gradle
+      # This step might be crucial if you have Kotlin version mismatches or other Gradle problems.
+      - name: Decode google-services.json (if using Firebase)
+        # This step is only needed if you commit your google-services.json directly
+        # and want to ensure it's handled properly by CI. Usually, it's not committed
+        # and handled by other means like secrets. For a basic build, you might commit it.
+        # If your google-services.json is NOT in your repo, you'd need to add it as a secret
+        # and decode it here. For simplicity, let's assume it's in your repo for now.
+        run: |
+          # If your google-services.json is in your repo, this step can be removed or simplified.
+          # If it's encoded in CI secrets:
+          # echo "${{ secrets.GOOGLE_SERVICES_JSON }}" > android/app/google-services.json
+          echo "Assuming google-services.json is available in repo or handled by setup."
+
+      - name: Decode GoogleService-Info.plist (if using Firebase for iOS/Mac/Web)
+        # Similar to google-services.json, if using iOS/Mac/Web Firebase, you'd handle its plist
+        # echo "${{ secrets.GOOGLE_SERVICE_INFO_PLIST }}" > ios/Runner/GoogleService-Info.plist
+        # echo "Assuming GoogleService-Info.plist is available or handled."
+
+      # Builds the Android App Bundle for release
+      - name: Build Android App Bundle
+        run: flutter build appbundle --release
+
+      # Uploads the generated .aab file as a workflow artifact
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: color-rash-android-appbundle
+          path: build/app/outputs/bundle/release/app-release.aab
