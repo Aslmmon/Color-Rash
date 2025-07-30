@@ -1,9 +1,8 @@
 // lib/services/google_ad_service.dart
-import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:color_rash/core/ad_service.dart';
-import 'package:color_rash/domain/game_constants.dart'; // <--- NEW: Import game_constants
 
 class GoogleAdService implements IAdService {
   InterstitialAd? _interstitialAd;
@@ -11,17 +10,15 @@ class GoogleAdService implements IAdService {
   bool _isRewardedAdLoading =
       false; // <--- NEW: To prevent multiple simultaneous loads
 
+  String _getAdmobAppId() => dotenv.env['ADMOB_APP_ID'] ?? '';
+
+  String _getBannerId() => dotenv.env['ADMOB_BANNER_ID'] ?? '';
+
+  String _getInterstitialId() => dotenv.env['ADMOB_INTERSTITIAL_ID'] ?? '';
+
+  String _getRewardedId() => dotenv.env['ADMOB_REWARDED_ID'] ?? '';
+
   // Helper method to get the correct interstitial ad unit ID based on platform
-  String _getInterstitialAdUnitId() {
-    if (kIsWeb) {
-      return ''; // Return empty string for web, as ads won't load
-    } else if (Platform.isAndroid) {
-      return kInterstitialAdUnitIdAndroid; // <--- MODIFIED: Use constant
-    } else if (Platform.isIOS) {
-      return kInterstitialAdUnitIdiOS; // <--- MODIFIED: Use constant
-    }
-    return ''; // Fallback for unsupported platforms
-  }
 
   @override
   void loadInterstitialAd() {
@@ -31,7 +28,7 @@ class GoogleAdService implements IAdService {
     }
 
     InterstitialAd.load(
-      adUnitId: _getInterstitialAdUnitId(),
+      adUnitId: _getInterstitialId(),
       request: const AdRequest(),
       adLoadCallback: InterstitialAdLoadCallback(
         onAdLoaded: (ad) {
@@ -68,32 +65,9 @@ class GoogleAdService implements IAdService {
     }
   }
 
-  // Helper method to get the correct banner ad unit ID based on platform
-  String _getBannerAdUnitId() {
-    if (kIsWeb) {
-      return ''; // Return empty string for web
-    } else if (Platform.isAndroid) {
-      return kBannerAdUnitIdAndroid; // <--- MODIFIED: Use constant
-    } else if (Platform.isIOS) {
-      return kBannerAdUnitIdiOS; // <--- MODIFIED: Use constant
-    }
-    return ''; // Fallback
-  }
-
   @override
   String getBannerAdUnitId() {
-    return _getBannerAdUnitId();
-  }
-
-  String _getRewardedAdUnitId() {
-    if (kIsWeb) {
-      return '';
-    } else if (Platform.isAndroid) {
-      return kRewardedAdUnitIdAndroid; // Android TEST ID for Rewarded Ad
-    } else if (Platform.isIOS) {
-      return kRewardedAdUnitIdiOS; // iOS TEST ID for Rewarded Ad
-    }
-    return '';
+    return _getBannerId();
   }
 
   @override
@@ -105,7 +79,7 @@ class GoogleAdService implements IAdService {
     _isRewardedAdLoading = true;
 
     RewardedAd.load(
-      adUnitId: _getRewardedAdUnitId(),
+      adUnitId: _getRewardedId(),
       request: const AdRequest(),
       rewardedAdLoadCallback: RewardedAdLoadCallback(
         onAdLoaded: (ad) {

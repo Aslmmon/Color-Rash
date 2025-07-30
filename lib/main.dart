@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
@@ -12,10 +13,14 @@ import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  String envFileName = kDebugMode ? '.env.dev' : '.env'; // Assuming .env is for production in CI/CD.
+  await dotenv.load(fileName: ".env.dev"); // <--- Load your default dev file
+
   if (!kIsWeb) {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
+
 
     // Get the monitoring service instance from the provider scope
     // This requires creating a temporary ProviderContainer for initial setup

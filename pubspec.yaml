@@ -50,6 +50,8 @@ dependencies:
   firebase_crashlytics: ^5.0.0
   firebase_analytics: ^12.0.0
   firebase_performance: ^0.11.0
+  flutter_dotenv: ^5.2.1
+
 
 dev_dependencies:
   flutter_test:
@@ -85,3 +87,5 @@ flutter:
   assets:
     - assets/audio/
     - assets/images/
+    - .env # <--- This tells Flutter to bundle .env files as assets
+    - .env.dev # <--- Also bundle the dev specific file if you use it directly
