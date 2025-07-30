@@ -87,5 +87,5 @@ flutter:
   assets:
     - assets/audio/
     - assets/images/
-    - .env # <--- This tells Flutter to bundle .env files as assets
     - .env.dev # <--- Also bundle the dev specific file if you use it directly
+    - .env.prod # <--- Also bundle the dev specific file if you use it directly

@@ -15,31 +15,22 @@ android {
     // <--- NEW: Define Flavor Dimensions
     // This is required if you have multiple flavor dimensions.
     // For now, we'll just have one.
-    flavorDimensions "app"
+    flavorDimensions += "app" // Correct Kotlin DSL for adding to a collection
     // <--- NEW: Define Product Flavors
     productFlavors {
-        dev {
-            dimension "app"
-            // Application ID for development builds. Good for distinguishing on device.
-            applicationIdSuffix ".dev"
-            // App name visible on device for development build
-            resValue "string", "app_name", "Color Rash (Dev)"
+        create("dev") { // Use create("name") for named flavors
+            dimension = "app" // Correct Kotlin DSL assignment
+            resValue("string", "app_name", "(Dev)") // Correct Kotlin DSL method call
+            resValue("string", "admob_app_id_value", "ca-app-pub-3940256099942544~3347511713")
 
-
-            // Firebase config file for this flavor (e.g., google-services.json)
-            // You would place your dev google-services.json in:
-            // android/app/src/dev/google-services.json
         }
-        prod {
-            dimension "app"
-            // No applicationIdSuffix for production (it will be your default applicationId from defaultConfig)
-            // App name for production
-            resValue "string", "app_name", "Color Rash"
+        create("prod") { // Use create("name") for named flavors
+            dimension = "app" // Correct Kotlin DSL assignment
+            resValue("string", "app_name", "Color Rash") // Correct Kotlin DSL method call
+            resValue("string", "admob_app_id_value", "ca-app-pub-9544398657505872~2597969443")
+//            resValue("string", "admob_app_id_value", "\"${System.getenv("ADMOB_APP_ID")}\"")
 
 
-            // Firebase config file for this flavor (e.g., google-services.json)
-            // You would place your prod google-services.json in:
-            // android/app/src/prod/google-services.json
         }
     }
     namespace = "com.colorrash.color_rash"

@@ -13,14 +13,31 @@ import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  String envFileName = kDebugMode ? '.env.dev' : '.env'; // Assuming .env is for production in CI/CD.
-  await dotenv.load(fileName: ".env.dev"); // <--- Load your default dev file
+  String envFileName =
+      kDebugMode
+          ? '.env.dev'
+          : '.env.prod'; // Assuming .env is for production in CI/CD.
+
+  debugPrint("environemtFileUsed is + " + envFileName.toString());
+
+  // Only apply this in debug builds
+  final RequestConfiguration configuration = RequestConfiguration(
+    testDeviceIds: <String>[
+      'F2386F50E5601E10DD63F1C43F4B26B2',
+      // Replace with your actual device hash ID from logs
+      // 'ANOTHER_DEVICE_HASH_ID_2', // Add more if you have other test devices
+      // For Android emulators, you can sometimes use 'EMULATOR', but it's less reliable
+    ],
+  );
+  MobileAds.instance.updateRequestConfiguration(configuration);
+  debugPrint('AdMob: Test devices configured programmatically.');
+
+  await dotenv.load(fileName: envFileName); // <--- Load your default dev file
 
   if (!kIsWeb) {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-
 
     // Get the monitoring service instance from the provider scope
     // This requires creating a temporary ProviderContainer for initial setup
