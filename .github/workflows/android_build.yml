@@ -56,7 +56,7 @@ jobs:
           # echo "${{ secrets.GOOGLE_SERVICES_JSON }}" > android/app/google-services.json
           echo "Assuming google-services.json is available in repo or handled by setup."
 
-      - name: Decode GoogleService-Info.plist (if using Firebase for iOS/Mac/Web)
+#      - name: Decode GoogleService-Info.plist (if using Firebase for iOS/Mac/Web)
         # Similar to google-services.json, if using iOS/Mac/Web Firebase, you'd handle its plist
         # echo "${{ secrets.GOOGLE_SERVICE_INFO_PLIST }}" > ios/Runner/GoogleService-Info.plist
         # echo "Assuming GoogleService-Info.plist is available or handled."
