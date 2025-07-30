@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "541186418171",
+    "project_id": "color-rash",
+    "storage_bucket": "color-rash.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:541186418171:android:edb33b9c0ab765086bd75e",
+        "android_client_info": {
+          "package_name": "com.colorrash.color_rash"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyATquICWq4hBx5SzVIr2RSRAK-jLYGzvBw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
