@@ -27,8 +27,7 @@ android {
         create("prod") { // Use create("name") for named flavors
             dimension = "app" // Correct Kotlin DSL assignment
             resValue("string", "app_name", "Color Rash") // Correct Kotlin DSL method call
-            resValue("string", "admob_app_id_value", "ca-app-pub-9544398657505872~2597969443")
-//            resValue("string", "admob_app_id_value", "\"${System.getenv("ADMOB_APP_ID")}\"")
+            resValue("string", "admob_app_id_value", "\"${System.getenv("ADMOB_APP_ID")}\"")
 
 
         }
