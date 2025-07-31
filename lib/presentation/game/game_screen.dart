@@ -8,7 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import '../../domain/game_constants.dart';
-import '../../domain/game_provider.dart';
+import '../../domain/game_notifier.dart';
+import '../../domain/game_providers.dart';
 import '../../domain/game_state.dart';
 import '../theme/app_colors.dart';
 import 'color_rush_game.dart';
@@ -91,7 +92,6 @@ class _GameScreenState extends ConsumerState<GameScreen>
     final gameState = ref.watch(gameProvider);
     final gameNotifier = ref.read(gameProvider.notifier);
     final colors = ref.read(colorProvider);
-
     _game.status = gameState.status; // Update Flame game status
     return Scaffold(
       body: _buildBackgroundGradient(context, gameState, gameNotifier, colors),
@@ -106,7 +106,9 @@ class _GameScreenState extends ConsumerState<GameScreen>
     List<Color> colors,
   ) {
     return AnimatedContainer(
-      duration: const Duration(seconds: kBackgroundGradientChangeDurationMs),
+      duration: const Duration(
+        seconds: AppConstants.kBackgroundGradientChangeDurationMs,
+      ),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: AppColors.backgroundGradients[gameState.currentGradientIndex],

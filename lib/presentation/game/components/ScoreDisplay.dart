@@ -15,7 +15,7 @@ class ScoreDisplay extends StatelessWidget {
     return Align(
       alignment: Alignment.topCenter,
       child: Padding(
-        padding: const EdgeInsets.all(kLargePadding), // Using constant
+        padding: const EdgeInsets.all(AppConstants.kLargePadding), // Using constant
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -25,19 +25,19 @@ class ScoreDisplay extends StatelessWidget {
                 color: AppColors.primaryTextColor,
                 fontSize:
                     kIsWeb
-                        ? kTextFontSizeInWeb
-                        : kTextFontSizeInMobile, // Make it extra big for WIN!
+                        ? AppConstants.kTextFontSizeInWeb
+                        : AppConstants.kTextFontSizeInMobile, // Make it extra big for WIN!
               ),
             ),
-            const SizedBox(height: kSmallSpacing), // Using constant
+            const SizedBox(height:AppConstants. kSmallSpacing), // Using constant
             Text(
               'High Score: ${gameState.highScore}',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: AppColors.secondaryTextColor,
                 fontSize:
                     kIsWeb
-                        ? kTextFontSizeInWeb
-                        : kTextFontSizeInMobile, // Make it extra big for WIN!
+                        ?AppConstants. kTextFontSizeInWeb
+                        :AppConstants. kTextFontSizeInMobile, // Make it extra big for WIN!
               ),
             ),
           ],

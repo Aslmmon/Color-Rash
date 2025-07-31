@@ -1,5 +1,5 @@
 // lib/presentation/widgets/game_control_buttons.dart
-import 'package:color_rash/domain/game_provider.dart';
+import 'package:color_rash/domain/game_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:color_rash/domain/game_state.dart'; // For GameState
 import 'package:color_rash/presentation/theme/app_colors.dart'; // For AppColors
@@ -22,32 +22,32 @@ class GameControlButtons extends StatelessWidget {
     // These values are derived from gameState and gameNotifier, keeping this widget stateless
 
     return Positioned(
-      top: kDefaultPadding, // Using constant
-      left: kDefaultPadding, // Using constant
-      right: kDefaultPadding, // Using constant
+      top: AppConstants.kDefaultPadding, // Using constant
+      left: AppConstants.kDefaultPadding, // Using constant
+      right: AppConstants.kDefaultPadding, // Using constant
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           GameButton(
             onPressed: gameNotifier.togglePause,
-            width: kControlButtonSize,
-            height: kControlButtonSize,
-            borderRadius: kControlBtnBorderRadius,
+            width: AppConstants.kControlButtonSize,
+            height: AppConstants.kControlButtonSize,
+            borderRadius: AppConstants.kControlBtnBorderRadius,
             child: Icon(
               gameState.isPaused ? Icons.play_arrow : Icons.pause,
               color: AppColors.buttonTextColor,
-              size: kControlButtonIconSize,
+              size: AppConstants.kControlButtonIconSize,
             ),
           ),
           GameButton(
             onPressed: gameNotifier.toggleMute,
-            width: kControlButtonSize,
-            height: kControlButtonSize,
-            borderRadius: kControlBtnBorderRadius,
+            width: AppConstants.kControlButtonSize,
+            height: AppConstants.kControlButtonSize,
+            borderRadius: AppConstants.kControlBtnBorderRadius,
             child: Icon(
               gameState.isMuted ? Icons.volume_off : Icons.volume_up,
               color: AppColors.buttonTextColor,
-              size: kControlButtonIconSize,
+              size: AppConstants.kControlButtonIconSize,
             ),
           ),
         ],

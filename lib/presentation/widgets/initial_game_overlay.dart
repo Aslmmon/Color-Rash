@@ -6,7 +6,7 @@ import 'package:color_rash/domain/game_constants.dart';
 import 'package:color_rash/presentation/theme/app_colors.dart';
 import 'package:color_rash/presentation/widgets/game_button.dart';
 
-import '../../../domain/game_provider.dart'; // For GameNotifier
+import '../../../domain/game_notifier.dart'; // For GameNotifier
 import '../../../domain/game_state.dart'; // For GameState
 import '../../core/ad_service.dart';
 
@@ -28,14 +28,16 @@ class InitialStateOverlay extends StatelessWidget {
     final String mainOverlayText = AppStrings.appTitle;
     final Color mainOverlayTextColor = AppColors.accentColor;
     final double mainOverlayTextSize =
-        kIsWeb ? kHeadlineLargeFontSizeWeb : kHeadlineLargeFontSizeMobile;
+        kIsWeb
+            ? AppConstants.kHeadlineLargeFontSizeWeb
+            : AppConstants.kHeadlineLargeFontSizeMobile;
 
     debugPrint("grantLevelBoost GameState in InitialGameOverlay ${gameState}");
     final String startLevelHintText =
         '${AppStrings.startLevelHint} ${gameState.startLevelOverride ?? 1}';
 
     // Logic for showing Rewarded Ad button in initial state
-    final bool showRewardedAdButton = (gameState.currentLevel < kMaxLevel);
+    final bool showRewardedAdButton = (gameState.currentLevel < AppConstants.kMaxLevel);
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -50,60 +52,63 @@ class InitialStateOverlay extends StatelessWidget {
           ),
         ),
 
-        const SizedBox(height: kGameOverScoreSpacing), // Spacing before button
+        const SizedBox(height: AppConstants.kGameOverScoreSpacing),
+        // Spacing before button
         // Primary Start Game Button
         GameButton(
-          width: kRestartButtonWidth,
-          height: kRestartButtonHeight,
+          width: AppConstants.kRestartButtonWidth,
+          height: AppConstants.kRestartButtonHeight,
           onPressed: () {
             gameNotifier.startGame(); // Starts the game
           },
           color: AppColors.buttonColor,
-          borderRadius: kControlBtnBorderRadius,
+          borderRadius: AppConstants.kControlBtnBorderRadius,
           child: Text(
             AppStrings.startGameButton,
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
               color: AppColors.buttonTextColor,
-              fontSize: kRestartButtonTextSize,
+              fontSize: AppConstants.kRestartButtonTextSize,
             ),
           ),
         ),
 
         // --- Show Tutorial Button ---
-        const SizedBox(height: kDefaultPadding), // Spacing
+        const SizedBox(height: AppConstants.kDefaultPadding),
+        // Spacing
         GameButton(
-          width: kRestartButtonWidth,
-          height: kRestartButtonHeight / 1.5,
+          width: AppConstants.kRestartButtonWidth,
+          height: AppConstants.kRestartButtonHeight / 1.5,
           // Slightly smaller
           onPressed: gameNotifier.restartTutorial,
           color: AppColors.buttonColor.withOpacity(0.7),
-          borderRadius: kControlBtnBorderRadius,
+          borderRadius: AppConstants.kControlBtnBorderRadius,
           child: Text(
             AppStrings.showTutorialButton,
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
               color: AppColors.buttonTextColor,
-              fontSize: kRestartButtonTextSize * 0.8,
+              fontSize: AppConstants.kRestartButtonTextSize * 0.8,
             ),
           ),
         ),
 
         // --- Rewarded Ad Button ---
         if (showRewardedAdButton) // Use the calculated boolean
-          const SizedBox(height: kDefaultPadding),
+          const SizedBox(height: AppConstants.kDefaultPadding),
         if (showRewardedAdButton)
           Column(
             children: [
               GameButton(
-                width: kRestartButtonWidth * 1.2,
-                height: kRestartButtonHeight / 1.5,
+                width: AppConstants.kRestartButtonWidth * 1.2,
+                height: AppConstants.kRestartButtonHeight / 1.5,
                 // Consistent with tutorial button
                 onPressed: () {
                   adService.showRewardedAd(() {
-                    gameNotifier.grantLevelBoost(); // Callback for when reward is earned
+                    gameNotifier
+                        .grantLevelBoost(); // Callback for when reward is earned
                   });
                 },
                 color: AppColors.correctTapColor.withOpacity(0.8),
-                borderRadius: kControlBtnBorderRadius,
+                borderRadius: AppConstants.kControlBtnBorderRadius,
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -112,7 +117,7 @@ class InitialStateOverlay extends StatelessWidget {
                       color: AppColors.primaryTextColor,
                       size: 25,
                     ),
-                    SizedBox(height: kSmallSpacing),
+                    SizedBox(height: AppConstants.kSmallSpacing),
                     // Spacing between icon and text
                     Text(
                       '${AppStrings.watchAdForBoost} ${AppStrings.levelBoostAmount}',
@@ -125,7 +130,7 @@ class InitialStateOverlay extends StatelessWidget {
                 ),
               ),
               // Start Level Hint Text
-              const SizedBox(height: kDefaultPadding), // Spacing
+              const SizedBox(height: AppConstants.kDefaultPadding), // Spacing
               Text(
                 startLevelHintText,
                 textAlign: TextAlign.center,

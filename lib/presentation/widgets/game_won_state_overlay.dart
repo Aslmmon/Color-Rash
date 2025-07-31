@@ -6,7 +6,7 @@ import 'package:color_rash/domain/game_constants.dart';
 import 'package:color_rash/presentation/theme/app_colors.dart';
 import 'package:color_rash/presentation/widgets/game_button.dart';
 
-import '../../../domain/game_provider.dart'; // For GameNotifier
+import '../../../domain/game_notifier.dart'; // For GameNotifier
 import '../../../domain/game_state.dart'; // For GameState
 import '../../core/ad_service.dart'; // For IAdService
 
@@ -27,7 +27,7 @@ class GameWonStateOverlay extends StatelessWidget {
     final Color mainOverlayTextColor =
         AppColors.accentColor; // Accent color for WIN!
     final double mainOverlayTextSize =
-        kIsWeb ? kWinTitleFontSizeWeb : kWinTitleFontSizeMobile;
+        kIsWeb ? AppConstants.kWinTitleFontSizeWeb : AppConstants.kWinTitleFontSizeMobile;
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -43,62 +43,62 @@ class GameWonStateOverlay extends StatelessWidget {
         ),
 
         // Score details (always shown after a game ends, whether win or lose)
-        const SizedBox(height: kGameOverScoreSpacing),
+        const SizedBox(height: AppConstants.kGameOverScoreSpacing),
         Text(
           '${AppStrings.yourScoreLabel} ${gameState.score}',
           style: Theme.of(context).textTheme.headlineMedium?.copyWith(
             color: AppColors.primaryTextColor,
-            fontSize: kIsWeb ? kTextFontSizeInWeb : kTextFontSizeInMobile,
+            fontSize: kIsWeb ? AppConstants.kTextFontSizeInWeb : AppConstants.kTextFontSizeInMobile,
           ),
         ),
-        const SizedBox(height: kGameOverScoreSpacing),
+        const SizedBox(height:AppConstants. kGameOverScoreSpacing),
         // Consistent spacing
         Text(
           '${AppStrings.highScoreLabel} ${gameState.highScore}',
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
             color: AppColors.accentColor, // High score highlighted
-            fontSize: kIsWeb ? kTextFontSizeInWeb : kTextFontSizeInMobile,
+            fontSize: kIsWeb ? AppConstants.kTextFontSizeInWeb : AppConstants.kTextFontSizeInMobile,
           ),
         ),
-        const SizedBox(height: kGameOverHighscoreSpacing),
+        const SizedBox(height: AppConstants.kGameOverHighscoreSpacing),
         // Spacing before buttons
 
         // Primary "Play Again" Button
         GameButton(
-          width: kRestartButtonWidth,
-          height: kRestartButtonHeight,
+          width:AppConstants. kRestartButtonWidth,
+          height: AppConstants.kRestartButtonHeight,
           onPressed: () {
             gameNotifier.restartGame(); // Sets status to initial, loads ad
           },
           color: AppColors.buttonColor,
           // Standard button color
-          borderRadius: kControlBtnBorderRadius,
+          borderRadius: AppConstants.kControlBtnBorderRadius,
           child: Text(
             AppStrings.playAgainButton, // "Play Again"
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
               color: AppColors.buttonTextColor,
-              fontSize: kRestartButtonTextSize,
+              fontSize:AppConstants. kRestartButtonTextSize,
             ),
           ),
         ),
         // --- Return to Main Menu Button ---
-        const SizedBox(height: kDefaultPadding),
+        const SizedBox(height: AppConstants.kDefaultPadding),
         // Spacing
         GameButton(
-          width: kRestartButtonWidth,
-          height: kRestartButtonHeight / 1.5,
+          width: AppConstants.kRestartButtonWidth,
+          height:AppConstants. kRestartButtonHeight / 1.5,
           // Slightly smaller
           onPressed: () {
             gameNotifier.returnToMainMenu(); // Reset game state (to initial)
           },
           color: AppColors.buttonColor.withOpacity(0.6),
           // Slightly dimmer
-          borderRadius: kControlBtnBorderRadius,
+          borderRadius: AppConstants.kControlBtnBorderRadius,
           child: Text(
             AppStrings.mainMenuButton,
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
               color: AppColors.buttonTextColor,
-              fontSize: kRestartButtonTextSize * 0.8,
+              fontSize: AppConstants.kRestartButtonTextSize * 0.8,
             ),
           ),
         ),

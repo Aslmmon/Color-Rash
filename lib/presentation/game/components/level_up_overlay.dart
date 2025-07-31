@@ -62,8 +62,8 @@ class _LevelUpOverlayState extends State<LevelUpOverlay>
                   color: AppColors.accentColor, // Use accent color for pop
                   fontSize:
                       kIsWeb
-                          ? kTextFontSizeInWeb
-                          : kTextFontSizeInMobileOverlay,
+                          ? AppConstants.kTextFontSizeInWeb
+                          : AppConstants.kTextFontSizeInMobile,
                   shadows: [
                     Shadow(
                       blurRadius: 10.0,

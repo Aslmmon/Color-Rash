@@ -2,120 +2,154 @@
 
 // --- Game Difficulty & Mechanics Constants ---
 // Score thresholds for increasing difficulty
-const int kScoreThresholdForSpeedIncrease = 5;
-const double kSpeedIncrementFactor = 0.1; // e.g., 10% increase per threshold
-const int kScoreThresholdForIntervalDecrease = 10;
-const int kScoreThresholdForGradientChange = 25;
-const double kIntervalDecrementAmount = 0.1; // e.g., decrease by 0.1 seconds
-const double kMinSpawnInterval = 0.5; // Minimum spawn interval allowed
-// --- UI/Animation Constants ---
-
-const int kLevelUpOverlayDisplayDurationMs =
-    1500; // Duration for level up overlay to show in milliseconds (1.5 seconds)
-
-// Flame Game Component Constants
-const double kObjectBaseSpeed = 150; // Pixels per second for falling objects
-const double kObjectRadius = 30.0; // Radius of falling circles
-const double kCatchZoneHeight = 200; // Height of the catch zone from the bottom
-const double kCatchZoneLineWidth = 2.5; // Thickness of the catch zone line
-const double kReceiverHeight =
-    100.0; // Height of the receiver buttons at the bottom
-
-// Particle Effect Constants (from ColorRushGame)
-const int kParticleCount = 35;
-const double kParticleLifespan = 0.5;
-const double kParticleSpeed = 100; // Base speed for random particle velocity
-const double kParticleAccelerationY =
-    200; // Gravity-like acceleration for particles
-const double kParticleRadius = 3;
-
-// --- Ad Integration Constants ---
-const int kAdShowFrequency = 1; // Show interstitial ad every X game overs
-
-// Add these Ad Unit IDs
-const String kInterstitialAdUnitIdAndroid =
-    'ca-app-pub-3940256099942544/1033173712'; // Test ID
-const String kInterstitialAdUnitIdiOS =
-    'ca-app-pub-3940256099942544/4411468910'; // Test ID
-const String kBannerAdUnitIdAndroid =
-    'ca-app-pub-3940256099942544/6300978111'; // Test ID
-const String kBannerAdUnitIdiOS =
-    'ca-app-pub-3940256099942544/2934735716'; // Test ID
-
-const String kRewardedAdUnitIdAndroid =
-    'ca-app-pub-3940256099942544/5224354917'; // Test ID
-const String kRewardedAdUnitIdiOS =
-    'ca-app-pub-3940256099942544/1712485301'; // Test ID
-
-const int kButtonPressAnimationDurationMs = 150;
-const double kButtonPressScaleFactor = 0.9;
-const double kColorButtonBorderWidth = 3.0; //
-// Add common padding/spacing constants if needed across UI files
-const double kDefaultPadding = 16.0;
-const double kLargePadding = 32.0;
-const double kButtonBottomPadding = 64.0; // Original padding for buttons
-const double kBannerAdHeight = 50.0; // Standard AdSize.banner height
-const kObjectSpawnPeriodInitial = 2.0;
-// You can use a prefix like 'k' for constants (Kotlin convention) or 'App'
-// or no prefix at all, just ensure consistency. 'k' is quite common in Flutter for global constants.
-
 // lib/domain/game_constants.dart
 
-// ... (your existing constants)
+// This class centralizes all game-related constants.
+// All constants are static const, making them accessible via AppConstants.CONSTANT_NAME.
+class AppConstants {
+  // --- Game Difficulty & Mechanics Constants ---
+  static const int kScoreThresholdForSpeedIncrease = 5;
+  static const double kSpeedIncrementFactor =
+      0.1; // e.g., 10% increase per threshold
+  static const int kScoreThresholdForIntervalDecrease = 10;
+  static const int kScoreThresholdForGradientChange = 25;
+  static const double kIntervalDecrementAmount =
+      0.1; // e.g., decrease by 0.1 seconds
+  static const double kMinSpawnInterval = 0.5; // Minimum spawn interval allowed
+  static const double kObjectSpawnPeriodInitial =
+      2.0; // Initial spawn period for objects
+  static const double kObjectSpeedInitial =
+      1; // Initial spawn period for objects
+  static const int kGameScoreInitial = 0; // Initial spawn period for objects
+  static const int kGameGradientIndexInitial =
+      0; // Initial spawn period for objects
+  static const int kGameLevelInitial = 1; // Initial spawn period for objects
+  static const int kGameScoreToBeIncreaseFromCorrectTap =
+      1; // Initial spawn period for objects
+  static const int kGameLevelsBoostedValueAfterReward =
+      2; // Initial spawn period for objects
 
-// --- UI/Animation Constants ---
-const int kBackgroundGradientChangeDurationMs =
-    1; // Duration for background gradient color change (1 second)
+  // --- UI/Animation Constants ---
+  static const int kLevelUpOverlayDisplayDurationMs =
+      1500; // Duration for level up overlay to show in milliseconds (1.5 seconds)
+  static const int kBackgroundGradientChangeDurationMs =
+      1; // Duration for background gradient color change (1 second)
 
-const double kTextFontSizeInMobile = 25;
-const double kTextFontSizeInMobileOverlay = 32;
+  // Game Over Overlay specific constants
+  static const double kGameOverOverlayOpacity =
+      0.7; // Opacity of the game over overlay (0.0 to 1.0)
+  static const double kGameOverScoreSpacing =
+      20.0; // Spacing between "Game Over" and "Your Score"
+  static const double kGameOverHighscoreSpacing =
+      30.0; // Spacing between "High Score" and button
 
-const double kTextFontSizeInWeb = 25;
+  // Pause Overlay specific constants
+  static const double kPauseOverlayOpacity =
+      0.7; // Opacity of the pause screen overlay (0.0 to 1.0)
+  static const double kPauseOverlaySpacing =
+      40.0; // Spacing between "Paused" text and "Resume" button
 
-// Control Button (Pause/Mute) specific constants
-const double kControlButtonSize = 60.0;
-const double kControlBtnBorderRadius = 30.0; // For circular buttons
-const double kControlButtonIconSize = 30.0;
+  // General Padding/Spacing constants
+  static const double kDefaultPadding = 16.0;
+  static const double kLargePadding = 32.0;
+  static const double kSmallSpacing = 10.0; // For small SizedBox heights
 
-// Pause Overlay specific constants
-const double kPauseOverlayOpacity =
-    0.7; // Opacity of the pause screen overlay (0.0 to 1.0)
-const double kPauseButtonWidth = 200.0;
-const double kPauseButtonHeight = 60.0;
-const double kPauseButtonTextSize =
-    24.0; // Specific font size for "Resume" button
+  // --- Flame Game Component Constants ---
+  static const double kObjectBaseSpeed =
+      150; // Pixels per second for falling objects
+  static const double kObjectRadius = 30.0; // Radius of falling circles
+  static const double kCatchZoneHeight =
+      200; // Height of the catch zone from the bottom
+  static const double kCatchZoneLineWidth =
+      2.5; // Thickness of the catch zone line
+  static const double kReceiverHeight =
+      100.0; // Height of the receiver buttons at the bottom
 
-// Game Over Overlay specific constants
-const double kGameOverOverlayOpacity =
-    0.7; // Opacity of the game over overlay (0.0 to 1.0)
-const double kRestartButtonWidth = 200.0; // <--- HERE IT IS
-const double kRestartButtonHeight = 60.0;
-const double kRestartButtonTextSize =
-    24.0; // Specific font size for "Start/Play Again" button
+  // Catch zone line pulsing (moved from ColorRushGame for centralization)
+  static const double kLinePulseRange =
+      50.0; // Distance from line to trigger pulse
+  static const double kLinePulseDuration = 0.3; // How fast the pulse happens
 
-const double kSmallSpacing = 10.0; // <--- NEW: For the SizedBox height 10.0
+  // Particle Effect Constants (from ColorRushGame)
+  static const int kParticleCount = 35;
+  static const double kParticleLifespan = 0.5;
+  static const double kParticleSpeed =
+      100; // Base speed for random particle velocity
+  static const double kParticleAccelerationY =
+      200; // Gravity-like acceleration for particles
+  static const double kParticleRadius = 3;
 
-const double kGameOverScoreSpacing =
-    20.0; // Spacing between "Game Over" and "Your Score"
-const double kGameOverHighscoreSpacing =
-    30.0; // Spacing between "High Score" and button
+  // --- Ad Integration Constants ---
+  static const int kAdShowFrequency =
+      1; // Show interstitial ad every X game overs
+  // Test Ad Unit IDs (These would be replaced by production IDs in prod builds via CI/CD secrets)
+  static const String kInterstitialAdUnitIdAndroid =
+      'ca-app-pub-3940256099942544/1033173712';
+  static const String kInterstitialAdUnitIdiOS =
+      'ca-app-pub-3940256099942544/4411468910';
+  static const String kBannerAdUnitIdAndroid =
+      'ca-app-pub-3940256099942544/6300978111';
+  static const String kBannerAdUnitIdiOS =
+      'ca-app-pub-3940256099942544/2934735716';
+  static const String kRewardedAdUnitIdAndroid =
+      'ca-app-pub-3940256099942544/5224354917';
+  static const String kRewardedAdUnitIdiOS =
+      'ca-app-pub-3940256099942544/1712485301';
 
-const double kPauseOverlaySpacing =
-    40.0; // <--- NEW: Spacing between "Paused" text and "Resume" button
+  // --- Button Styling Constants ---
+  static const int kButtonPressAnimationDurationMs = 150;
+  static const double kButtonPressScaleFactor = 0.9;
+  static const double kColorButtonBorderWidth =
+      3.0; // Border for color input buttons
+  static const double kButtonBottomPadding =
+      64.0; // Original padding for color input buttons
+  static const double kBannerAdHeight =
+      50.0; // Standard AdSize.banner height (used in padding calc)
 
-const int kMaxLevel = 15; // Or whatever number of levels you want for an ending
-const int minPlayersInAudioPool = 1;
-const int maxPlayersInAudioPool = 3;
-// lib/domain/game_constants.dart
-// ... (your existing constants)
+  // Game Button (AnimatedButton wrapper) specific constants
+  static const double kControlButtonSize = 60.0; // Size for Pause/Mute buttons
+  static const double kControlBtnBorderRadius = 30.0; // Circular buttons
+  static const double kControlButtonIconSize =
+      30.0; // Icon size for control buttons
 
-const double kHeadlineLargeFontSizeMobile = 48.0; // Example base for mobile
-const double kHeadlineLargeFontSizeWeb = 60.0; // Example larger for web
+  static const double kPauseButtonWidth = 200.0;
+  static const double kPauseButtonHeight = 60.0;
+  static const double kPauseButtonTextSize =
+      24.0; // Font size for "Resume" button
 
-const double kWinTitleFontSizeMobile =
-    70.0; // Specific huge size for "YOU WIN!" on mobile
-const double kWinTitleFontSizeWeb =
-    90.0; // Specific huge size for "YOU WIN!" on web
+  static const double kRestartButtonWidth = 200.0;
+  static const double kRestartButtonHeight = 60.0;
+  static const double kRestartButtonTextSize =
+      24.0; // Font size for "Start/Play Again" button
+
+  static const double kMainMenuButtonWidth = 200.0;
+  static const double kMainMenuButtonHeight = 60.0;
+  static const double kMainMenuButtonTextSize =
+      18.0; // Font size for "Main Menu" button
+
+  // --- Game Progression Limits ---
+  static const int kMaxLevel = 15; // Max level to reach for a 'win'
+
+  // --- Audio Pool Specifics ---
+  static const int minPlayersInAudioPool = 1; // Min players for SFX AudioPools
+  static const int maxPlayersInAudioPool = 3; // Max players for SFX AudioPools
+
+  // --- Font Size Adjustments for Web/Mobile (Used in AppTheme & Overlays) ---
+  static const double kTextFontSizeInMobile =
+      14.0; // Default for smaller body text on mobile
+  static const double kTextFontSizeInWeb =
+      18.0; // Default for smaller body text on web
+
+  static const double kHeadlineLargeFontSizeMobile =
+      48.0; // Base for mobile headlines
+  static const double kHeadlineLargeFontSizeWeb =
+      60.0; // Larger for web headlines
+
+  static const double kWinTitleFontSizeMobile =
+      70.0; // Specific huge size for "YOU WIN!" on mobile
+  static const double kWinTitleFontSizeWeb =
+      90.0; // Specific huge size for "YOU WIN!" on web
+}
 
 // ... (other constants)
 class AppFilePaths {
@@ -128,6 +162,14 @@ class AppFilePaths {
   static const String restartIcon = 'assets/icons/restart.png';
 }
 
+class AppMonitoringLogs {
+  static const String gameStartedLog = 'game_started';
+  static const String gameSessionDuration = 'game_session_duration';
+  static const String levelUpLog = 'level_up';
+  static const String gameEndedLog = 'game_ended';
+  static const String rewardedAdLevelBoostGranted = 'rewarded_ad_level_boost_granted';
+
+}
 class AppAudioPaths {
   static const String bgm = 'bg_music.ogg';
   static const String correctTap = 'correct_tap.ogg';
@@ -138,12 +180,8 @@ class AppAudioPaths {
 // lib/domain/app_strings.dart
 
 class AppStrings {
-  // --- Game Names/Titles ---
   static const String appTitle = 'Color Rash';
-
   static const String startLevelHint = 'You will begin at Level';
-
-  // --- Tutorial Overlay Strings ---
   static const String tutorialWelcomeTitle = 'WELCOME  TO COLOR RASH!';
   static const String tutorialWelcomeBody =
       'Tap the screen quickly to match falling colors and conquer the levels!';

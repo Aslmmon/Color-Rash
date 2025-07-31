@@ -1,5 +1,5 @@
 // lib/presentation/widgets/pause_overlay.dart
-import 'package:color_rash/domain/game_provider.dart';
+import 'package:color_rash/domain/game_notifier.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:color_rash/presentation/theme/app_colors.dart'; // For AppColors
@@ -14,7 +14,7 @@ class PauseOverlay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: AppColors.gameOverOverlayColor.withOpacity(kPauseOverlayOpacity),
+      color: AppColors.gameOverOverlayColor.withOpacity(AppConstants.kPauseOverlayOpacity),
       // Using constant for opacity
       child: Center(
         child: Column(
@@ -25,26 +25,26 @@ class PauseOverlay extends StatelessWidget {
               style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                 // Using headlineLarge for consistency
                 color: AppColors.primaryTextColor,
-                fontSize: kIsWeb ? kTextFontSizeInWeb : kTextFontSizeInMobile,
+                fontSize: kIsWeb ? AppConstants.kTextFontSizeInWeb :AppConstants. kTextFontSizeInMobile,
               ),
             ),
-            const SizedBox(height: kPauseOverlaySpacing), // Using constant
+            const SizedBox(height: AppConstants.kPauseOverlaySpacing), // Using constant
             GameButton(
-              width: kPauseButtonWidth,
+              width: AppConstants.kPauseButtonWidth,
               // Using constant
-              height: kPauseButtonHeight,
+              height: AppConstants.kPauseButtonHeight,
               // Using constant
               onPressed: gameNotifier.togglePause,
               color: AppColors.accentColor,
               // Using app theme color
-              borderRadius: kControlBtnBorderRadius,
+              borderRadius: AppConstants.kControlBtnBorderRadius,
               // Assuming similar style as control buttons
               child: Text(
                 'Resume',
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   // Using titleLarge for consistency
                   color: AppColors.primaryTextColor,
-                  fontSize: kPauseButtonTextSize, // Using constant
+                  fontSize: AppConstants.kPauseButtonTextSize, // Using constant
                 ),
               ),
             ),

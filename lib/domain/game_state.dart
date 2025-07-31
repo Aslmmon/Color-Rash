@@ -25,15 +25,15 @@ class GameState {
     this.highScore = 0,
     this.status = GameStatus.initial,
     this.currentSpeed = 1.0,
-    this.currentSpawnInterval = kObjectSpawnPeriodInitial,
+    this.currentSpawnInterval = AppConstants.kObjectSpawnPeriodInitial,
     this.currentGradientIndex = 0,
-    this.currentLevel = 1, // <--- NEW: Start at Level 1
-    this.showLevelUpOverlay = false, // <--- NEW: Default hidden
-    this.isPaused = false, // <--- NEW: Default to not paused
-    this.isMuted = false, // <--- NEW: Default to not muted
-    this.showConfetti = false, // <--- NEW: Default to false
-    this.hasSeenTutorial = false, // <--- NEW: Default to false (not seen)
-    this.startLevelOverride = 1, // <--- NEW: Defaults to null
+    this.currentLevel = 1,
+    this.showLevelUpOverlay = false,
+    this.isPaused = false,
+    this.isMuted = false,
+    this.showConfetti = false,
+    this.hasSeenTutorial = false,
+    this.startLevelOverride = 1,
   });
 
   // A convenience method to create a copy of the state with new values.
@@ -42,15 +42,15 @@ class GameState {
     int? highScore,
     GameStatus? status,
     double? currentSpeed,
-    double? currentSpawnInterval, // <--- NEW
-    int? currentGradientIndex, // <--- NEW
-    int? currentLevel, // <--- NEW
-    bool? showLevelUpOverlay, // <--- NEW
-    bool? isPaused, // <--- NEW
-    bool? isMuted, // <--- NEW
-    bool? showConfetti, // <--- NEW
-    bool? hasSeenTutorial, // <--- NEW
-    int? startLevelOverride, // <--- NEW
+    double? currentSpawnInterval,
+    int? currentGradientIndex,
+    int? currentLevel,
+    bool? showLevelUpOverlay,
+    bool? isPaused,
+    bool? isMuted,
+    bool? showConfetti,
+    bool? hasSeenTutorial,
+    int? startLevelOverride,
   }) {
     return GameState(
       score: score ?? this.score,

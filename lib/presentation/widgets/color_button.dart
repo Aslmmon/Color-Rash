@@ -22,7 +22,9 @@ class _ColorButtonState extends State<ColorButton>
     _controller = AnimationController(
       vsync: this,
 
-      duration: const Duration(milliseconds: kButtonPressAnimationDurationMs),
+      duration: const Duration(
+        milliseconds: AppConstants.kButtonPressAnimationDurationMs,
+      ),
       // Duration of the animation
       lowerBound: 0.0,
       // Minimum value of the animation (for reverse)
@@ -32,7 +34,7 @@ class _ColorButtonState extends State<ColorButton>
     // Define the scale animation: shrinks to 90% size when pressed
     _scaleAnimation = Tween<double>(
       begin: 1.0,
-      end: kButtonPressScaleFactor,
+      end: AppConstants.kButtonPressScaleFactor,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
   }
 
@@ -66,14 +68,14 @@ class _ColorButtonState extends State<ColorButton>
       child: ScaleTransition(
         scale: _scaleAnimation,
         child: Container(
-          width: kObjectRadius * 2,
-          height: kObjectRadius * 2,
+          width: AppConstants.kObjectRadius * 2,
+          height: AppConstants.kObjectRadius * 2,
           decoration: BoxDecoration(
             color: widget.color, // Use widget.color
             shape: BoxShape.circle,
             border: Border.all(
               color: Colors.white,
-              width: kColorButtonBorderWidth,
+              width: AppConstants.kColorButtonBorderWidth,
             ), // Border width could be a constant
           ),
         ),

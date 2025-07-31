@@ -5,7 +5,7 @@ import 'package:color_rash/presentation/widgets/initial_game_overlay.dart';
 import 'package:flutter/material.dart';
 
 import 'package:color_rash/core/ad_service.dart'; // Ensure IAdService is imported
-import '../../../domain/game_provider.dart';
+import '../../../domain/game_notifier.dart';
 import '../../../domain/game_state.dart';
 import '../../theme/app_colors.dart';
 
@@ -26,7 +26,7 @@ class GameOverlay extends StatelessWidget {
     // The Container and Center are common to all overlays, so they stay here.
     return Container(
       color: AppColors.gameOverOverlayColor.withOpacity(
-        kGameOverOverlayOpacity,
+        AppConstants. kGameOverOverlayOpacity,
       ),
       child: Center(
         child: _buildOverlayContent(

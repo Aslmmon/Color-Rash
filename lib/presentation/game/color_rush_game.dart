@@ -7,7 +7,7 @@ import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
 import '../../core/audio_player.dart';
 import '../../domain/game_constants.dart';
-import '../../domain/game_provider.dart';
+import '../../domain/game_notifier.dart';
 import '../../domain/game_state.dart';
 import '../theme/app_colors.dart';
 import 'components/falling_object.dart';
@@ -51,10 +51,10 @@ class ColorRushGame extends FlameGame {
   /// Initializes essential game components on load.
   void _initializeGameComponents() {
     final screenWidth = size.x;
-    final catchZoneY = size.y - kCatchZoneHeight;
+    final catchZoneY = size.y - AppConstants.kCatchZoneHeight;
     _catchZoneLineComponent = RectangleComponent(
       position: Vector2(0, catchZoneY),
-      size: Vector2(screenWidth, kCatchZoneLineWidth),
+      size: Vector2(screenWidth, AppConstants.kCatchZoneLineWidth),
       paint: Paint()..color = AppColors.catchZoneLineColor.withOpacity(0.5),
     );
     add(_catchZoneLineComponent);
@@ -100,11 +100,12 @@ class ColorRushGame extends FlameGame {
   // _updateCatchZoneLine method remains as is (already extracted)
   void _updateCatchZoneLine(double dt) {
     bool objectInZone = false;
-    final catchZoneTop = size.y - kCatchZoneHeight;
+    final catchZoneTop = size.y - AppConstants.kCatchZoneHeight;
 
     for (final obj in children.whereType<FallingObject>()) {
       if (obj.position.y + obj.radius > catchZoneTop - _linePulseRange &&
-          obj.position.y - obj.radius < catchZoneTop + kCatchZoneLineWidth) {
+          obj.position.y - obj.radius <
+              catchZoneTop + AppConstants.kCatchZoneLineWidth) {
         objectInZone = true;
         break;
       }
@@ -157,7 +158,7 @@ class ColorRushGame extends FlameGame {
 
     if (lowestObject == null) return;
 
-    final catchZone = size.y - kCatchZoneHeight;
+    final catchZone = size.y - AppConstants.kCatchZoneHeight;
 
     if (lowestObject.position.y > catchZone) {
       if (lowestObject.color == tappedColor) {
@@ -174,16 +175,16 @@ class ColorRushGame extends FlameGame {
       ParticleSystemComponent(
         position: tappedObject.position,
         particle: Particle.generate(
-          count: kParticleCount,
-          lifespan: kParticleLifespan,
+          count: AppConstants.kParticleCount,
+          lifespan: AppConstants.kParticleLifespan,
           generator:
               (i) => AcceleratedParticle(
                 speed:
-                    Vector2.random() * kParticleSpeed -
-                    Vector2.all(kParticleSpeed / 2),
-                acceleration: Vector2(0, kParticleAccelerationY),
+                    Vector2.random() * AppConstants.kParticleSpeed -
+                    Vector2.all(AppConstants.kParticleSpeed / 2),
+                acceleration: Vector2(0, AppConstants.kParticleAccelerationY),
                 child: CircleParticle(
-                  radius: kParticleRadius,
+                  radius: AppConstants.kParticleRadius,
                   paint: Paint()..color = tappedObject.color,
                 ),
               ),
@@ -196,7 +197,8 @@ class ColorRushGame extends FlameGame {
     add(
       FeedbackTextComponent(
         text: '+1',
-        position: tappedObject.position - Vector2(0, kObjectRadius),
+        position:
+            tappedObject.position - Vector2(0, AppConstants.kObjectRadius),
         color: AppColors.correctTapColor,
       ),
     );
@@ -209,7 +211,8 @@ class ColorRushGame extends FlameGame {
     add(
       FeedbackTextComponent(
         text: 'Miss!',
-        position: tappedObject.position - Vector2(0, kObjectRadius),
+        position:
+            tappedObject.position - Vector2(0, AppConstants.kObjectRadius),
         color: AppColors.incorrectTapColor,
       ),
     );
@@ -222,8 +225,8 @@ class ColorRushGame extends FlameGame {
     // ensuring it doesn't go off screen.
     // The range for randomX should be from kObjectRadius to (size.x - kObjectRadius).
 
-    final double minSpawnX = kObjectRadius;
-    final double maxSpawnX = size.x - kObjectRadius * 2;
+    final double minSpawnX = AppConstants.kObjectRadius;
+    final double maxSpawnX = size.x - AppConstants.kObjectRadius * 2;
     final double spawnableRange = maxSpawnX - minSpawnX;
     final double randomX = minSpawnX + (_random.nextDouble() * spawnableRange);
 
@@ -241,7 +244,7 @@ class ColorRushGame extends FlameGame {
     final screenWidth = size.x;
     final screenHeight = size.y;
     final receiverWidth = screenWidth / gameColors.length;
-    final receiverHeight = kReceiverHeight;
+    final receiverHeight = AppConstants.kReceiverHeight;
 
     for (var i = 0; i < gameColors.length; i++) {
       final receiver = RectangleComponent(
@@ -262,13 +265,13 @@ class ColorRushGame extends FlameGame {
     ]);
     _correctTapSoundPool = await FlameAudio.createPool(
       AppAudioPaths.correctTap,
-      minPlayers: minPlayersInAudioPool,
-      maxPlayers: maxPlayersInAudioPool,
+      minPlayers: AppConstants.minPlayersInAudioPool,
+      maxPlayers: AppConstants.maxPlayersInAudioPool,
     );
     _errorTapSoundPool = await FlameAudio.createPool(
       AppAudioPaths.errorTap,
-      minPlayers: minPlayersInAudioPool,
-      maxPlayers: maxPlayersInAudioPool,
+      minPlayers: AppConstants.minPlayersInAudioPool,
+      maxPlayers: AppConstants.maxPlayersInAudioPool,
     );
     audioPlayer.registerAudioPools(
       correctTapPool: _correctTapSoundPool,

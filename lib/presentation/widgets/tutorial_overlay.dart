@@ -1,5 +1,5 @@
 // lib/presentation/widgets/tutorial_overlay.dart
-import 'package:color_rash/domain/game_provider.dart';
+import 'package:color_rash/domain/game_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:color_rash/domain/tutorial_page_content.dart';
 import 'package:color_rash/presentation/theme/app_colors.dart';
@@ -26,7 +26,11 @@ class _TutorialOverlayState extends State<TutorialOverlay> {
     TutorialPageContent(
       title: AppStrings.tutorialWelcomeTitle,
       body: AppStrings.tutorialWelcomeBody,
-      visualWidget: Icon(Icons.star, size: 80, color: AppColors.incorrectTapColor),
+      visualWidget: Icon(
+        Icons.star,
+        size: 80,
+        color: AppColors.incorrectTapColor,
+      ),
     ),
     TutorialPageContent(
       title: AppStrings.tutorialMatchColorTitle,
@@ -60,7 +64,7 @@ class _TutorialOverlayState extends State<TutorialOverlay> {
       // Use string interpolation for kMaxLevel
       body: AppStrings.tutorialGetReadyBody.replaceAll(
         '{level}',
-        kMaxLevel.toString(),
+        AppConstants.kMaxLevel.toString(),
       ),
       visualWidget: Icon(
         Icons.rocket_launch,
@@ -99,11 +103,13 @@ class _TutorialOverlayState extends State<TutorialOverlay> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: kDefaultPadding),
+              padding: const EdgeInsets.symmetric(
+                vertical: AppConstants.kDefaultPadding,
+              ),
               child: Column(
                 children: [
                   _buildPageIndicators(),
-                  const SizedBox(height: kDefaultPadding),
+                  const SizedBox(height: AppConstants.kDefaultPadding),
                   _buildNavigationButtons(),
                 ],
               ),
@@ -116,7 +122,7 @@ class _TutorialOverlayState extends State<TutorialOverlay> {
 
   Widget _buildTutorialPage(BuildContext context, TutorialPageContent page) {
     return Padding(
-      padding: const EdgeInsets.all(kLargePadding),
+      padding: const EdgeInsets.all(AppConstants.kLargePadding),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -129,12 +135,12 @@ class _TutorialOverlayState extends State<TutorialOverlay> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: kDefaultPadding),
+          const SizedBox(height: AppConstants.kDefaultPadding),
           if (page.imagePath != null)
             Image.asset(page.imagePath!, height: 150, fit: BoxFit.contain)
           else if (page.visualWidget != null)
             page.visualWidget!,
-          const SizedBox(height: kDefaultPadding),
+          const SizedBox(height: AppConstants.kDefaultPadding),
           Text(
             page.body,
             textAlign: TextAlign.center,
