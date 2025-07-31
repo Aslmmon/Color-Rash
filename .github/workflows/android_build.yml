@@ -32,6 +32,12 @@ jobs:
       - name: Get Flutter dependencies
         run: flutter pub get
 
+      - name: Setup .env.prod for Production Build
+        run: |
+          echo "${{ secrets.PROD_ENV_FILE_CONTENT }}" > .env.prod
+          echo "Created .env.prod file from GitHub Secret."
+        # This step should run BEFORE the build command.
+
       - name: Decode google-services.json
         # This step assumes google-services.json is part of your repo for simplicity.
         # If it's a secret, you would decode it here.
