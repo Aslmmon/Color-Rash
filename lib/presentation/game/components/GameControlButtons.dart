@@ -19,8 +19,6 @@ class GameControlButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // These values are derived from gameState and gameNotifier, keeping this widget stateless
-
     return Positioned(
       top: AppConstants.kDefaultPadding, // Using constant
       left: AppConstants.kDefaultPadding, // Using constant

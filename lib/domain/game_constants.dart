@@ -136,7 +136,7 @@ class AppConstants {
 
   // --- Font Size Adjustments for Web/Mobile (Used in AppTheme & Overlays) ---
   static const double kTextFontSizeInMobile =
-      14.0; // Default for smaller body text on mobile
+      24.0; // Default for smaller body text on mobile
   static const double kTextFontSizeInWeb =
       18.0; // Default for smaller body text on web
 
@@ -167,9 +167,10 @@ class AppMonitoringLogs {
   static const String gameSessionDuration = 'game_session_duration';
   static const String levelUpLog = 'level_up';
   static const String gameEndedLog = 'game_ended';
-  static const String rewardedAdLevelBoostGranted = 'rewarded_ad_level_boost_granted';
-
+  static const String rewardedAdLevelBoostGranted =
+      'rewarded_ad_level_boost_granted';
 }
+
 class AppAudioPaths {
   static const String bgm = 'bg_music.ogg';
   static const String correctTap = 'correct_tap.ogg';

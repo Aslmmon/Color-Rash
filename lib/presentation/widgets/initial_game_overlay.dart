@@ -31,13 +31,12 @@ class InitialStateOverlay extends StatelessWidget {
         kIsWeb
             ? AppConstants.kHeadlineLargeFontSizeWeb
             : AppConstants.kHeadlineLargeFontSizeMobile;
-
-    debugPrint("grantLevelBoost GameState in InitialGameOverlay ${gameState}");
     final String startLevelHintText =
         '${AppStrings.startLevelHint} ${gameState.startLevelOverride ?? 1}';
 
     // Logic for showing Rewarded Ad button in initial state
-    final bool showRewardedAdButton = (gameState.currentLevel < AppConstants.kMaxLevel);
+    final bool showRewardedAdButton =
+        (gameState.currentLevel < AppConstants.kMaxLevel);
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,

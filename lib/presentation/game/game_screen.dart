@@ -185,13 +185,10 @@ class _GameScreenState extends ConsumerState<GameScreen>
           .paused: // App is in the background or screen is locked
         if (!gameNotifier.state.isPaused &&
             gameNotifier.state.status == GameStatus.playing) {
-          gameNotifier
-              .togglePause(); // Pause the game if it's playing and not already paused
+          gameNotifier.togglePause(); // Pause the game if it's playing and not already paused
         }
         break;
       case AppLifecycleState.resumed: // App comes to foreground
-        // Optional: you could auto-resume here, but often user preference is to manually resume.
-        // If you want to auto-resume, ensure gameNotifier.state.isPaused is true before resuming.
         break;
       case AppLifecycleState
           .inactive: // Temporary pause, e.g., incoming call. Often behaves like paused.
