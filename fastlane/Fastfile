@@ -1,0 +1,30 @@
+# fastlane/Fastfile
+
+# Define the platform (Android)
+platform :android do
+
+  # This is the lane our GitHub Action will call
+  # It takes parameters that are passed from the workflow
+  lane :internal_testing do |options|
+    # Get the path to the AAB file from the options passed by the GitHub Action
+    aab_path = options[:aab_path]
+
+    # Get the package name from the options passed by the GitHub Action
+    package_name = options[:package_name]
+
+    # Get the track from the options passed by the GitHub Action
+    track = options[:track]
+
+    # Get the path to the JSON key from the options passed by the GitHub Action
+    json_key = options[:json_key]
+
+    # Call the 'upload_to_play_store' action
+    upload_to_play_store(
+      # Use the parameters received from the GitHub Action
+      track: track,
+      aab: aab_path,
+      package_name: package_name,
+      json_key: json_key
+    )
+  end
+end

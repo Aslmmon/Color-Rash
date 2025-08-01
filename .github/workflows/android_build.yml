@@ -71,20 +71,24 @@ jobs:
           name: color-rash-android-appbundle
           path: build/app/outputs/bundle/release/ # Download the artifact to this path
 
-      # Step 3: Set up the Google Play credentials from your GitHub secret
+      # Step 3: Set up the Google Play credentials
       - name: Setup Google Play Credentials
         run: |
-          echo "${{ secrets.GOOGLE_PLAY_JSON_KEY }}" > google_play_key.json
+          echo "${{ secrets.GOOGLE_PLAY_JSON_KEY }}" > fastlane/google_play_key.json
           echo "Google Play key file created."
 
       # Step 4: Use Fastlane to deploy the app bundle to Google Play Store
       - name: Deploy to Google Play Internal Testing
-        uses: rnx-community/fastlane-actions@v2
+        uses: fastlane/github-action@v2
         with:
-          lane: 'internal_testing'
-          # This should be your apps package name
-          package_name: 'com.colorrash.color_rash' # <--- REPLACE with your actual package name
-          aab_path: 'build/app/outputs/bundle/release/app-prod-release.aab' # <--- Adjust path if needed
-          track: 'internal'
-          # Use the JSON key file you created
-          json_key: 'google_play_key.json'
+          # The Fastfile is in the fastlane/ directory
+          # We need to tell Fastlane where the AAB is located
+          aab_path: 'app-release.aab' # <--- Correct path relative to the runner root
+          # These parameters are now passed as environment variables to the Fastfile
+          android_package_name: 'com.colorrash.color_rash' # <--- Pass package name
+          android_track: 'internal'
+          android_json_key: 'fastlane/google_play_key.json' # Path to credentials file
+
+          # This command executes the 'internal_testing' lane in the Fastfile
+          command: |
+            bundle exec fastlane internal_testing aab_path:app-release.aab package_name:com.colorrash.color_rash track:internal json_key:fastlane/google_play_key.json
