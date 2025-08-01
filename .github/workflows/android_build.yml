@@ -51,6 +51,7 @@ jobs:
         run: |
           echo "${{ secrets.UPLOAD_KEYSTORE }}" | base64 --decode > android/app/upload-keystore.jks
 
+
       - name: Create keystore.properties file
         run: |
           echo "storeFile=upload-keystore.jks" >> android/key.properties
