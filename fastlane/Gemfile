@@ -3,3 +3,6 @@
 source "https://rubygems.org"
 
 gem "fastlane"
+
+# If you use `bundle exec`, you should run `bundle install`
+# in your project's `fastlane` directory to generate the Gemfile.lock.

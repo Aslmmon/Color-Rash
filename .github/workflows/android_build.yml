@@ -67,10 +67,8 @@ jobs:
       - name: Deploy to Google Play Internal Testing
         run: |
           cd fastlane
-          # The Fastfile is in the 'fastlane' directory.
-          # We need to tell the Fastlane command where to look for it.
-          # The path to the AAB file is relative to the workspace root.
-          bundle exec fastlane internal_testing aab_path:build/app/outputs/bundle/prodRelease/app-prod-release.aab package_name:com.colorrash.color_rash track:internal json_key:fastlane/google_play_key.json
+          bundle install # Install gems from the Gemfile
+          bundle exec fastlane internal_testing
         env:
           # These environment variables are passed to the Fastlane process
           FLUTTER_ROOT: ${{ runner.tool_cache }}/flutter
