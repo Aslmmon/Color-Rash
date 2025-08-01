@@ -51,7 +51,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: color-rash-android-appbundle
-          path: build/app/outputs/bundle/prod/app-prod-release.aab # <--- Ensure this path is correct for your 'prod' flavor build
+          path: build/app/outputs/bundle/prodRelease/app-prod-release.aab # <--- Ensure this path is correct for your 'prod' flavor build
           # The path might vary. Check your build logs for the exact path.
 
   # <--- NEW JOB: The "deploy" job depends on the "build" job --->
