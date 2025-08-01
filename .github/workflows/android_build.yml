@@ -66,6 +66,7 @@ jobs:
 
       - name: Deploy to Google Play Internal Testing
         run: |
+          cd fastlane
           # The Fastfile is in the 'fastlane' directory.
           # We need to tell the Fastlane command where to look for it.
           # The path to the AAB file is relative to the workspace root.
