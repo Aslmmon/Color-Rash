@@ -9,7 +9,7 @@ platform :android do
     # The `aab` path is relative to the workspace root, so we use `../`
     # as the GitHub Actions job `cd`s into the 'fastlane' directory.
     supply(
-      aab: "/Users/macbookpro/Flutter/color_rash/build/app/outputs/bundle/prodRelease/app-prod-release.aab",
+      aab: "build/app/outputs/bundle/prodRelease/app-prod-release.aab",
       package_name: "com.colorrash.color_rash",
       track: "internal",
       # `json_key` is the path to your service account key,
