@@ -9,7 +9,25 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+
+def keystorePropertiesFile = rootProject.file("key.properties")
+def keystoreProperties = new Properties()
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
 android {
+
+
+    signingConfigs {
+        release {
+            if (keystoreProperties.present) {
+                storeFile file(keystoreProperties['storeFile'])
+                storePassword keystoreProperties['storePassword']
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+            }
+        }
+    }
 
 
     // <--- NEW: Define Flavor Dimensions
@@ -61,7 +79,9 @@ android {
         release {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+//            signingConfig = signingConfigs.getByName("debug")
+            signingConfig signingConfigs.release
+
         }
     }
 }

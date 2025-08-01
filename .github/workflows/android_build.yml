@@ -38,10 +38,26 @@ jobs:
           echo "${{ secrets.PROD_ENV_FILE_CONTENT }}" > .env.prod
           echo "Created .env.prod file from GitHub Secret."
 
-#      - name: Setup google-services.json for Production Build
-#        run: |
-#          echo "${{ secrets.GOOGLE_SERVICES_JSON_PROD }}" > android/app/google-services.json
-#          echo "Created google-services.json from GitHub Secret."
+      #      - name: Setup google-services.json for Production Build
+      #        run: |
+      #          echo "${{ secrets.GOOGLE_SERVICES_JSON_PROD }}" > android/app/google-services.json
+      #          echo "Created google-services.json from GitHub Secret."
+
+
+
+      # --- START of SIGNING STEPS ---
+      # These steps decode the key from the GitHub Secret and create a properties file for Gradle
+      - name: Decode Keystore File
+        run: |
+          echo "${{ secrets.UPLOAD_KEYSTORE }}" | base64 --decode > android/app/upload-keystore.jks
+
+      - name: Create keystore.properties file
+        run: |
+          echo "storeFile=upload-keystore.jks" >> android/key.properties
+          echo "storePassword=${{ secrets.UPLOAD_KEYSTORE_PASSWORD }}" >> android/key.properties
+          echo "keyAlias=${{ secrets.UPLOAD_KEY_ALIAS }}" >> android/key.properties
+          echo "keyPassword=${{ secrets.UPLOAD_KEY_PASSWORD }}" >> android/key.properties
+      # --- END of SIGNING STEPS ---
 
       - name: Build Android App Bundle
         run: flutter build appbundle --flavor prod --release
