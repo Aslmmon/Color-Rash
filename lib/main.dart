@@ -19,6 +19,7 @@ void main() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
+
     final container = ProviderContainer();
     final appMonitoringService = container.read(appMonitoringServiceProvider);
     await appMonitoringService.initialize();
