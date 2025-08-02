@@ -70,6 +70,7 @@ jobs:
           ruby-version: '3.1'
           bundler-cache: true
 
+
       - name: Setup Google Play Credentials
         run: |
           mkdir -p fastlane
