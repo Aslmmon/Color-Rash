@@ -88,5 +88,6 @@ jobs:
           bundle exec fastlane internal_testing
         env:
           # These environment variables are passed to the Fastlane process
+          GOOGLE_PLAY_KEY_FILE: ${{ github.workspace }}/fastlane/google_play_key.json
           FLUTTER_ROOT: ${{ runner.tool_cache }}/flutter
           # Other environment variables as needed

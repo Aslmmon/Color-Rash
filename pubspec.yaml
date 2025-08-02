@@ -71,7 +71,7 @@ flutter_native_splash:
 flutter_launcher_icons:
   android: "launcher_icon" # Or specify true to use default 'mipmap/ic_launcher'
   ios: true                 # Generates icons for iOS
-  image_path: "assets/images/logo.png" # Path to your source icon image
+  image_path: "assets/images/logo_2.png" # Path to your source icon image
 
 
 # For information on the generic Dart part of this file, see the

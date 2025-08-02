@@ -14,7 +14,7 @@ platform :android do
       track: "internal",
       # `json_key` is the path to your service account key,
       # which is created by your GitHub Actions workflow.
-      json_key: "google_play_key.json"
+      json_key: ENV['GOOGLE_PLAY_KEY_FILE'] # THIS IS THE CORRECTED LINE
     )
 
     # Note: We are not running the build command here because it's already handled
