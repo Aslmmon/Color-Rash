@@ -15,6 +15,8 @@ platform :android do
       # `json_key` is the path to your service account key,
       # which is created by your GitHub Actions workflow.
       json_key: ENV['GOOGLE_PLAY_KEY_FILE'] # THIS IS THE CORRECTED LINE
+      native_debug_symbols: "build/app/outputs/native-debug-symbols/prodRelease/native-debug-symbols.zip"
+
     )
 
     # Note: We are not running the build command here because it's already handled

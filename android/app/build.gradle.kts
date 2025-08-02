@@ -85,8 +85,10 @@ import java . util . Properties
                 getByName("release") {
                     // Assign the release signing config
                     //  signingConfig = signingConfigs.getByName("debug")
-
                     signingConfig = signingConfigs.getByName("release")
+                    ndk {
+                        debugSymbolLevel = "FULL" // or "SYMBOL_TABLE"
+                    }
                 }
             }
         }
