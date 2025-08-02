@@ -108,6 +108,7 @@ class InitialStateOverlay extends StatelessWidget {
                         .grantLevelBoost(); // Callback for when reward is earned
                   });
                 },
+
                 color: AppColors.correctTapColor.withOpacity(0.8),
                 borderRadius: AppConstants.kControlBtnBorderRadius,
                 child: Row(
