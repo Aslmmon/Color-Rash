@@ -1,4 +1,6 @@
 // lib/presentation/widgets/initial_game_overlay.dart
+import 'package:color_rash/presentation/widgets/pulsating_icon.dart'
+    show PulsatingIcon;
 import 'package:flutter/foundation.dart'; // For kIsWeb
 import 'package:flutter/material.dart';
 
@@ -111,10 +113,14 @@ class InitialStateOverlay extends StatelessWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(
-                      Icons.video_collection,
+                    PulsatingIcon(
+                      icon: Icons.video_collection,
                       color: AppColors.primaryTextColor,
                       size: 25,
+                      // You can adjust the duration here if you want a faster/slower pulse
+                      duration: const Duration(
+                        seconds: 2,
+                      ), // Example: a 2-second pulse cycle
                     ),
                     SizedBox(height: AppConstants.kSmallSpacing),
                     // Spacing between icon and text
