@@ -73,7 +73,7 @@ jobs:
       - name: Setup Google Play Credentials
         run: |
           mkdir -p fastlane
-          echo "${{ secrets.GOOGLE_PLAY_JSON_KEY }}" > fastlane/google_play_key.json
+          echo "${{ secrets.GOOGLE_PLAY_KEY_JSON_BASE64 }}" | base64 --decode > fastlane/google_play_key.json
           echo "Google Play key file created."
 
       - name: Set up Fastlane Match (if used)
