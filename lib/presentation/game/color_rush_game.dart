@@ -160,7 +160,7 @@ class ColorRushGame extends FlameGame {
 
     final catchZone = size.y - AppConstants.kCatchZoneHeight;
 
-    if (lowestObject.position.y > catchZone) {
+    if (lowestObject.position.y + (lowestObject.radius * 2) >= catchZone) {
       if (lowestObject.color == tappedColor) {
         _handleCorrectTap(lowestObject);
       } else {

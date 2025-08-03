@@ -1,3 +1,4 @@
+import 'package:color_rash/domain/game_constants.dart';
 import 'package:color_rash/presentation/game/game_screen.dart';
 import 'package:color_rash/presentation/theme/app_theme.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -7,14 +8,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-
 import 'domain/game_providers.dart';
 import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await _prepareEnvironmentIdsVariables();
-
 
   if (!kIsWeb) {
     await Firebase.initializeApp(
@@ -40,8 +39,9 @@ void main() async {
 Future<void> _prepareEnvironmentIdsVariables() async {
   String envFileName =
       kDebugMode
-          ? '.env.dev'
-          : '.env.prod'; // Assuming .env is for production in CI/CD.
+          ? AppFilePaths.devEnvironment
+          : AppFilePaths
+              .prodEnvironment; // Assuming .env is for production in CI/CD.
 
   if (kDebugMode && !kIsWeb) {
     final RequestConfiguration configuration = RequestConfiguration(
@@ -65,7 +65,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       showPerformanceOverlay: kDebugMode ? false : false,
-      title: 'Color Rash',
+      title: AppStrings.appTitle,
       debugShowCheckedModeBanner: false,
       theme: AppTheme.darkTheme,
       // <-- Use your custom theme here

@@ -55,8 +55,8 @@ class GameNotifier extends Notifier<GameState> {
     double interval = AppConstants.kObjectSpawnPeriodInitial;
     int gradientIndex = AppConstants.kGameGradientIndexInitial;
     for (
-      int currentThresholdLevel = 1;
-      currentThresholdLevel < targetLevel;
+      int currentThresholdLevel = 0;
+      currentThresholdLevel <= targetLevel;
       currentThresholdLevel++
     ) {
       speed += AppConstants.kSpeedIncrementFactor;
@@ -234,9 +234,8 @@ class GameNotifier extends Notifier<GameState> {
     if (newLevel > AppConstants.kMaxLevel) {
       // Use >= in case you skip levels
       finalStatus = GameStatus.won;
-      _audioPlayer.playSfx(
-        AppAudioPaths.celebrate,
-      ); // <--- NEW: Play a win sound effect
+      wonGame();
+
     }
 
     state = state.copyWith(
@@ -284,6 +283,26 @@ class GameNotifier extends Notifier<GameState> {
     _audioPlayer.playSfx(AppAudioPaths.gameOver); // Play game over sound
     _audioPlayer.stopBgm(); // Stop BGM on game over
     state = state.copyWith(status: GameStatus.gameOver);
+    _handleGameOverAds();
+    _appMonitoringService.logEvent(
+      AppMonitoringLogs.gameEndedLog,
+      parameters: {
+        'score': state.score,
+        'high_score': state.highScore,
+        'status': state.status.toString(),
+      },
+    ); // <--- NEW
+    _appMonitoringService.stopTrace(
+      AppMonitoringLogs.gameSessionDuration,
+    ); // <--- NEW
+  }
+
+  /// Ends the current game session, handles high score saving and ads.
+  void wonGame() {
+    _handleScoreAfterGameOver(); // Handle score saving and ad display
+    _audioPlayer.playSfx(AppAudioPaths.celebrate); // Play game over sound
+    state.copyWith(showConfetti: true);
+    _audioPlayer.stopBgm(); // Stop BGM on game over
     _handleGameOverAds();
     _appMonitoringService.logEvent(
       AppMonitoringLogs.gameEndedLog,

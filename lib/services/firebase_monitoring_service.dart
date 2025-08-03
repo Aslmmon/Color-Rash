@@ -31,63 +31,74 @@ class FirebaseMonitoringService implements IAppMonitoringService {
   // --- Analytics Implementation ---
   @override
   void logEvent(String name, {Map<String, Object>? parameters}) {
-    _analytics.logEvent(name: name, parameters: parameters);
+    if (!kIsWeb) _analytics.logEvent(name: name, parameters: parameters);
   }
 
   @override
   void setUserProperty(String name, String? value) {
-    _analytics.setUserProperty(name: name, value: value);
+    if (!kIsWeb) _analytics.setUserProperty(name: name, value: value);
   }
 
   // --- Crashlytics Implementation ---
   @override
   void logError(dynamic exception, StackTrace stack, {String? reason}) {
-    _crashlytics.recordError(
-      exception,
-      stack,
-      reason: reason,
-      fatal: false, // Log as non-fatal
-    );
+    if (!kIsWeb) {
+      _crashlytics.recordError(
+        exception,
+        stack,
+        reason: reason,
+        fatal: false, // Log as non-fatal
+      );
+    }
   }
 
   @override
   void recordFlutterFatalError(FlutterErrorDetails errorDetails) {
-    _crashlytics.recordFlutterFatalError(errorDetails);
+    if (!kIsWeb) _crashlytics.recordFlutterFatalError(errorDetails);
   }
 
   // --- Performance Monitoring Implementation ---
   @override
   Future<void> startTrace(String name) async {
-    if (_activeTraces.containsKey(name)) {
-      // Trace already started, or not properly stopped. Log a warning.
-      _crashlytics.log('Warning: Trace "$name" started while already active.');
-      return;
+    if (!kIsWeb) {
+      if (_activeTraces.containsKey(name)) {
+        // Trace already started, or not properly stopped. Log a warning.
+
+        _crashlytics.log(
+          'Warning: Trace "$name" started while already active.',
+        );
+        return;
+      }
+      final trace = _performance.newTrace(name);
+      _activeTraces[name] = trace;
+      await trace.start();
     }
-    final trace = _performance.newTrace(name);
-    _activeTraces[name] = trace;
-    await trace.start();
   }
 
   @override
   void stopTrace(String name) {
-    final trace = _activeTraces.remove(name);
-    if (trace != null) {
-      trace.stop();
-    } else {
-      // Trace not found or already stopped. Log a warning.
-      _crashlytics.log('Warning: Trace "$name" stopped but was not active.');
+    if (!kIsWeb) {
+      final trace = _activeTraces.remove(name);
+      if (trace != null) {
+        trace.stop();
+      } else {
+        // Trace not found or already stopped. Log a warning.
+        _crashlytics.log('Warning: Trace "$name" stopped but was not active.');
+      }
     }
   }
 
   @override
   void incrementTraceMetric(String traceName, String metricName, int value) {
-    final trace = _activeTraces[traceName];
-    if (trace != null) {
-      trace.incrementMetric(metricName, value);
-    } else {
-      _crashlytics.log(
-        'Warning: Metric incremented for inactive trace "$traceName".',
-      );
+    if (!kIsWeb) {
+      final trace = _activeTraces[traceName];
+      if (trace != null) {
+        trace.incrementMetric(metricName, value);
+      } else {
+        _crashlytics.log(
+          'Warning: Metric incremented for inactive trace "$traceName".',
+        );
+      }
     }
   }
 }

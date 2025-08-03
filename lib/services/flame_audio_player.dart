@@ -61,15 +61,12 @@ class FlameAudioPlayer implements IAudioPlayer {
   @override
   void setMuted(bool muted) {
     _isGloballyMuted = muted;
-    debugPrint("isGloballyMuted  " +_isGloballyMuted.toString());
+    debugPrint("isGloballyMuted  " + _isGloballyMuted.toString());
     if (_isGloballyMuted) {
       FlameAudio.bgm.audioPlayer.setVolume(0.0); // MUTE: Set volume to 0
     } else {
-      FlameAudio.bgm.audioPlayer.setVolume(
-        _bgmDefaultVolume,
-      );
+      FlameAudio.bgm.audioPlayer.setVolume(_bgmDefaultVolume);
       FlameAudio.bgm.resume();
-
     }
   }
 

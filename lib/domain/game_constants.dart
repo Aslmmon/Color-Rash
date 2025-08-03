@@ -160,6 +160,8 @@ class AppFilePaths {
   static const String unmuteIcon = 'assets/icons/unmute.png';
   static const String playIcon = 'assets/icons/play.png';
   static const String restartIcon = 'assets/icons/restart.png';
+  static const String devEnvironment = '.env.dev';
+  static const String prodEnvironment = '.env.prod';
 }
 
 class AppMonitoringLogs {
@@ -175,7 +177,7 @@ class AppAudioPaths {
   static const String bgm = 'bg_music.ogg';
   static const String correctTap = 'correct_tap.ogg';
   static const String errorTap = 'error_tap.ogg';
-  static const String celebrate = 'celebrate.ogg';
+  static const String celebrate = 'celebrate.mp3';
   static const String gameOver = 'game_over.ogg';
 }
 // lib/domain/app_strings.dart

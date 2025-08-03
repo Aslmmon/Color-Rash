@@ -138,8 +138,9 @@ class _TutorialOverlayState extends State<TutorialOverlay> {
           const SizedBox(height: AppConstants.kDefaultPadding),
           if (page.imagePath != null)
             Image.asset(page.imagePath!, height: 150, fit: BoxFit.contain)
-          else if (page.visualWidget != null)
-            page.visualWidget!,
+          else
+            if (page.visualWidget != null)
+              page.visualWidget!,
           const SizedBox(height: AppConstants.kDefaultPadding),
           Text(
             page.body,
@@ -165,9 +166,9 @@ class _TutorialOverlayState extends State<TutorialOverlay> {
           width: _currentPage == index ? 24.0 : 8.0,
           decoration: BoxDecoration(
             color:
-                _currentPage == index
-                    ? AppColors.accentColor
-                    : AppColors.secondaryTextColor.withOpacity(0.5),
+            _currentPage == index
+                ? AppColors.accentColor
+                : AppColors.secondaryTextColor.withOpacity(0.5),
             borderRadius: BorderRadius.circular(4),
           ),
         );
@@ -193,7 +194,11 @@ class _TutorialOverlayState extends State<TutorialOverlay> {
             borderRadius: 12,
             child: Text(
               AppStrings.tutorialButtonBack,
-              style: Theme.of(context).textTheme.titleSmall?.copyWith(
+              style: Theme
+                  .of(context)
+                  .textTheme
+                  .titleSmall
+                  ?.copyWith(
                 color: AppColors.buttonTextColor,
               ),
             ),
@@ -217,9 +222,13 @@ class _TutorialOverlayState extends State<TutorialOverlay> {
             _currentPage == _tutorialPages.length - 1
                 ? AppStrings.tutorialButtonGotItLetSPlay
                 : AppStrings.tutorialButtonNext,
-            style: Theme.of(
+            style: Theme
+                .of(
               context,
-            ).textTheme.titleSmall?.copyWith(color: AppColors.buttonTextColor),
+            )
+                .textTheme
+                .titleSmall
+                ?.copyWith(color: AppColors.buttonTextColor),
           ),
         ),
       ],

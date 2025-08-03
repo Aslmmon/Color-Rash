@@ -108,7 +108,7 @@ class InitialStateOverlay extends StatelessWidget {
                         .grantLevelBoost(); // Callback for when reward is earned
                   });
                 },
-                color: AppColors.correctTapColor.withOpacity(0.8),
+                color: AppColors.incorrectTapColor.withOpacity(0.8),
                 borderRadius: AppConstants.kControlBtnBorderRadius,
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -119,7 +119,7 @@ class InitialStateOverlay extends StatelessWidget {
                       size: 25,
                       // You can adjust the duration here if you want a faster/slower pulse
                       duration: const Duration(
-                        seconds: 2,
+                        milliseconds: 500,
                       ), // Example: a 2-second pulse cycle
                     ),
                     SizedBox(height: AppConstants.kSmallSpacing),
