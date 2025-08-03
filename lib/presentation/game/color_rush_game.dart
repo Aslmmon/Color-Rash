@@ -51,7 +51,9 @@ class ColorRushGame extends FlameGame {
   /// Initializes essential game components on load.
   void _initializeGameComponents() {
     final screenWidth = size.x;
-    final catchZoneY = size.y - AppConstants.kCatchZoneHeight;
+    // final catchZoneY = size.y - AppConstants.kCatchZoneHeight;
+    final catchZoneY = size.y * AppConstants.kCatchZoneHeightPercentage;
+
     _catchZoneLineComponent = RectangleComponent(
       position: Vector2(0, catchZoneY),
       size: Vector2(screenWidth, AppConstants.kCatchZoneLineWidth),
@@ -100,7 +102,8 @@ class ColorRushGame extends FlameGame {
   // _updateCatchZoneLine method remains as is (already extracted)
   void _updateCatchZoneLine(double dt) {
     bool objectInZone = false;
-    final catchZoneTop = size.y - AppConstants.kCatchZoneHeight;
+    // final catchZoneTop = size.y - AppConstants.kCatchZoneHeight;
+    final catchZoneTop = size.y * AppConstants.kCatchZoneHeightPercentage;
 
     for (final obj in children.whereType<FallingObject>()) {
       if (obj.position.y + obj.radius > catchZoneTop - _linePulseRange &&
@@ -158,7 +161,8 @@ class ColorRushGame extends FlameGame {
 
     if (lowestObject == null) return;
 
-    final catchZone = size.y - AppConstants.kCatchZoneHeight;
+    // final catchZone = size.y - AppConstants.kCatchZoneHeight;
+    final catchZone = size.y * AppConstants.kCatchZoneHeightPercentage;
 
     if (lowestObject.position.y + (lowestObject.radius * 2) >= catchZone) {
       if (lowestObject.color == tappedColor) {
@@ -245,7 +249,10 @@ class ColorRushGame extends FlameGame {
     final screenHeight = size.y;
     final receiverWidth = screenWidth / gameColors.length;
     // final receiverHeight = AppConstants.kReceiverHeight;
-    final receiverHeight = screenHeight * AppConstants.kReceiverHeightPercentage; // e.g., 10% of the screen height
+    final receiverHeight =
+        screenHeight *
+        AppConstants
+            .kReceiverHeightPercentage; // e.g., 10% of the screen height
 
     for (var i = 0; i < gameColors.length; i++) {
       final receiver = RectangleComponent(

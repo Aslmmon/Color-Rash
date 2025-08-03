@@ -58,14 +58,14 @@ class AppConstants {
   static const double kObjectBaseSpeed =
       150; // Pixels per second for falling objects
   static const double kObjectRadius = 30.0; // Radius of falling circles
-  static const double kCatchZoneHeight =
-      200; // Height of the catch zone from the bottom
+  static const double kCatchZoneHeight = 200; // Height of the catch zone from the bottom
+  static const double kCatchZoneHeightPercentage = 0.8; // Height of the catch zone from the bottom
+
   static const double kCatchZoneLineWidth =
       2.5; // Thickness of the catch zone line
-  static const double kReceiverHeight =
-      100.0; // Height of the receiver buttons at the bottom
+  static const double kReceiverHeight =   100.0; // Height of the receiver buttons at the bottom
 
-  static const double kReceiverHeightPercentage = 0.15; // e.g., 10% of the screen height
+  static const double kReceiverHeightPercentage = 0.1; // e.g., 15% of the screen height
   // Catch zone line pulsing (moved from ColorRushGame for centralization)
   static const double kLinePulseRange =
       50.0; // Distance from line to trigger pulse
