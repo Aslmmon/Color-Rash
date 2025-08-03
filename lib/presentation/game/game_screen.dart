@@ -58,7 +58,6 @@ class _GameScreenState extends ConsumerState<GameScreen>
         _loadBannerAd();
       }
     });
-
   }
 
   void _loadBannerAd() {
@@ -94,12 +93,13 @@ class _GameScreenState extends ConsumerState<GameScreen>
     final gameNotifier = ref.read(gameProvider.notifier);
     final colors = ref.read(colorProvider);
     _game.status = gameState.status; // Update Flame game status
-    debugPrint("GameScreen initialized with game status: ${gameNotifier.state.toString()}");
+    debugPrint(
+      "GameScreen initialized with game status: ${gameNotifier.state.toString()}",
+    );
 
     return Scaffold(
       body: _buildBackgroundGradient(context, gameState, gameNotifier, colors),
     );
-
   }
 
   /// Builds the animated container with the dynamic gradient background.
@@ -159,7 +159,8 @@ class _GameScreenState extends ConsumerState<GameScreen>
             showConfetti:
                 gameState.showConfetti, // <--- Pass the state directly
           ),
-          if (gameState.status == GameStatus.initial && !gameState.hasSeenTutorial)
+          if (gameState.status == GameStatus.initial &&
+              !gameState.hasSeenTutorial)
             TutorialOverlay(gameNotifier: gameNotifier),
         ],
       ),

@@ -50,7 +50,7 @@ class AppConstants {
       40.0; // Spacing between "Paused" text and "Resume" button
 
   // General Padding/Spacing constants
-  static const double kDefaultPadding = 16.0;
+  static const double kDefaultPadding = 30.0;
   static const double kLargePadding = 32.0;
   static const double kSmallSpacing = 10.0; // For small SizedBox heights
 
@@ -65,6 +65,7 @@ class AppConstants {
   static const double kReceiverHeight =
       100.0; // Height of the receiver buttons at the bottom
 
+  static const double kReceiverHeightPercentage = 0.15; // e.g., 10% of the screen height
   // Catch zone line pulsing (moved from ColorRushGame for centralization)
   static const double kLinePulseRange =
       50.0; // Distance from line to trigger pulse
@@ -107,8 +108,8 @@ class AppConstants {
       50.0; // Standard AdSize.banner height (used in padding calc)
 
   // Game Button (AnimatedButton wrapper) specific constants
-  static const double kControlButtonSize = 60.0; // Size for Pause/Mute buttons
-  static const double kControlBtnBorderRadius = 30.0; // Circular buttons
+  static const double kControlButtonSize = 50.0; // Size for Pause/Mute buttons
+  static const double kControlBtnBorderRadius = 40.0; // Circular buttons
   static const double kControlButtonIconSize =
       30.0; // Icon size for control buttons
 

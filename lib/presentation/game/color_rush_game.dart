@@ -244,7 +244,8 @@ class ColorRushGame extends FlameGame {
     final screenWidth = size.x;
     final screenHeight = size.y;
     final receiverWidth = screenWidth / gameColors.length;
-    final receiverHeight = AppConstants.kReceiverHeight;
+    // final receiverHeight = AppConstants.kReceiverHeight;
+    final receiverHeight = screenHeight * AppConstants.kReceiverHeightPercentage; // e.g., 10% of the screen height
 
     for (var i = 0; i < gameColors.length; i++) {
       final receiver = RectangleComponent(
