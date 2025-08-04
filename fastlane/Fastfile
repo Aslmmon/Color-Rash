@@ -24,7 +24,7 @@ platform :android do
      email(
           to: "adamtomy13@gmail.com", # <--- Add your email addresses here
           subject: "New Color Rash Android build available on #{track} track!",
-          body: "A new version of Color Rash has been successfully uploaded to the #{track} track on Google Play. You can now download and test it.",
+          body: "A new version of Color Rash has been successfully uploaded to the #{track} track on Google Play. You can now download and test it. link is : #{https://play.google.com/apps/internaltest/4700654095157702073}",
           # You can use the 'skip_text_attachment' option to avoid attaching the log file.
           skip_text_attachment: true
         )
