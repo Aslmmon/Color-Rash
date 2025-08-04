@@ -4,7 +4,6 @@ description: "A new Flutter project."
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
 # followed by an optional build number separated by a +.
@@ -17,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.0+1
+version: 1.0.0+2
 
 environment:
   sdk: ^3.7.2
@@ -51,6 +50,7 @@ dependencies:
   firebase_analytics: ^12.0.0
   firebase_performance: ^0.11.0
   flutter_dotenv: ^5.2.1
+  lottie: ^3.3.1
 
 
 dev_dependencies:
@@ -65,13 +65,13 @@ dev_dependencies:
   flutter_lints: ^5.0.0
   flame_lint: ^1.4.0
 flutter_native_splash:
-  color: "#FFFFFF" # Hex color code for the background of the splash screen.
+  color: "#000000" # Hex color code for the background of the splash screen.
   # This will be the primary background for your splash.
-  image: assets/images/logo.png # Path to your splash image.
+  image: assets/images/logo_3.png # Path to your splash image.
 flutter_launcher_icons:
   android: "launcher_icon" # Or specify true to use default 'mipmap/ic_launcher'
   ios: true                 # Generates icons for iOS
-  image_path: "assets/images/logo_2.png" # Path to your source icon image
+  image_path: "assets/images/logo_3.png" # Path to your source icon image
 
 
 # For information on the generic Dart part of this file, see the
@@ -87,5 +87,6 @@ flutter:
   assets:
     - assets/audio/
     - assets/images/
+    - assets/lottie/
     - .env.dev # <--- Also bundle the dev specific file if you use it directly
     - .env.prod # <--- Also bundle the dev specific file if you use it directly

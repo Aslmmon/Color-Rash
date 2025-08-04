@@ -28,6 +28,9 @@ class GameNotifier extends Notifier<GameState> {
     return GameState();
   }
 
+
+
+
   /// Initializes the necessary service dependencies from Riverpod.
   void _initializeDependencies() {
     _settingsRepository = ref.read(settingsRepositoryProvider);

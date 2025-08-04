@@ -1,5 +1,6 @@
 import 'package:color_rash/domain/game_constants.dart';
 import 'package:color_rash/presentation/game/game_screen.dart';
+import 'package:color_rash/presentation/game/loading_screen.dart';
 import 'package:color_rash/presentation/theme/app_theme.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
@@ -14,17 +15,7 @@ import 'firebase_options.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await _prepareEnvironmentIdsVariables();
-
   if (!kIsWeb) {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-
-    final container = ProviderContainer();
-    final appMonitoringService = container.read(appMonitoringServiceProvider);
-    await appMonitoringService.initialize();
-    FlutterError.onError =
-        appMonitoringService.recordFlutterFatalError; // <--- MODIFIED
     MobileAds.instance.initialize();
   }
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
@@ -69,7 +60,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.darkTheme,
       // <-- Use your custom theme here
-      home: const GameScreen(), // <-- Updated this line
+      home: LoadingScreen(), // <-- Updated this line
     );
   }
 }

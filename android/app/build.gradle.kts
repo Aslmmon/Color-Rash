@@ -13,6 +13,16 @@ import java . util . Properties
 
         android {
 
+            packagingOptions { // <--- Kotlin DSL for packagingOptions
+                // This ensures the build includes both 32-bit and 64-bit native libraries.
+                jniLibs {
+                    useLegacyPackaging = false
+                }
+                resources {
+                    excludes += "/lib/armeabi-v7a/*" // Exclude 32-bit if not needed, but here you NEED it so it's a stylistic comment
+                    excludes += "/lib/x86/*" // Exclude x86 as Flutter no longer supports it
+                }
+            }
 
             // <--- NEW: Define Flavor Dimensions
             // This is required if you have multiple flavor dimensions.
@@ -34,8 +44,6 @@ import java . util . Properties
                     dimension = "app" // Correct Kotlin DSL assignment
                     resValue("string", "app_name", "Color Rash") // Correct Kotlin DSL method call
                     resValue("string", "admob_app_id_value", "\"${System.getenv("ADMOB_APP_ID")}\"")
-
-
                 }
             }
             namespace = "com.colorrash.color_rash"
@@ -78,6 +86,8 @@ import java . util . Properties
                         keyAlias = keystoreProperties["keyAlias"] as String
                         keyPassword = keystoreProperties["keyPassword"] as String
                     }
+
+
                 }
             }
 
@@ -86,8 +96,15 @@ import java . util . Properties
                     // Assign the release signing config
                     //  signingConfig = signingConfigs.getByName("debug")
                     signingConfig = signingConfigs.getByName("release")
-                    ndk {
-                        debugSymbolLevel = "FULL" // or "SYMBOL_TABLE"
+                    ndk { // <--- Kotlin DSL for ndk block
+                        abiFilters.add("armeabi-v7a") // <--- Use abiFilters.add()
+                        abiFilters.add("arm64-v8a")
+                    }
+                }
+                getByName("debug") {
+                    ndk { // <--- Kotlin DSL for ndk block
+                        abiFilters.add("armeabi-v7a")
+                        abiFilters.add("arm64-v8a")
                     }
                 }
             }

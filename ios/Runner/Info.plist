@@ -16,7 +16,7 @@
 		<key>CFBundleDisplayName</key>
 		<string>Color Rash</string>
 		<key>CFBundleName</key>
-        <string>color_rash</string>
+		<string>color_rash</string>
 		<key>CFBundleExecutable</key>
 		<string>$(EXECUTABLE_NAME)</string>
 		<key>CFBundleIdentifier</key>
