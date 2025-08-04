@@ -14,10 +14,6 @@ import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await _prepareEnvironmentIdsVariables();
-  if (!kIsWeb) {
-    MobileAds.instance.initialize();
-  }
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
@@ -25,28 +21,6 @@ void main() async {
   ]);
 
   runApp(const ProviderScope(child: MyApp()));
-}
-
-Future<void> _prepareEnvironmentIdsVariables() async {
-  String envFileName =
-      kDebugMode
-          ? AppFilePaths.devEnvironment
-          : AppFilePaths
-              .prodEnvironment; // Assuming .env is for production in CI/CD.
-
-  if (kDebugMode && !kIsWeb) {
-    final RequestConfiguration configuration = RequestConfiguration(
-      testDeviceIds: <String>[
-        'F2386F50E5601E10DD63F1C43F4B26B2',
-        // Replace with your actual device hash ID from logs
-        // 'ANOTHER_DEVICE_HASH_ID_2', // Add more if you have other test devices
-        // For Android emulators, you can sometimes use 'EMULATOR', but it's less reliable
-      ],
-    );
-    MobileAds.instance.updateRequestConfiguration(configuration);
-  }
-
-  await dotenv.load(fileName: envFileName); // <--- Load your default dev file
 }
 
 class MyApp extends StatelessWidget {

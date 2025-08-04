@@ -264,13 +264,6 @@ class ColorRushGame extends FlameGame {
   }
 
   Future<void> _initializeAudioPools() async {
-    await FlameAudio.audioCache.loadAll([
-      AppAudioPaths.bgm,
-      AppAudioPaths.errorTap,
-      AppAudioPaths.correctTap,
-      AppAudioPaths.celebrate,
-      AppAudioPaths.gameOver,
-    ]);
     _correctTapSoundPool = await FlameAudio.createPool(
       AppAudioPaths.correctTap,
       minPlayers: AppConstants.minPlayersInAudioPool,

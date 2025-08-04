@@ -150,11 +150,13 @@ class AppConstants {
       70.0; // Specific huge size for "YOU WIN!" on mobile
   static const double kWinTitleFontSizeWeb =
       90.0; // Specific huge size for "YOU WIN!" on web
+
+static const int waitScreenDurationInMillis = 1000;
 }
 
 // ... (other constants)
 class AppFilePaths {
-  static const String logo = 'assets/images/logo.png';
+  static const String logo = 'assets/images/app_icon.png';
   static const String background = 'assets/images/background.png';
   static const String pauseIcon = 'assets/icons/pause.png';
   static const String muteIcon = 'assets/icons/mute.png';
@@ -163,6 +165,8 @@ class AppFilePaths {
   static const String restartIcon = 'assets/icons/restart.png';
   static const String devEnvironment = '.env.dev';
   static const String prodEnvironment = '.env.prod';
+  static const String lottieFile = 'assets/lottie/loading_colors.json';
+
 }
 
 class AppMonitoringLogs {

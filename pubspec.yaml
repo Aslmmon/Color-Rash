@@ -67,11 +67,11 @@ dev_dependencies:
 flutter_native_splash:
   color: "#000000" # Hex color code for the background of the splash screen.
   # This will be the primary background for your splash.
-  image: assets/images/logo_3.png # Path to your splash image.
+  image: assets/images/app_logo.png # Path to your splash image.
 flutter_launcher_icons:
-  android: "launcher_icon" # Or specify true to use default 'mipmap/ic_launcher'
+  android: true # Or specify true to use default 'mipmap/ic_launcher'
   ios: true                 # Generates icons for iOS
-  image_path: "assets/images/logo_3.png" # Path to your source icon image
+  image_path: "assets/images/app_icon.png" # Path to your source icon image
 
 
 # For information on the generic Dart part of this file, see the
