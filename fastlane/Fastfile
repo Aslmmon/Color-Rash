@@ -11,7 +11,7 @@ platform :android do
     supply(
       aab: "build/app/outputs/bundle/prodRelease/app-prod-release.aab",
       package_name: "com.colorrash.color_rash",
-      track: "internal",
+      track: "open_testing",
       # `json_key` is the path to your service account key,
       # which is created by your GitHub Actions workflow.
       json_key: ENV['GOOGLE_PLAY_KEY_FILE'], # THIS IS THE CORRECTED LINE
@@ -21,5 +21,12 @@ platform :android do
     # Note: We are not running the build command here because it's already handled
     # by the `flutter build` step in your GitHub Actions workflow.
     # The responsibility of this Fastlane lane is only the deployment.
+     email(
+          to: "adamtomy13@gmail.com", # <--- Add your email addresses here
+          subject: "New Color Rash Android build available on #{track} track!",
+          body: "A new version of Color Rash has been successfully uploaded to the #{track} track on Google Play. You can now download and test it.",
+          # You can use the 'skip_text_attachment' option to avoid attaching the log file.
+          skip_text_attachment: true
+        )
   end
 end
