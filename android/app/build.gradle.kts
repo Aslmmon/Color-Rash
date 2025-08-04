@@ -99,12 +99,14 @@ import java . util . Properties
                     ndk { // <--- Kotlin DSL for ndk block
                         abiFilters.add("armeabi-v7a") // <--- Use abiFilters.add()
                         abiFilters.add("arm64-v8a")
+                        debugSymbolLevel= "FULL" // <--- Set debugSymbolLevel
                     }
                 }
                 getByName("debug") {
                     ndk { // <--- Kotlin DSL for ndk block
                         abiFilters.add("armeabi-v7a")
                         abiFilters.add("arm64-v8a")
+                        debugSymbolLevel = "FULL" // <--- Set debugSymbolLevel
                     }
                 }
             }
