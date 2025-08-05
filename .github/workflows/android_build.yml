@@ -90,7 +90,7 @@ jobs:
         run: |
           cd fastlane
           bundle install # Install gems from the Gemfile
-          bundle exec fastlane internal_testing
+          bundle exec fastlane deploy_to_open_testing
         env:
           # These environment variables are passed to the Fastlane process
           GOOGLE_PLAY_KEY_FILE: ${{ github.workspace }}/fastlane/google_play_key.json
