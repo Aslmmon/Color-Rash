@@ -22,15 +22,6 @@ platform :android do
 
     )
 
-    # Note: We are not running the build command here because it's already handled
-    # by the `flutter build` step in your GitHub Actions workflow.
-    # The responsibility of this Fastlane lane is only the deployment.
-    email(
-         to: "adamtomy13@gmail.com", # <--- Add your email addresses here
-         subject: "New Color Rash Android build available on open Testing track!",
-         body: "A new version of Color Rash has been successfully uploaded to the Open Testing track on Google Play. You can now download and test it. link is : https://play.google.com/apps/testing/com.colorrash.color_rash}",
-          # You can use the 'skip_text_attachment' option to avoid attaching the log file.
-         skip_text_attachment: true
-        )
+
   end
 end

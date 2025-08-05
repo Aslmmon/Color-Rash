@@ -28,9 +28,6 @@ class GameNotifier extends Notifier<GameState> {
     return GameState();
   }
 
-
-
-
   /// Initializes the necessary service dependencies from Riverpod.
   void _initializeDependencies() {
     _settingsRepository = ref.read(settingsRepositoryProvider);
@@ -238,7 +235,6 @@ class GameNotifier extends Notifier<GameState> {
       // Use >= in case you skip levels
       finalStatus = GameStatus.won;
       wonGame();
-
     }
 
     state = state.copyWith(
@@ -263,7 +259,7 @@ class GameNotifier extends Notifier<GameState> {
 
   /// Triggers the visual overlay and sound effect for a level up.
   void _triggerLevelUpVisualsAndSound() {
-    _audioPlayer.playSfx(AppAudioPaths.celebrate); // Play level up sound
+    _audioPlayer.playSfx(AppAudioPaths.celebrateLevel); // Play level up sound
     // hide the level up overlay after a delay
     Future.delayed(
       const Duration(

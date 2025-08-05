@@ -183,6 +183,7 @@ class AppAudioPaths {
   static const String correctTap = 'correct_tap.ogg';
   static const String errorTap = 'error_tap.ogg';
   static const String celebrate = 'celebrate.mp3';
+  static const String celebrateLevel = 'celebrate.ogg';
   static const String gameOver = 'game_over.ogg';
 }
 // lib/domain/app_strings.dart
