@@ -4,14 +4,18 @@ default_platform(:android)
 
 platform :android do
   desc "Deploys a signed app bundle to the Google Play Internal track"
-  lane :open_testing do
+  lane :deploy_to_open_testing do
     # Use the `supply` action to upload the AAB to the Play Store.
     # The `aab` path is relative to the workspace root, so we use `../`
     # as the GitHub Actions job `cd`s into the 'fastlane' directory.
     supply(
       aab: "build/app/outputs/bundle/prodRelease/app-prod-release.aab",
       package_name: "com.colorrash.color_rash",
-      track: "Open testing",
+        # The `track` parameter specifies the track to which you want to deploy.
+        # In this case, we are deploying to the Internal Testing track.
+        # You can change this to `alpha`, `beta`, or `production` as needed.
+        # The `track` parameter specifies the track to which you want to deploy.
+      track: "beta",
       # `json_key` is the path to your service account key,
       # which is created by your GitHub Actions workflow.
       json_key: ENV['GOOGLE_PLAY_KEY_FILE'], # THIS IS THE CORRECTED LINE
