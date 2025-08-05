@@ -4,7 +4,7 @@ default_platform(:android)
 
 platform :android do
   desc "Deploys a signed app bundle to the Google Play Internal track"
-  lane :internal_testing do
+  lane :open_testing do
     # Use the `supply` action to upload the AAB to the Play Store.
     # The `aab` path is relative to the workspace root, so we use `../`
     # as the GitHub Actions job `cd`s into the 'fastlane' directory.
