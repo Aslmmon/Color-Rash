@@ -43,7 +43,13 @@ import java . util . Properties
                 create("prod") { // Use create("name") for named flavors
                     dimension = "app" // Correct Kotlin DSL assignment
                     resValue("string", "app_name", "Color Rash") // Correct Kotlin DSL method call
-                    resValue("string", "admob_app_id_value", "\"${System.getenv("ADMOB_APP_ID")}\"")
+//                    resValue("string", "admob_app_id_value", "\"${System.getenv("ADMOB_APP_ID")}\"")
+                    resValue(
+                        "string",
+                        "admob_app_id_value",
+                        "ca-app-pub-9544398657505872~2597969443"
+                    )
+
                 }
             }
             namespace = "com.colorrash.color_rash"
@@ -99,7 +105,7 @@ import java . util . Properties
                     ndk { // <--- Kotlin DSL for ndk block
                         abiFilters.add("armeabi-v7a") // <--- Use abiFilters.add()
                         abiFilters.add("arm64-v8a")
-                        debugSymbolLevel= "FULL" // <--- Set debugSymbolLevel
+                        debugSymbolLevel = "FULL" // <--- Set debugSymbolLevel
                     }
                 }
                 getByName("debug") {
