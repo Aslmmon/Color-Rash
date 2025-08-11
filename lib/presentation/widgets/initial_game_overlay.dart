@@ -112,7 +112,7 @@ class InitialStateOverlay extends StatelessWidget {
                 },
                 color: AppColors.incorrectTapColor.withOpacity(0.8),
                 borderRadius: AppConstants.kControlBtnBorderRadius,
-                child: Row(
+                child:  Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     PulsatingIcon(

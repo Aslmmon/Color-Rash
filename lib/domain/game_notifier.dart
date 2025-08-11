@@ -6,7 +6,7 @@ import '../core/app_monitoring_service.dart';
 import '../core/audio_player.dart';
 import '../data/settings_repository.dart';
 import '../presentation/theme/app_colors.dart';
-import 'banner_ad_notifier.dart';
+import '../services/google_ad_service.dart';
 import 'difficulty_params.dart';
 import 'game_constants.dart';
 import 'game_providers.dart';
@@ -164,7 +164,6 @@ class GameNotifier extends Notifier<GameState> {
       startLevelOverride: AppConstants.kGameLevelInitial,
     );
     _audioPlayer.playBgm(AppAudioPaths.bgm); // Play BGM on game start
-    ref.read(bannerAdProvider.notifier).reloadAd();
   }
 
   /// Starts a new game session, resetting scores and game state.
@@ -197,7 +196,6 @@ class GameNotifier extends Notifier<GameState> {
     _audioPlayer.playBgm(AppAudioPaths.bgm);
     _appMonitoringService.logEvent(AppMonitoringLogs.gameStartedLog);
     _appMonitoringService.startTrace(AppMonitoringLogs.gameSessionDuration);
-    ref.read(bannerAdProvider.notifier).reloadAd();
   }
 
   /// Handles the player tapping a color.
@@ -282,6 +280,8 @@ class GameNotifier extends Notifier<GameState> {
     _audioPlayer.stopBgm(); // Stop BGM on game over
     state = state.copyWith(status: GameStatus.gameOver);
     _handleGameOverAds();
+    ref.read(bannerAdProvider.notifier).reloadAd();
+
     _appMonitoringService.logEvent(
       AppMonitoringLogs.gameEndedLog,
       parameters: {

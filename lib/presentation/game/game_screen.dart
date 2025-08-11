@@ -1,8 +1,6 @@
 import 'package:color_rash/core/ad_service.dart';
 import 'package:color_rash/core/audio_player.dart';
-import 'package:color_rash/domain/banner_ad_notifier.dart';
 import 'package:color_rash/presentation/widgets/tutorial_overlay.dart';
-import 'package:confetti/confetti.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +10,7 @@ import '../../domain/game_constants.dart';
 import '../../domain/game_notifier.dart';
 import '../../domain/game_providers.dart';
 import '../../domain/game_state.dart';
+import '../../services/google_ad_service.dart';
 import '../theme/app_colors.dart';
 import 'color_rush_game.dart';
 import 'components/ColorInputButtons.dart';

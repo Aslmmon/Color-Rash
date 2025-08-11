@@ -1,13 +1,17 @@
 // lib/services/google_ad_service.dart
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:color_rash/core/ad_service.dart';
+
+import '../domain/game_providers.dart';
 
 class GoogleAdService implements IAdService {
   InterstitialAd? _interstitialAd;
   RewardedAd? _rewardedAd; // <--- NEW: Rewarded Ad instance
-  bool _isRewardedAdLoading = false; // <--- NEW: To prevent multiple simultaneous loads
+  bool _isRewardedAdLoading =
+      false; // <--- NEW: To prevent multiple simultaneous loads
 
   String _getAdmobAppId() => dotenv.env['ADMOB_APP_ID'] ?? '';
 
@@ -126,5 +130,60 @@ class GoogleAdService implements IAdService {
   void dispose() {
     _interstitialAd?.dispose();
     _rewardedAd?.dispose(); // <--- NEW: Dispose rewarded ad too
+  }
+}
+
+/**
+ * Banner Ad Provider uses Riverpod to manage the state of the banner ad.
+ */
+class BannerAdState {
+  final BannerAd? bannerAd;
+  final bool isLoaded;
+
+  BannerAdState({this.bannerAd, this.isLoaded = false});
+}
+
+final bannerAdProvider = StateNotifierProvider<BannerAdNotifier, BannerAdState>(
+  (ref) {
+    final adService = ref.watch(adServiceProvider);
+    return BannerAdNotifier(adService);
+  },
+);
+
+class BannerAdNotifier extends StateNotifier<BannerAdState> {
+  final IAdService _adService;
+
+  BannerAdNotifier(this._adService) : super(BannerAdState()) {
+    _loadBannerAd();
+  }
+
+  void _loadBannerAd() {
+    BannerAd(
+      adUnitId: _adService.getBannerAdUnitId(),
+      request: const AdRequest(),
+      size: AdSize.banner,
+      listener: BannerAdListener(
+        onAdLoaded: (Ad ad) {
+          state = BannerAdState(bannerAd: ad as BannerAd, isLoaded: true);
+        },
+        onAdFailedToLoad: (ad, err) {
+          state = BannerAdState();
+          ad.dispose();
+        },
+      ),
+    ).load();
+  }
+
+  // Reload the ad, perhaps for a new game session
+  void reloadAd() {
+    state.bannerAd?.dispose();
+    state = BannerAdState();
+    _loadBannerAd();
+  }
+
+  @override
+  void dispose() {
+    state.bannerAd?.dispose();
+    super.dispose();
   }
 }
