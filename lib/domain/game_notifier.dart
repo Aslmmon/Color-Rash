@@ -24,8 +24,6 @@ class GameNotifier extends Notifier<GameState> {
   GameState build() {
     _initializeDependencies();
     _loadHighScoreAndSettings();
-    _adService.loadInterstitialAd();
-    _adService.loadRewardedAd();
     return GameState();
   }
 
@@ -166,7 +164,6 @@ class GameNotifier extends Notifier<GameState> {
       startLevelOverride: AppConstants.kGameLevelInitial,
     );
     _audioPlayer.playBgm(AppAudioPaths.bgm); // Play BGM on game start
-    _adService.loadInterstitialAd(); // Load new ad for next game session
     ref.read(bannerAdProvider.notifier).reloadAd();
   }
 
@@ -200,7 +197,6 @@ class GameNotifier extends Notifier<GameState> {
     _audioPlayer.playBgm(AppAudioPaths.bgm);
     _appMonitoringService.logEvent(AppMonitoringLogs.gameStartedLog);
     _appMonitoringService.startTrace(AppMonitoringLogs.gameSessionDuration);
-    _adService.loadRewardedAd();
     ref.read(bannerAdProvider.notifier).reloadAd();
   }
 
@@ -361,9 +357,6 @@ class GameNotifier extends Notifier<GameState> {
     state = state.copyWith(isMuted: newMuteState);
     _audioPlayer.setMuted(newMuteState); // Tell the audio player to mute/unmute
   }
-
-  // lib/domain/game_notifier.dart
-  // ... (existing class definition)
 
   DifficultyUpdateResult _applyDifficultyIncreaseStep({
     required double currentSpeed,

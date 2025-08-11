@@ -43,17 +43,3 @@ final appMonitoringServiceProvider = Provider<IAppMonitoringService>((ref) {
 
 final rewardedAdLoadingProvider = StateProvider<bool>((ref) => false);
 
-
-// This provider will be a single source for all initialization status
-final initializationProvider = FutureProvider<void>((ref) async {
-  // Get all the services from Riverpod
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  final adService = ref.read(adServiceProvider);
-  final monitoringService = ref.read(appMonitoringServiceProvider);
-  await monitoringService
-      .initialize();
-  FlutterError.onError =
-      monitoringService.recordFlutterFatalError; // <--- MODIFIED
-  adService.loadInterstitialAd();
-  adService.loadRewardedAd();
-});

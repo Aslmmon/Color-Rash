@@ -27,7 +27,6 @@ class MyApp extends StatelessWidget {
       title: AppStrings.appTitle,
       debugShowCheckedModeBanner: false,
       theme: AppTheme.darkTheme,
-      // <-- Use your custom theme here
       home: LoadingScreen(), // <-- Updated this line
     );
   }
