@@ -6,6 +6,7 @@ import '../core/app_monitoring_service.dart';
 import '../core/audio_player.dart';
 import '../data/settings_repository.dart';
 import '../presentation/theme/app_colors.dart';
+import 'banner_ad_notifier.dart';
 import 'difficulty_params.dart';
 import 'game_constants.dart';
 import 'game_providers.dart';
@@ -166,6 +167,8 @@ class GameNotifier extends Notifier<GameState> {
     );
     _audioPlayer.playBgm(AppAudioPaths.bgm); // Play BGM on game start
     _adService.loadInterstitialAd(); // Load new ad for next game session
+    ref.read(bannerAdProvider.notifier).reloadAd();
+
   }
 
   /// Starts a new game session, resetting scores and game state.
@@ -199,6 +202,8 @@ class GameNotifier extends Notifier<GameState> {
     _appMonitoringService.logEvent(AppMonitoringLogs.gameStartedLog);
     _appMonitoringService.startTrace(AppMonitoringLogs.gameSessionDuration);
     _adService.loadRewardedAd();
+    ref.read(bannerAdProvider.notifier).reloadAd();
+
   }
 
   /// Handles the player tapping a color.

@@ -33,9 +33,6 @@ class _GameScreenState extends ConsumerState<GameScreen>
     with WidgetsBindingObserver {
   late final ColorRushGame _game;
 
-  // BannerAd? _bannerAd;
-
-  // bool _isBannerAdLoaded = false;
   late final IAdService _adService;
   static final List<Color> _allConfettiColors =
       AppColors.backgroundGradients.expand((list) => list).toList();
@@ -56,37 +53,11 @@ class _GameScreenState extends ConsumerState<GameScreen>
       notifier: gameNotifier,
       audioPlayer: audioPlayer,
     );
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   if (!kIsWeb) {
-    //     _loadBannerAd();
-    //   }
-    // });
   }
-
-  // void _loadBannerAd() {
-  //   _bannerAd = BannerAd(
-  //     adUnitId: _adService.getBannerAdUnitId(),
-  //     request: const AdRequest(),
-  //     size: AdSize.banner,
-  //     listener: BannerAdListener(
-  //       onAdLoaded: (ad) {
-  //         setState(() {
-  //           _isBannerAdLoaded = true;
-  //         });
-  //       },
-  //       onAdFailedToLoad: (ad, err) {
-  //         _isBannerAdLoaded = false;
-  //         ad.dispose();
-  //         // print('Error loading banner ad: $err'); // Removed debug print
-  //       },
-  //     ),
-  //   )..load();
-  // }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this); // <--- UNREGISTER Observer
-    // _bannerAd?.dispose();
     super.dispose();
   }
 
@@ -181,7 +152,7 @@ class _GameScreenState extends ConsumerState<GameScreen>
       );
     }
 
-    return SizedBox(height: 50,width: 50);
+    return SizedBox(height: 50, width: 50);
   }
 
   @override
