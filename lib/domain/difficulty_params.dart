@@ -15,7 +15,6 @@ class DifficultyParams {
   });
 }
 
-
 // lib/domain/difficulty_update_result.dart
 
 /// A data class to hold the result of a difficulty update.

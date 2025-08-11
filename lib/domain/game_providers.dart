@@ -47,16 +47,10 @@ final initializationProvider = FutureProvider<void>((ref) async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   final adService = ref.read(adServiceProvider);
   final monitoringService = ref.read(appMonitoringServiceProvider);
-
-  // Initialize Firebase (if not already done) and services
   await monitoringService
-      .initialize(); // This includes Firebase.initializeApp()
+      .initialize();
   FlutterError.onError =
       monitoringService.recordFlutterFatalError; // <--- MODIFIED
   adService.loadInterstitialAd();
   adService.loadRewardedAd();
-
-  // final container = ProviderContainer();
-  // final appMonitoringService = container.read(appMonitoringServiceProvider);
-  // await appMonitoringService.initialize();
 });

@@ -1,5 +1,6 @@
 import 'package:color_rash/core/ad_service.dart';
 import 'package:color_rash/core/audio_player.dart';
+import 'package:color_rash/domain/banner_ad_notifier.dart';
 import 'package:color_rash/presentation/widgets/tutorial_overlay.dart';
 import 'package:confetti/confetti.dart';
 import 'package:flame/game.dart';
@@ -31,8 +32,10 @@ class GameScreen extends ConsumerStatefulWidget {
 class _GameScreenState extends ConsumerState<GameScreen>
     with WidgetsBindingObserver {
   late final ColorRushGame _game;
-  BannerAd? _bannerAd;
-  bool _isBannerAdLoaded = false;
+
+  // BannerAd? _bannerAd;
+
+  // bool _isBannerAdLoaded = false;
   late final IAdService _adService;
   static final List<Color> _allConfettiColors =
       AppColors.backgroundGradients.expand((list) => list).toList();
@@ -53,37 +56,37 @@ class _GameScreenState extends ConsumerState<GameScreen>
       notifier: gameNotifier,
       audioPlayer: audioPlayer,
     );
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!kIsWeb) {
-        _loadBannerAd();
-      }
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   if (!kIsWeb) {
+    //     _loadBannerAd();
+    //   }
+    // });
   }
 
-  void _loadBannerAd() {
-    _bannerAd = BannerAd(
-      adUnitId: _adService.getBannerAdUnitId(),
-      request: const AdRequest(),
-      size: AdSize.banner,
-      listener: BannerAdListener(
-        onAdLoaded: (ad) {
-          setState(() {
-            _isBannerAdLoaded = true;
-          });
-        },
-        onAdFailedToLoad: (ad, err) {
-          _isBannerAdLoaded = false;
-          ad.dispose();
-          // print('Error loading banner ad: $err'); // Removed debug print
-        },
-      ),
-    )..load();
-  }
+  // void _loadBannerAd() {
+  //   _bannerAd = BannerAd(
+  //     adUnitId: _adService.getBannerAdUnitId(),
+  //     request: const AdRequest(),
+  //     size: AdSize.banner,
+  //     listener: BannerAdListener(
+  //       onAdLoaded: (ad) {
+  //         setState(() {
+  //           _isBannerAdLoaded = true;
+  //         });
+  //       },
+  //       onAdFailedToLoad: (ad, err) {
+  //         _isBannerAdLoaded = false;
+  //         ad.dispose();
+  //         // print('Error loading banner ad: $err'); // Removed debug print
+  //       },
+  //     ),
+  //   )..load();
+  // }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this); // <--- UNREGISTER Observer
-    _bannerAd?.dispose();
+    // _bannerAd?.dispose();
     super.dispose();
   }
 
@@ -169,17 +172,16 @@ class _GameScreenState extends ConsumerState<GameScreen>
 
   /// Builds the section for displaying the banner ad.
   Widget _buildBannerAdSection() {
-    if (!kIsWeb && _isBannerAdLoaded && _bannerAd != null) {
+    final adState = ref.watch(bannerAdProvider);
+    if (!kIsWeb && adState.isLoaded) {
       return SizedBox(
-        width: _bannerAd?.size.width.toDouble(),
-        height: _bannerAd?.size.height.toDouble(),
-        child: AdWidget(ad: _bannerAd!),
+        width: adState.bannerAd?.size.width.toDouble(),
+        height: adState.bannerAd?.size.height.toDouble(),
+        child: AdWidget(ad: adState.bannerAd!),
       );
     }
-    return const SizedBox(
-      width: 50,
-      height: 50,
-    ); // Hide if not loaded or on web
+
+    return SizedBox(height: 50,width: 50);
   }
 
   @override
