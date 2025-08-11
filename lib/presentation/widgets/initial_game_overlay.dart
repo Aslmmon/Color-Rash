@@ -1,4 +1,5 @@
 // lib/presentation/widgets/initial_game_overlay.dart
+import 'package:color_rash/domain/game_providers.dart';
 import 'package:color_rash/presentation/widgets/pulsating_icon.dart'
     show PulsatingIcon;
 import 'package:flutter/foundation.dart'; // For kIsWeb
@@ -7,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:color_rash/domain/game_constants.dart';
 import 'package:color_rash/presentation/theme/app_colors.dart';
 import 'package:color_rash/presentation/widgets/game_button.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../domain/game_notifier.dart'; // For GameNotifier
 import '../../../domain/game_state.dart'; // For GameState
@@ -103,10 +105,10 @@ class InitialStateOverlay extends StatelessWidget {
                 height: AppConstants.kRestartButtonHeight / 1.5,
                 // Consistent with tutorial button
                 onPressed: () {
-                  adService.showRewardedAd(() {
-                    gameNotifier
-                        .grantLevelBoost(); // Callback for when reward is earned
-                  });
+                  // We now need to pass the ref to the adService methods
+                  adService.showRewardedAd(
+                    () => gameNotifier.grantLevelBoost(),
+                  );
                 },
                 color: AppColors.incorrectTapColor.withOpacity(0.8),
                 borderRadius: AppConstants.kControlBtnBorderRadius,

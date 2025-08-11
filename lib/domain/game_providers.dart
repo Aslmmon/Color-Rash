@@ -41,6 +41,9 @@ final appMonitoringServiceProvider = Provider<IAppMonitoringService>((ref) {
   return service;
 });
 
+final rewardedAdLoadingProvider = StateProvider<bool>((ref) => false);
+
+
 // This provider will be a single source for all initialization status
 final initializationProvider = FutureProvider<void>((ref) async {
   // Get all the services from Riverpod

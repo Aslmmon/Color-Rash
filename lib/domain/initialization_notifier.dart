@@ -42,25 +42,17 @@ class InitializationNotifier extends StateNotifier<InitializationState> {
       options: DefaultFirebaseOptions.currentPlatform,
     );
     await _prepareEnvironmentIdsVariables();
-
     final adService = ref.read(adServiceProvider);
     final monitoringService = ref.read(appMonitoringServiceProvider);
     if (!kIsWeb) {
       MobileAds.instance.initialize();
     }
     // Initialize Firebase (if not already done) and services
-    await monitoringService
-        .initialize(); // This includes Firebase.initializeApp()
-    FlutterError.onError =
-        monitoringService.recordFlutterFatalError; // <--- MODIFIED
-    adService.loadInterstitialAd();
-    adService.loadRewardedAd();
-    await Future.delayed(
-      Duration(milliseconds: AppConstants.waitScreenDurationInMillis),
-    );
+    await monitoringService.initialize(); // This includes Firebase.initializeApp()
+    FlutterError.onError = monitoringService.recordFlutterFatalError; // <--- MODIFIED
 
-    // --- Step 1: Load Settings and High Score (approx. 25% of progress) ---
     state = state.copyWith(message: "Loading settings...", progress: 0.25);
+
     await Future.delayed(
       Duration(milliseconds: AppConstants.waitScreenDurationInMillis),
     );
@@ -75,7 +67,9 @@ class InitializationNotifier extends StateNotifier<InitializationState> {
       AppAudioPaths.bgm,
     ]);
 
-    await Future.delayed(const Duration(milliseconds: 500));
+    await Future.delayed(
+      Duration(milliseconds: AppConstants.waitScreenDurationInMillis),
+    );
 
     // --- Step 3: Load Ads (approx. 75% of progress) ---
     state = state.copyWith(message: "Preparing ads...", progress: 0.75);

@@ -1,6 +1,8 @@
 // lib/services/google_ad_service.dart
+import 'package:color_rash/domain/game_providers.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:color_rash/core/ad_service.dart';
 
@@ -85,6 +87,7 @@ class GoogleAdService implements IAdService {
         onAdLoaded: (ad) {
           _rewardedAd = ad;
           _isRewardedAdLoading = false;
+
           print('Rewarded ad loaded.'); // Debugging
         },
         onAdFailedToLoad: (error) {

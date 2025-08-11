@@ -1,4 +1,6 @@
 // lib/core/ad_service.dart
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 abstract class IAdService {
   void loadInterstitialAd();
 

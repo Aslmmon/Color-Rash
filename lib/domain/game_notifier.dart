@@ -168,7 +168,6 @@ class GameNotifier extends Notifier<GameState> {
     _audioPlayer.playBgm(AppAudioPaths.bgm); // Play BGM on game start
     _adService.loadInterstitialAd(); // Load new ad for next game session
     ref.read(bannerAdProvider.notifier).reloadAd();
-
   }
 
   /// Starts a new game session, resetting scores and game state.
@@ -203,7 +202,6 @@ class GameNotifier extends Notifier<GameState> {
     _appMonitoringService.startTrace(AppMonitoringLogs.gameSessionDuration);
     _adService.loadRewardedAd();
     ref.read(bannerAdProvider.notifier).reloadAd();
-
   }
 
   /// Handles the player tapping a color.
