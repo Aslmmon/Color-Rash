@@ -41,7 +41,6 @@ class InitialStateOverlay extends StatelessWidget {
     // Logic for showing Rewarded Ad button in initial state
     final bool showRewardedAdButton =
         (gameState.currentLevel < AppConstants.kMaxLevel);
-
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -112,29 +111,28 @@ class InitialStateOverlay extends StatelessWidget {
                 },
                 color: AppColors.incorrectTapColor.withOpacity(0.8),
                 borderRadius: AppConstants.kControlBtnBorderRadius,
-                child:  Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    PulsatingIcon(
-                      icon: Icons.video_collection,
-                      color: AppColors.primaryTextColor,
-                      size: 25,
-                      // You can adjust the duration here if you want a faster/slower pulse
-                      duration: const Duration(
-                        milliseconds: 500,
-                      ), // Example: a 2-second pulse cycle
-                    ),
-                    SizedBox(height: AppConstants.kSmallSpacing),
-                    // Spacing between icon and text
-                    Text(
-                      '${AppStrings.watchAdForBoost} ${AppStrings.levelBoostAmount}',
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: AppColors.primaryTextColor,
-                      ),
-                    ),
-                  ],
-                ),
+                child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            PulsatingIcon(
+                              icon: Icons.video_collection,
+                              color: AppColors.primaryTextColor,
+                              size: 25,
+                              // You can adjust the duration here if you want a faster/slower pulse
+                              duration: const Duration(
+                                milliseconds: 500,
+                              ), // Example: a 2-second pulse cycle
+                            ),
+                            SizedBox(height: AppConstants.kSmallSpacing),
+                            // Spacing between icon and text
+                            Text(
+                              '${AppStrings.watchAdForBoost} ${AppStrings.levelBoostAmount}',
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context).textTheme.bodySmall
+                                  ?.copyWith(color: AppColors.primaryTextColor),
+                            ),
+                          ],
+                        ),
               ),
               // Start Level Hint Text
               const SizedBox(height: AppConstants.kDefaultPadding), // Spacing

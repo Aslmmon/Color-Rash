@@ -8,7 +8,7 @@ abstract class IAdService {
 
   String getBannerAdUnitId(); // <--- NEW: Method to get banner ID
 
-  void loadRewardedAd();
+  void loadRewardedAd(); // Optional Ref for context
 
   void showRewardedAd(
     Function onUserEarnedReward,

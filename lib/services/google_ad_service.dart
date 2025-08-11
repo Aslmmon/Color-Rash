@@ -1,4 +1,5 @@
 // lib/services/google_ad_service.dart
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -74,12 +75,14 @@ class GoogleAdService implements IAdService {
   }
 
   @override
-  void loadRewardedAd() {
+  void loadRewardedAd({Ref? ref}) {
     if (kIsWeb || _isRewardedAdLoading || _rewardedAd != null) {
       // Don't load if on web, already loading, or already loaded
       return;
     }
     _isRewardedAdLoading = true;
+    ref?.read(rewardedAdLoadingProvider.notifier).state =
+        true; // Update loading state
 
     RewardedAd.load(
       adUnitId: _getRewardedId(),
@@ -88,12 +91,16 @@ class GoogleAdService implements IAdService {
         onAdLoaded: (ad) {
           _rewardedAd = ad;
           _isRewardedAdLoading = false;
+          ref?.read(rewardedAdLoadingProvider.notifier).state =
+              false; // Update loading state
 
           print('Rewarded ad loaded.'); // Debugging
         },
         onAdFailedToLoad: (error) {
           _rewardedAd = null;
           _isRewardedAdLoading = false;
+          ref?.read(rewardedAdLoadingProvider.notifier).state =
+              false; // Update loading state
           print('Rewarded ad failed to load: $error'); // Debugging
         },
       ),
@@ -102,18 +109,18 @@ class GoogleAdService implements IAdService {
 
   @override
   void showRewardedAd(Function onUserEarnedReward) {
+    debugPrint("Showing rewarded ad..." + _rewardedAd.toString()); // Debugging
     if (_rewardedAd != null) {
       _rewardedAd!.fullScreenContentCallback = FullScreenContentCallback(
         onAdDismissedFullScreenContent: (ad) {
           ad.dispose();
           _rewardedAd = null;
-          loadRewardedAd(); // Load the next one for future use
+          loadRewardedAd();
         },
         onAdFailedToShowFullScreenContent: (ad, error) {
           ad.dispose();
           _rewardedAd = null;
           loadRewardedAd();
-          print('Rewarded ad failed to show: $error'); // Debugging
         },
       );
       _rewardedAd?.show(
@@ -123,7 +130,7 @@ class GoogleAdService implements IAdService {
       );
     } else {
       print('Rewarded ad not loaded yet.'); // Debugging
-      loadRewardedAd(); // Try to load if it's null
+      loadRewardedAd();
     }
   }
 
